@@ -1027,7 +1027,7 @@ load_mb_base() {
             VAP=0;VAN=0
         fi
         case $mt in
-        acq2206*)
+        acq1102|acq2206*)
             dblr '"db/acq2206psu.db","UUT='${HOST},vap=$VAP,van=$VAN'"';;
         *)
             dblr '"db/acq2006psu.db","UUT='${HOST},vap=$VAP,van=$VAN'"';;
