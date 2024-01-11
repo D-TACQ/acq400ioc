@@ -24,7 +24,7 @@ load_mgt400_fifo_stat()
 load_mgt400_sfp() 
 {
 	sprams="UUT=${HOST}"
-	for ch in 1 2 3 4
+	for ch in $*
 	do
 			dblr '"db/mgt480sfp.db","'${sprams},CH=${ch}'"'	
 			
@@ -94,7 +94,10 @@ load_mgt400() {
 #tr '[:upper:]' '[:lower:]'
 
 # kmcu, z7io sfp gpio do not exist
-[ -e /dev/gpio/MGT482/SFP1/PRESENT ] && load_mgt400_sfp
+
+SFP_LIST="$(echo $(ls /dev/gpio/MGT482 | grep SFP) | sed -e s/SFP//g)"
+[ -e /dev/gpio/MGT482/SFP1/PRESENT ] && load_mgt400_sfp ${SFP_LIST}
+
 
 MGTPORTS=0
 
@@ -123,7 +126,7 @@ dblr '"db/acq2106_mgtports.db","UUT='${HOST}',MGTPORTS='${MGTPORTS}'"'
 
 if [ "$mt" != "z7io" ]; then
 # SFP1 at 4291
-    for port in 1 2 3 4; do
+    for port in ${SFP_LIST}; do
 		create_asyn_channel SSFP${port} 127.0.0.1:429${port}
 		dblr '"db/sfp.db", "UUT='${HOST}',PORT='${port}',SPORT=SSFP'${port}'"'
     done
