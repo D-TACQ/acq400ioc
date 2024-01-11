@@ -1,0 +1,213 @@
+
+record (stringin, "${UUT}:SYS:CLK:CONFIG") {
+	field(DTYP, "stream")
+	field(INP,  "@acq2106clk.proto getSi5326config ${SPORT}")
+	field(SCAN, "1 second")
+}
+
+record (bo, "${UUT}:SYS:CLK:BYPASS" ) {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Clock Bypass")
+	field(DTYP, "Soft Channel")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	field(FLNK, "${UUT}:SYS:CLK:BYPASS:w PP")	
+}
+
+record (bo, "${UUT}:SYS:CLK:BYPASS:w" ){
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "")
+	field(DTYP, "stream")
+	field(OUT,  "@acq2106clk.proto setSi5326Bypass ${SPORT}")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:SYS:CLK:BYPASS")
+	field(SDIS, "${UUT}:SYS:CLK:BYPASS:s.PACT")
+	field(DISV, "1")
+}
+record (bi, "${UUT}:SYS:CLK:BYPASS:r" ) {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "")
+	field(DTYP, "stream")
+	field(INP,  "@acq2106clk.proto getSi5326bypass ${SPORT}")
+	field(SCAN, "1 second")
+	field(FLNK, "${UUT}:SYS:CLK:BYPASS:s")
+}
+record (bo, "${UUT}:SYS:CLK:BYPASS:s" ) {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "")
+	field(DTYP, "Soft Channel")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:SYS:CLK:BYPASS:r NPP")
+	field(OUT,  "${UUT}:SYS:CLK:BYPASS PP")
+}
+record(longout, "${UUT}:0:SIG:CLK_MB:SET") {
+	field(SDIS, "${UUT}:SYS:CLK:BYPASS")
+	field(DISV, "1")
+}
+record (bo, "${UUT}:SYS:CLK:OE_CLK1_ELF1") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Site 1 CLK OE")
+	field(DTYP, "boAcqHost")	
+	field(OUT, "@/dev/gpio/CLK/OE_CLK1_ELF1")
+	field(PINI, "YES")
+	field(VAL,  "0")	
+}
+
+record (bo, "${UUT}:SYS:CLK:OE_CLK1_ELF2") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Site 2 CLK OE")
+	field(DTYP, "boAcqHost")	
+	field(OUT, "@/dev/gpio/CLK/OE_CLK1_ELF2")
+	field(PINI, "YES")
+	field(VAL,  "0")		
+}
+
+
+record (bo, "${UUT}:SYS:CLK:OE_CLK1_ZYNQ") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "CLK1 ZYNQ OE")
+	field(DTYP, "boAcqHost")	
+	field(OUT, "@/dev/gpio/CLK/OE_CLK1_ZYNQ")
+	field(PINI, "YES")
+	field(VAL,  "0")	
+}
+
+record (bi, "${UUT}:SYS:CLK:lol") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "CLK Loss of Lock")
+	field(DTYP, "biAcqHost")
+	field(INP,  "@/dev/gpio/CLK/LOL")
+	field(SCAN, "1 second")
+	field(FLNK, "${UUT}:SYS:CLK:LOL")
+}
+
+record (calc, "${UUT}:SYS:CLK:LOL" ) {
+	field(INPA, "${UUT}:SYS:CLK:lol")
+	field(INPB, "${UUT}:SYS:CLK:BYPASS")
+	field(CALC, "B==0 && A!=0")
+}
+
+record (bi, "${UUT}:SYS:CLK:C1B") {
+	field(DTYP, "biAcqHost")
+	field(INP,  "@/dev/gpio/CLK/C1B")
+	field(SCAN, "1 second")
+        field(DESC, "Si5326 CLKIN1 Invalid")
+        field(ONAM, "FAULT")
+        field(ZNAM, "OK")
+}
+
+record (bi, "${UUT}:SYS:CLK:C2B") {
+	field(DTYP, "biAcqHost")
+	field(INP,  "@/dev/gpio/CLK/C2B")
+	field(SCAN, "1 second")
+	field(DESC, "Si5326 CLKIN2 Invalid")
+	field(ONAM, "FAULT")
+	field(ZNAM, "OK")
+}
+
+record (bi, "${UUT}:SYS:CLK:Si570_OE") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Si570_OE")
+	field(DTYP, "biAcqHost")
+	field(INP,  "@/dev/gpio/CLK/Si570_OE")
+	field(SCAN, "10 second")
+}
+
+record (bi, "${UUT}:SYS:CLK:Si5326:PLAN_EN:t") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "")
+	field(DTYP, "Soft Channel")
+	field(SCAN, "1 second")
+	field(FLNK, "${UUT}:SYS:CLK:Si5326:PLAN_EN")
+}
+record (calc, "${UUT}:SYS:CLK:Si5326:PLAN_EN"){
+	field(INPA, "${UUT}:SYS:CLK:FPMUX")
+	field(INPB, "${UUT}:0:SIG:ZCLK_SRC")
+	field(CALC, "A==3 && B==0")
+}
+record (mbbo, "${UUT}:SYS:CLK:Si5326:PLAN") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "loads PLAN when 33.333MHz src")	
+	field(NOBT, "8")
+	field(ZRVL, "10")
+	field(ONVL, "20")
+	field(TWVL, "24")
+	field(THVL, "40")
+	field(FRVL, "50")
+	field(FVVL, "80")
+	field(ZRST, "10M")
+	field(ONST, "20M")
+	field(TWST, "24M")
+	field(THST, "40M")
+	field(FRST, "50M")
+	field(FVST, "80M")
+	field(SDIS, "${UUT}:SYS:CLK:Si5326:PLAN_EN")
+	field(DISV, "0")
+# stub load freq by formula 	
+	field(FLNK, "${UUT}:0:SIG:CLK_MB:SET:clr")
+}
+
+record(longout, "${UUT}:0:SIG:CLK_MB:SET:clr") {
+	field(DTYP, "Soft Channel")
+	field(OMSL, "closed_loop")
+	field(DOL,  "0")
+	field(OUT, "${UUT}:0:SIG:CLK_MB:SET PP")
+	field(FLNK, "${UUT}:SYS:CLK:Si5326:PLAN:w")
+}
+
+record(longout, "${UUT}:SYS:CLK:Si5326:PLAN:w") {
+	field(DTYP, "stream")
+	field(OUT,  "@acq2106clk.proto setSi5326config ${SPORT}")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:SYS:CLK:Si5326:PLAN.RVAL")
+}
+
+# Set Output Enable when FP signals configured as OUTPUTS
+# NOT AVAILABLE for CLK, TRG.
+record (mbbo, "${UUT}:0:SIG:FP:GPIO:w" ){
+	field(FLNK, "${UUT}:0:SIG:FP:GPIO:OE:c")
+}
+
+record (calc, "${UUT}:0:SIG:FP:GPIO:OE:c") {
+	field(INPA, "${UUT}:0:SIG:FP:GPIO:w")
+	field(CALC, "A != 0")
+	field(FLNK, "${UUT}:0:SIG:FP:GPIO:OE")	
+}
+record (bo, "${UUT}:0:SIG:FP:GPIO:OE") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "FP:GPIO:OE")
+	field(DTYP, "boAcqHost")
+	field(OUT, "@/dev/gpio/FP_IO_DIR_OUT")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:0:SIG:FP:GPIO:OE:c")
+}
+
+record (mbbo, "${UUT}:0:SIG:FP:SYNC:w" ){
+	field(FLNK, "${UUT}:0:SIG:FP:SYNC:OE:c")
+}
+
+record (calc, "${UUT}:0:SIG:FP:SYNC:OE:c") {
+	field(INPA, "${UUT}:0:SIG:FP:SYNC:w")
+	field(CALC, "A != 0")
+	field(FLNK, "${UUT}:0:SIG:FP:SYNC:OE")	
+}
+record (bo, "${UUT}:0:SIG:FP:SYNC:OE") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "FP:SYNC:OE")
+	field(DTYP, "boAcqHost")
+	field(OUT, "@/dev/gpio/FP_SYNC_DIR_OUT")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:0:SIG:FP:SYNC:OE:c")
+}
