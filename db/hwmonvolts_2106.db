@@ -69,11 +69,11 @@ record(ai, "${UUT}:SYS:_van") {
 }
 
 record(calc, "${UUT}:SYS:VAN") {
-	field(INPA, "${UUT}:SYS:VAP")
-	field(INPB, "${UUT}:SYS:_van")
-	field(CALC, "6.6*B - 18.48")
-	field(PREC, "1")	
-	field(DESC, "Analog Rail Neg")
+		field(INPA, "${UUT}:SYS:VAP")
+		field(INPB, "${UUT}:SYS:_van")
+		field(CALC, "6.6*B - 18.48")
+		field(PREC, "1")	
+		field(DESC, "Analog Rail Neg")
         field(HOPR, "0")
         field(LOPR, "-15")
         field(LOW,  "-7")

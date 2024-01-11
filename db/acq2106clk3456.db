@@ -1,0 +1,42 @@
+
+record (bo, "${UUT}:SYS:CLK:OE_CLK1_ELF3") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Site 3 CLK OE")
+	field(DTYP, "boAcqHost")	
+	field(OUT, "@/dev/gpio/CLK/OE_CLK1_ELF3")
+	field(PINI, "YES")
+	field(VAL,  "0")
+}
+
+record (bo, "${UUT}:SYS:CLK:OE_CLK1_ELF4") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Site 4 CLK OE")
+	field(DTYP, "boAcqHost")	
+	field(OUT, "@/dev/gpio/CLK/OE_CLK1_ELF4")
+	field(PINI, "YES")
+	field(VAL,  "0")		
+}
+
+record (bo, "${UUT}:SYS:CLK:OE_CLK1_ELF5") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Site 5 CLK OE")
+	field(DTYP, "boAcqHost")	
+	field(OUT, "@/dev/gpio/CLK/OE_CLK1_ELF5")
+	field(PINI, "YES")
+	field(VAL,  "0")		
+}
+
+record (bo, "${UUT}:SYS:CLK:OE_CLK1_ELF6") {
+	field(ONAM, "ON")
+	field(ZNAM, "OFF")
+	field(DESC, "Site 6 CLK OE")
+	field(DTYP, "boAcqHost")	
+	field(OUT, "@/dev/gpio/CLK/OE_CLK1_ELF6")
+	field(PINI, "YES")
+	field(VAL,  "0")		
+}
+
+

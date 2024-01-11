@@ -977,11 +977,13 @@ load_mb_base() {
 
     dblr '"db/hwmonvolts_common.db","UUT='${HOST}'"'
     case $mt in
-    acq2[12]06*)
+    acq1102|acq2[12]06*)
             load_mb_acq2106
             dblr '"db/hwmonvolts_2106.db","UUT='${HOST}'"'
             acq2106b=$(cat /sys/module/acq420fmc/parameters/is_acq2106B)
-            dblr '"db/acq2106clk.db","UUT='${HOST}',acq2106b='${acq2106b}',SPORT=S0C"';;
+            dblr '"db/acq2106clk12.db","UUT='${HOST}',acq2106b='${acq2106b}',SPORT=S0C"'
+            [ "$mt" != "acq1102" ] && 
+            dblr '"db/acq2106clk3456.db","UUT='${HOST}',acq2106b='${acq2106b}',SPORT=S0C"';;
 
     z7io*)
             dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}'"';;
@@ -991,7 +993,7 @@ load_mb_base() {
             dblr '"db/hwmonvolts.db","UUT='${HOST}'"';;
     esac
     case $mt in
-    acq1001|acq1002)
+    acq1001|acq1002|acq1102)
         for site in $(seq 1 $ns)
         do
             # handles special case of v2f biscuit, no SITE LEDs.
@@ -1408,6 +1410,8 @@ load_mb() {
                 ns=6; mt=acq2106;;
         acq2006|acq2006b)
                 ns=6; mt=acq2006;;
+        acq1102)
+                ns=2; mt=acq1102;;
         acq1002)
                 ns=2; mt=acq1001;;
         acq1002p)
