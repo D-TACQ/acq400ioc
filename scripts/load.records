@@ -1200,7 +1200,7 @@ load_mb_sync() {
             fi;;
         SYNC)
             case $MB_MODEL in
-            acq2[12]06*)
+            acq1102|acq2[12]06*)
                 if [ $HAS_WR -eq 1 ]; then
                     lsb_x ${lp0},NOBT=1 WRPPS nc
                 else
@@ -1216,7 +1216,7 @@ load_mb_sync() {
         case $FUN in
         CLK)
             case $MB_MODEL in
-            acq2[12]06*)
+            acq1102|acq2[12]06*)
                 if [ $HAS_WR -eq 1 ]; then
                     lsb_x ${lp1},NOBT=1 MCLK nc
                 else
@@ -1239,7 +1239,7 @@ load_mb_sync() {
             fi;;
         SYNC)
             case $MB_MODEL in
-            acq2[12]06*)
+            acq1102|acq2[12]06*)
                 if [ $HAS_WR -eq 1 ]; then
                     lsb_x ${lp1},NOBT=1 WRPPS nc
                 else
@@ -1510,7 +1510,7 @@ do
 done
 
 case $MB_MODEL in
-acq2206*|acq2106*)
+acq1102|acq2[12]06*)
     [ $ACQ480_COUNT -gt 0 ] && echo "seq badledfixer \"uut=${HOST}\"" >>/tmp/st_post.cmd
     [ -e /etc/acq400/0/wrtd_tx ] && source /usr/local/epics/scripts/wr.init;;
 esac
