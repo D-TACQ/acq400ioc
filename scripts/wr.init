@@ -2,10 +2,13 @@
 
 echo '# wr.init'
 # copy from load.mgt400
+
+
 load_mgt400_sfp() 
 {
 	sprams="UUT=${HOST}"
-	for ch in 1 2 3 4
+	SFP_LIST="$(echo $(ls /dev/gpio/MGT482 | grep SFP) | sed -e s/SFP//g)"
+	for ch in $SFP_LIST
 	do
 			dblr '"db/mgt480sfp.db","'${sprams},CH=${ch}'"'		
 	done	
