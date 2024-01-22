@@ -1137,9 +1137,10 @@ has_dsp_trg() {
     if [ -e /dev/acq400.0.knobs/fpga_rev ]; then
         rev=$(cat /dev/acq400.0.knobs/fpga_rev)
         case $1 in
-        acq2206*)    rc=1;;
-        acq2106*)    [ $rev -ge 25 ] && rc=1;;
-        acq100*)     [ $rev -ge 38 ] && rc=1;;
+        acq1102|acq2206*)
+                        rc=1;;
+        acq2106*)       [ $rev -ge 25 ] && rc=1;;
+        acq100*)        [ $rev -ge 38 ] && rc=1;;
         esac
     fi
     echo $rc
