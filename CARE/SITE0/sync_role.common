@@ -169,21 +169,22 @@ is_43x() {
 
 CLKDX_OUT=d1
 
-if [ "${MOD:0:7}" = "acq2106" ]; then
+case ${MOD:0:7} in
+acq2106|acq2206|acq1102)
     set_slave=set_slave_acq2106
     set_common_master=set_common_master_acq2106
 # Si5326 minimum output rate. 2M works for slave XO hardware
     FMIN=10000
-    is_acq2106=1
-else
+    is_acq2106=1;;
+*)
     set_slave=set_slave_acq1001
     set_common_master=set_common_master_acq1001
 # ics527 minimum output rate
     FMIN=4000000
 # avoid local clkdiv on slow SLAVE SAR devices		
     is_42x && CLKDX_OUT=d2
-    is_acq2106=0
-fi
+    is_acq2106=0;;
+esac
 
 FS_DEF=200000; is_48x && FS_DEF=20000000
 

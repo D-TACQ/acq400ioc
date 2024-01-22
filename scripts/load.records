@@ -1334,7 +1334,7 @@ load_mb_sync() {
 
     if [ $HAS_ACQ43X -ne 0 ] && [ $ACQ43X_SET_SAMPLE_RATE -ge 0 ] && [ $HAS_WR -eq 0 ]; then
             case $MB_MODEL in
-            acq2[12]06*)
+            acq1102|acq2[12]06*)
                 (
                 echo "dbpf ${HOST}:SYS:CLK:FPMUX XCLK"
                 echo "dbpf ${HOST}:SYS:FPCLK: 32768000"
