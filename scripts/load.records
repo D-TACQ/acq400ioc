@@ -60,7 +60,7 @@ acq2[12]06*)
 esac
 
 
-HAS_WR=0; [ -e /etc/acq400/0/wr_tai_cur ] && HAS_WR=1
+HAS_WR=0; [ -e -e /etc/acq400/0/wrtd_tx ] && HAS_WR=1
 
 FIRST_AI_WF_RECORDS=1
 
