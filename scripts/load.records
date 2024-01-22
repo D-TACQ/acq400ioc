@@ -1174,6 +1174,7 @@ load_mb_sync() {
 
 # and acq2006 R2 with HDMI
     CPRAMS="UUT=${HOST},SITE=0,SPORT=S0"
+
     for FUN in SYNC TRG CLK
     do
         # d0
@@ -1194,8 +1195,9 @@ load_mb_sync() {
             esac;;
         TRG)
             if [ $(has_dsp_trg $MB_MODEL) -ne 0 ]; then
+                wrtt0=nc; [ $HAS_WR -eq 1 ] && wrtt0=WRTT0
                 #                   0       1       2       3       4       5       6   7
-                lsb_x ${lp0},NOBT=3 EXT     HDMI    HOSTB   GPG0    DSP0    WRTT0   nc  NONE
+                lsb_x ${lp0},NOBT=3 EXT     HDMI    HOSTB   GPG0    DSP0    $wrtt0  nc  NONE
             else
                 lsb_x ${lp0},NOBT=2 EXT HDMI_GPIO GPG0
             fi;;
@@ -1228,8 +1230,9 @@ load_mb_sync() {
             esac;;
         TRG)
             if [ $(has_dsp_trg $MB_MODEL) -ne 0 ]; then
+                wrtt1=nc; [ $HAS_WR -eq 1 ] && wrtt1=WRTT1
                 #                   0     1     2         3    4    5       6       7
-                lsb_x ${lp1},NOBT=3 STRIG HOSTA HDMI_GPIO GPG1 DSP1 FP_SYNC WRTT1   NONE
+                lsb_x ${lp1},NOBT=3 STRIG HOSTA HDMI_GPIO GPG1 DSP1 FP_SYNC $wrtt1  NONE
             else
                 case $MB_MODEL in
                 acq2[12]06*)
