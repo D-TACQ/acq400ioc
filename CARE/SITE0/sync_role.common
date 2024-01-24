@@ -250,16 +250,22 @@ set_master() {
 
 set_48x_override() {
     # Configure clock
+
     if [ "$2" = "master" ]; then
-        # Configure clock - This is NOT valid for FPCLK
-        set.site 0 SIG:SRC:CLK:0 INT01M
-        fin=1000000
+		if [ $is_acq2106 -ne 0 ]; then
+	        # Configure clock - This is NOT valid for FPCLK
+	        	set.site 0 SIG:SRC:CLK:0 INT01M
+	        	fin=1000000
+		else
+    			zclk_src=INT33M
+			fin=33333000
+		fi
     else
         set.site 0 SIG:SRC:CLK:0 HDMI
         fin=$FIN
     fi
     set.site 0 SYS:CLK:FPMUX ZCLK
-    set.site 0 SIG:ZCLK_SRC CLK.d0
+    set.site 0 SIG:ZCLK_SRC ${zclk_src:-CLK.d0}
     set.site 0 SIG:CLK_MB:FIN $fin
     $set_mb $1
     set.site 0 SIG:SRC:CLK:1 MCLK
