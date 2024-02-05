@@ -598,24 +598,32 @@ load_400() {
         else
             ./scripts/load.dio482td_DI ${HOST} ${site}
         fi;;
-    $MT_DIO432|$MT_DIO432P|$MT_DIO482|$MT_DIO482TD_PG|$MT_DIO422|$MT_DI460)
+    $MT_DIO432|$MT_DIO432P|$MT_DIO482|$MT_DIO482TD_PG|$MT_DIO422|$MT_DI460|$MT_DIO_5CH)
         mv=$(cat /dev/acq400.$site.knobs/module_variant)
-        if [ "$model" = "$MT_DIO482" -o "$model" = "$MT_DI460" ] && [ "$mv" = "20" -o "$mv" = "21" ]; then
-            if [ $site -eq 1 ]; then
-                dblr '"db/dio482-scaler.db","'${cprams}'"'
-            fi
-            ./scripts/load.scaler ${HOST} ${site}
-            is_adc="scaler"
-        elif [ -e ${esite}/num_pg ]; then
-            will_load_dio482pg=$(cat ${esite}/num_pg)
-        else
-            name=$(cat /dev/acq400.$site.knobs/module_name)
-            [ "$model" = "$MT_DIO482" ] && [ "$SUPPORT_COS" != "" ] && ./scripts/load.dio482 $HOST $site
-            if [ "$model" = "$MT_DIO422" ]  && [ $((0x$(cat ${esite}/module_variant)&0x7f)) -eq 1 ]; then
-                ./scripts/load.qen ${HOST} ${site} ${model}
-                has_output="no"
-            fi
-            [ -e ./scripts/load.$name ] && ./scripts/load.$name $HOST $site
+        case $model in
+        $MT_DIO482|$MT_DI460|$MT_DIO_5CH)
+                if [ "$mv" = "20" -o "$mv" = "21" ]; then
+                        if [ $site -eq 1 ]; then
+                                dblr '"db/dio482-scaler.db","'${cprams}'"'
+                        fi
+                        ./scripts/load.scaler ${HOST} ${site}
+                        is_adc="scaler"
+                fi;;
+        *)      ;;
+        esac
+
+        if [ is_adc != "scaler" ]; then
+                if [ -e ${esite}/num_pg ]; then
+                        will_load_dio482pg=$(cat ${esite}/num_pg)
+                else
+                        name=$(cat /dev/acq400.$site.knobs/module_name)
+                        [ "$model" = "$MT_DIO482" ] && [ "$SUPPORT_COS" != "" ] && ./scripts/load.dio482 $HOST $site
+                        if [ "$model" = "$MT_DIO422" ]  && [ $((0x$(cat ${esite}/module_variant)&0x7f)) -eq 1 ]; then
+                                ./scripts/load.qen ${HOST} ${site} ${model}
+                                has_output="no"
+                        fi
+                        [ -e ./scripts/load.$name ] && ./scripts/load.$name $HOST $site
+               fi
         fi;;
     $MT_DIOB)
         name=$(cat /dev/acq400.$site.knobs/module_name)
