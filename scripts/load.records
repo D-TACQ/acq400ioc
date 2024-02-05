@@ -1017,11 +1017,10 @@ load_mb_base() {
             dblr '"db/acq2006sites.db","'${cprams}'"'
         done;;
     z7io*)
-        for s in 1 2; do
-            if [ -e /dev/sites/${s}/details ]; then
-                cprams="UUT=${HOST},site=${s}"
-                echo 'dbLoadRecords("db/acq2006sites.db","'${cprams}'")'   
-            fi
+        for site in $(seq 1 $ns)
+        do
+            cprams="UUT=${HOST},site=${site}"
+            dblr '"db/acq2006sites.db","'${cprams}'"'
         done;;
     esac
     case $mt in
@@ -1431,7 +1430,7 @@ load_mb() {
         kmcu*)
                 ns=2; mt=kmcu;;
         z7io*)
-                ns=2; mt=z7io;;
+                ns=3; mt=z7io;;
         acq1014)
                 source ./scripts/acq1014_init
                 ns=1; mt=acq1001;;
