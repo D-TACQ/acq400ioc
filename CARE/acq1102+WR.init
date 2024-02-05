@@ -1,0 +1,87 @@
+#!/bin/sh
+# configure ACQ480 with internal clock.
+# for fpclk, call acq2106+acq42x.init fpclk SR FIN AFTER this program.
+
+source /etc/profile.d/epics.sh
+
+PNAME=$(basename $0)
+
+compat=$(cat /proc/device-tree/chosen/compatible_model)
+case $compat in
+acq1102)
+	;;
+*)
+	logger -t $PNAME "ERROR : script valid for ACQ2106 host ONLY"
+	exit 1;;
+esac
+
+list_int_configs() {
+	speeds=""
+	for file in /etc/si5326.d/si5326_33M333*
+	do
+		bn=$(basename $file)
+		fn1=${bn%*.txt}
+		speeds="$speeds ${fn1#si5326_33M333-*}"
+	done
+	echo $speeds
+}
+
+set.site 0 SIG:CLK_MB:FIN 0
+set.site 0 SIG:CLK_MB:SET 0
+
+CLKMHZ=${1:-40M}
+SICONF=si5326_31M25-${CLKMHZ}.txt
+FREQ=${CLKMHZ/M/.}
+CLKDIV=${2:-1}
+
+set.site 0 SYS:CLK:FPMUX ZCLK
+set.site 0 SIG:ZCLK_SRC WR31M25	
+# This enables the synchronous divide using the WR 1 PPS
+set.site 1 sync 1,0,1
+# Set the WRTT source to Front Panel, Rising
+set.site 0 wr_trg_src 1,0,1	
+
+
+
+set.site 0 SYS:CLK:OE_CLK1_ZYNQ 1
+load.si5326 $SICONF
+
+eval $(get.site 0 aggregator)
+if [ "x$sites" = "xnone" ]; then
+	logger -t $PNAME "WARNING: no sites in aggregator set"
+	exit 1
+fi
+
+mtype=$(cat /etc/acq400/1/MTYPE)
+case $mtype in
+08)
+	set.site 0 acq480_force_training 1
+	cp /usr/local/CARE/acq480_streamd.0.conf /etc/sysconfig/acq400_streamd.0.conf;;
+esac
+case $mtype in
+08|0B)
+	for site in $(echo $sites | tr , \  ); do
+		logger -t $PNAME "acq480_init_clk enable site $site"
+		set.site 0 SYS:CLK:OE_CLK1_ELF${site} 1
+	done;;
+*)
+    for site in $(echo $sites | tr , \  ); do
+        set.site $site CLKDIV=$CLKDIV
+        break
+    done;;
+esac
+
+
+FREQHZ=$(echo $FREQ | awk '{ print $1*1000000 }')
+deltaF() {
+	echo $(get.site 0 SIG:CLK_MB:FREQ) $FREQHZ 100000 | \
+		awk '{ x=($2/$4 - $3/$4); printf("%d\n", (x>=0? x: -x)) }'
+}
+
+sleep 1
+if [ $(deltaF) -ne 0 ]; then
+	logger -t $PNAME "acq480_init_clk warning clock error"
+fi
+
+set.site 0 SIG:CLK_MB:READY 1
+

@@ -269,7 +269,11 @@ wr|whiterabbit|fpmaster|rpmaster|master|solo|slave)
     set_out
     D_TRG='d1'
     $set_common_master
-    /usr/local/CARE/acq2106+WR.init ${FMB_DEF} ${CLKDIV}
+    if [ "$MOD" = "acq1102" ]; then
+    	/usr/local/CARE/acq1102+WR.init ${FMB_DEF} ${CLKDIV}
+    else
+    	/usr/local/CARE/acq2106+WR.init ${FMB_DEF} ${CLKDIV}
+    fi
     /usr/local/CARE/route-WR-FP    1>&2
 	[ -x /etc/acq400/0/on_sync_role ] && /etc/acq400/0/on_sync_role
 # Configure distributor (XO) after AI.
