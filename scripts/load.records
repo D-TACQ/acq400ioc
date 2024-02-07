@@ -410,7 +410,7 @@ load_rgm() {
     case $(cat /dev/acq400.${st}.knobs/module_type) in
     $MT_ACQ480)
         esp=1
-        radj=${RTM_TRANSLEN_ADJ:-1};;
+        radj=${RTM_TRANSLEN_ADJ:-2};;
     *)
         if [ $__is_adc -eq 1 ]; then
             s_nc=$(get.site $st active_chan)
@@ -429,7 +429,7 @@ load_rgm() {
         else
             esp=0
         fi
-        radj=${RTM_TRANSLEN_ADJ:--1};;
+        radj=${RTM_TRANSLEN_ADJ:-0};;
     esac
     blen=$(cat /sys/module/acq420fmc/parameters/bufferlen)
     rgmprams="BLEN=${blen},RADJ=${radj},BPB=${BURSTS_PER_BUFFER:-1},ES_SPREAD=${esp:-ES_SPREAD}"
