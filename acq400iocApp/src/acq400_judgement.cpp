@@ -71,6 +71,7 @@ acq400Judgement::acq400Judgement(const char* portName, int _nchan, int _nsam, in
 
 	createParam(PS_NCHAN,               asynParamInt32,         	&P_NCHAN);
 	createParam(PS_NSAM,                asynParamInt32,         	&P_NSAM);
+	createParam(PS_ES_SPREAD,           asynParamInt32,             &P_ES_SPREAD);
 	createParam(PS_MASK_FROM_DATA,      asynParamInt32,         	&P_MASK_FROM_DATA);
 	createParam(PS_MASK_BOXCAR,         asynParamInt32,             &P_MASK_BOXCAR);
 	createParam(PS_MASK_SQUARE,         asynParamInt32,             &P_MASK_SQUARE);
@@ -210,10 +211,35 @@ int acq400Judgement::handle_es(unsigned* raw)
 	}
 }
 
+void acq400Judgement::task_get_params()
+{
+	es_spread = 999;
+	int retries = 0;
+	asynStatus rc;
 
+	do {
+		sleep(1);
+		rc = getIntegerParam(P_ES_SPREAD, &es_spread);
+	} while (rc == asynParamUndefined && ++retries < 5);
 
+	if (rc != asynSuccess){
+		reportGetParamErrors(rc, P_ES_SPREAD, 0, "task()");
+		fprintf(stderr, "ERROR P_ES_SPREAD %d rc %d\n", P_ES_SPREAD, rc);
+	};
+	FIRST_SAM = es_spread + _FIRST_SAM;
+
+	if (_FIRST_SAM){
+		fprintf(stderr, "%s: WARNING: DEPRECATED acq400_Judgement_FIRST_SAM=%d should be zero should use ES_SPREAD:%d\n",
+				__FUNCTION__,
+				_FIRST_SAM, es_spread);
+	}
+	fprintf(stderr, "%s set FIRST_SAM=%d\n", __FUNCTION__, FIRST_SAM);
+
+}
 void acq400Judgement::task()
 {
+	task_get_params();
+
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
 	assert(fc >= 0);
 	for (unsigned ii = 0; ii < Buffer::nbuffers; ++ii){
@@ -292,7 +318,9 @@ asynStatus acq400Judgement::readInt16Array(asynUser *pasynUser, epicsInt16 *valu
 	return status;
 }
 
-const int acq400Judgement::FIRST_SAM = ::getenv_default("acq400_Judgement_FIRST_SAM", 1); //possibly skip ES and friends
+const int acq400Judgement::_FIRST_SAM = ::getenv_default("acq400_Judgement_FIRST_SAM", 0);
+//possibly skip ES and friends. es_spread should automate this.
+
 
 template <class ETYPE>
 class Boxcar {
@@ -377,9 +405,10 @@ class acq400JudgementNJ : public acq400Judgement {
 
 	bool calculate(ETYPE* raw)
 	{
-		for (int isam = 0; isam < nsam-FIRST_SAM; ++isam){
+		const int skip = FIRST_SAM;
+		for (int isam = 0; isam < nsam-skip; ++isam){
 			for (int ic = 0; ic < nchan; ++ic){
-				int ib = (isam+FIRST_SAM)*nchan+ic;
+				int ib = (isam+skip)*nchan+ic;
 				ETYPE xx = raw[ib];        // keep the ES out of the output data..
 
 				RAW[ic*nsam+isam] = xx;			 	// for plotting

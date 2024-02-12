@@ -12,6 +12,7 @@
 
 #define PS_NCHAN 		"NCHAN"				/* asynInt32, 		r/o */
 #define PS_NSAM			"NSAM"				/* asynInt32,       r/o */
+#define PS_ES_SPREAD	"ES_SPREAD"			/* asynInt32,       r/o */
 #define PS_MASK_FROM_DATA 	"MAKE_MASK_FROM_DATA"		/* asynInt32,       r/w .. MU=y+val, ML=y-val */
 #define PS_MASK_BOXCAR		"MASK_BOXCAR"			/* asynInt32        r/w numb boxcar elements */
 #define PS_MASK_SQUARE		"MASK_SQUARE"			/* asynInt32        r/w numb squareoff elements */
@@ -51,7 +52,8 @@ public:
 	static int factory(
 		const char *portName, int nchan, int maxPoints, unsigned data_size, int bursts_per_buffer, unsigned ndma);
 	static int verbose;
-	static const int FIRST_SAM;
+	static const int _FIRST_SAM;
+	void task_get_params();
 	virtual void task();
 	virtual void fill_request_task(void) {};
 	virtual asynStatus updateTimeStamp(int offset);
@@ -71,11 +73,13 @@ protected:
 
 	const int nchan;
 	const int nsam;
+	int es_spread;
 	const int bursts_per_buffer;  /** aka bpb */
 
 	/** Values used for pasynUser->reason, and indexes into the parameter library. */
 	int P_NCHAN;
 	int P_NSAM;
+	int P_ES_SPREAD;
 	int P_MASK_FROM_DATA;
 	int P_MASK_BOXCAR;
 	int P_MASK_SQUARE;
@@ -112,6 +116,8 @@ protected:
 
 	int ib;			/** ib is physical buffer contains bpb vpb's */
 	bool fill_requested;
+
+	int FIRST_SAM;
 };
 
 #endif /* ACQ400IOCAPP_SRC_ACQ400_JUDGEMENT_H_ */

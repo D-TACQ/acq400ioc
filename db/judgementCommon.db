@@ -34,12 +34,28 @@ record(mbbo, "${UUT}:JDG:MASK_PCT")
 	field(FLNK, "${UUT}:JDG:MASK_PCT:c")
 }
 
+
 record (calc, "${UUT}:JDG:MASK_PCT:c")
 {
 	field(INPA, "${UUT}:JDG:MASK_PCT.RVAL")
 	field(INPB, "${MAXCODE}")
 	field(CALC, "B*A/1000")
 	field(FLNK, "${UUT}:JDG:MASK_FROM_DATA:w PP")	
+}
+
+# warning: assumes site 1. 
+record(longout, "${UUT}:1:ES_SPREAD:w") {
+        field(DTYP, "asynInt32")
+        field(OUT,  "@asyn($(PORT),$(ADDR),$(TIMEOUT))ES_SPREAD")
+        field(DESC, "ES spreads over this number of samples")
+        field(LOPR, "1")
+        field(HOPR, "4")
+        field(OMSL, "closed_loop")
+        field(DOL,  "${UUT}:1:ES_SPREAD")
+}
+
+record(longin, "${UUT}:1:ES_SPREAD") {
+        field(FLNK, "${UUT}:1:ES_SPREAD:w")
 }
 
 record(longout, "${UUT}:JDG:MASK_FROM_DATA:w")
