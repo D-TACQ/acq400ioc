@@ -41,6 +41,7 @@ cp -r CARE/* opkg/usr/local/CARE
 (cd opkg/usr/local/CARE;ln -s acq2106+acq42x.init acq2106+acq424.init)
 (cd opkg/usr/local/CARE;ln -s acq1001+acq42x.init acq1001+acq424.init)
 (cd opkg/usr/local/CARE;ln -s acq2106+acq480.init acq2106+acq48x.init)
+(cd opkg/usr/local/CARE;ln -s acq2106+acq480.init acq1102+acq48x.init)
 
 
 strip_all()

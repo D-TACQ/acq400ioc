@@ -10,7 +10,7 @@ PNAME=$(basename $0)
 
 compat=$(cat /proc/device-tree/chosen/compatible_model)
 case $compat in
-acq2106|acq2206)
+acq2106|acq2206|acq1102)
 	;;
 *)
 	logger -t $PNAME "ERROR : script valid for ACQ2106 host ONLY"
