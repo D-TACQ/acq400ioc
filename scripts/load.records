@@ -410,7 +410,7 @@ load_rgm() {
     case $(cat /dev/acq400.${st}.knobs/module_type) in
     $MT_ACQ480)
         esp=1
-        radj=${RTM_TRANSLEN_ADJ:-2};;
+        radj=${RTM_TRANSLEN_ADJ:-1};;
     *)
         if [ $__is_adc -eq 1 ]; then
             s_nc=$(get.site $st active_chan)
