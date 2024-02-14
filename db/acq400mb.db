@@ -23,8 +23,8 @@ record(mbbi, "${UUT}:0:DISTRIBUTOR:COMMS") {
 	field(SCAN,  "I/O Intr")
 	field(NOBT,  "4")
 	field(ZRST,  "CPU")
-	field(ONST,  "COMMSB")
-	field(TWST,  "COMMSA")
+	field(ONST,  "${dist1}")
+	field(TWST,  "${dist2}")
 	field(THST,  "${dist3}")
 }
 record(longin, "${UUT}:0:DISTRIBUTOR:PAD") {

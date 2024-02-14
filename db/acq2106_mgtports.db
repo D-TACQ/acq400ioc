@@ -5,4 +5,10 @@ record(longin, "${UUT}:MGTPORTS") {
 	field(PINI, "YES")
 }
 
+record(stringin, "${UUT}:MGTLIST") {
+        field(DTYP, "Soft Channel")
+        field(DESC, "Number of ports")
+        field(VAL,  "${MGTLIST}")
+        field(PINI, "YES")
+}
 

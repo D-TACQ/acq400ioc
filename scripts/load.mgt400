@@ -100,6 +100,7 @@ SFP_LIST="$(echo $(ls /dev/gpio/MGT482 | grep SFP) | sed -e s/SFP//g)"
 
 
 MGTPORTS=0
+MGTLIST=""
 
 for SITE in 13 12 11 10; do
 	case $SITE in
@@ -112,17 +113,19 @@ for SITE in 13 12 11 10; do
 	    mt=$(cat /dev/acq400.$SITE.knobs/module_type)
 	    case ${mt} in
 	    9[01234])
-		    MGTPORTS=$(($MGTPORTS+1))
-		    load_mgt400 $SITE $id;;
-		97)
-		    echo 1>&2 "mtype 97 HUDP detected site $SITE";;
-		*)
-		    echo 1>&2 "site $SITE unknown mtype ${mt}";;
-		esac 
+	        MGTPORTS=$(($MGTPORTS+1))
+	        [ ! -z $MGTLIST ] && MGTLIST="$MGTLIST,"
+	        MGTLIST="$MGTLIST$id"
+		load_mgt400 $SITE $id;;
+	    97)
+                echo 1>&2 "mtype 97 HUDP detected site $SITE";;
+            *)
+                echo 1>&2 "site $SITE unknown mtype ${mt}";;
+            esac
 	fi
 done
 
-dblr '"db/acq2106_mgtports.db","UUT='${HOST}',MGTPORTS='${MGTPORTS}'"'
+dblr '"db/acq2106_mgtports.db","UUT='${HOST}',MGTPORTS='${MGTPORTS}',MGTLIST='''${MGTLIST}'''"'
 
 if [ "$mt" != "z7io" ]; then
 # SFP1 at 4291
