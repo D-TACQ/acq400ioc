@@ -725,8 +725,9 @@ public:
 		memset(RESULT_FAIL+1, 0, sizeof(epicsInt8)*nchan);
 		memset(FAIL_MASK32, 0, fail_mask_len*sizeof(epicsInt32));
 		bool fail = false;
+		int isam;
 
-		for (int isam = 0; isam < nsam-FIRST_SAM; ++isam){
+		for (isam = 0; isam < nsam-FIRST_SAM; ++isam){
 			for (int ic = 0; ic < nchan; ++ic){
 				int ib = (isam+FIRST_SAM)*nchan+ic;
 				ETYPE xx = raw[ib];        			// keep the ES out of the output data..
@@ -740,6 +741,13 @@ public:
 						fail = true;
 					}
 				}
+			}
+		}
+
+
+		for (int itail = isam-1; isam < nsam; ++isam){
+			for (int ic = 0; ic < nchan; ++ic){
+				RAW[ic*nsam+isam] = RAW[ic*nsam+itail];
 			}
 		}
 
