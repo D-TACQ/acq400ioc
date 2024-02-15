@@ -744,8 +744,7 @@ public:
 			}
 		}
 
-
-		for (int itail = isam-1; isam < nsam; ++isam){
+		for (int itail = (--isam)-1; isam < nsam; ++isam){
 			for (int ic = 0; ic < nchan; ++ic){
 				RAW[ic*nsam+isam] = RAW[ic*nsam+itail];
 			}
