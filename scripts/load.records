@@ -27,8 +27,35 @@ SHOTBUSY_OK=y
 
 HAS_ACQ427=0
 
+load_system() {
+    [ -e /sys/class/net/eth0 ] && ip0=$(/usr/local/epics/scripts/ifconfig_eth0)
+    [ -e /sys/class/net/eth1 ] && ip1=$(/usr/local/epics/scripts/ifconfig_eth0 eth1)
+    if [ "x$ip0" != "x" ]; then
+        ipx=$ip0
+    elif [ "x$ip1" != "x" ]; then
+        ipx=$ip1
+    fi
+    ipb=$(echo $ipx | tr . :)
+    sw=$(head -n1 /etc/acq400/0/software_version)
+    gw=$(sed -e 's/TOP_//' /etc/acq400/0/fpga_version | awk '{ print $1 }' | sed -e 's/ACQ2106/216/' -e 's/ACQ2206/226/' -e 's/DMA/D/')
+    dba="ipaddrbis=$ipb,IP0=$ip0,IP1=$ip1,SW=$sw,GW=$gw"
+cat - <<EOF
+epicsEnvSet("STREAM_PROTOCOL_PATH","./protocols")
+dbPvdTableSize($PVD_TABLE_SIZE)
+dbLoadDatabase("dbd/acq400ioc.dbd",0,0)
+acq400ioc_registerRecordDeviceDriver(pdbbase)
+dbLoadRecords("db/system.db","UUT=${HOST},$dba,SPORT=S0")
+EOF
+}
+
 source /etc/sysconfig/acq400.conf
 
+load_system
+
+if [ ! -e /etc/sites ]; then
+	echo "# load.records ERROR no sites"
+	exit 1
+fi
 source /etc/sites
 
 # gains are loaded last, as they tweak other WF records, must be there first..
@@ -1383,28 +1410,6 @@ load_mb_stats()
 }
 
 
-load_system() {
-    [ -e /sys/class/net/eth0 ] && ip0=$(/usr/local/epics/scripts/ifconfig_eth0)
-    [ -e /sys/class/net/eth1 ] && ip1=$(/usr/local/epics/scripts/ifconfig_eth0 eth1)
-    if [ "x$ip0" != "x" ]; then
-        ipx=$ip0
-    elif [ "x$ip1" != "x" ]; then
-        ipx=$ip1
-    fi
-    ipb=$(echo $ipx | tr . :)
-    sw=$(head -n1 /etc/acq400/0/software_version)
-    gw=$(sed -e 's/TOP_//' /etc/acq400/0/fpga_version | awk '{ print $1 }' | sed -e 's/ACQ2106/216/' -e 's/ACQ2206/226/' -e 's/DMA/D/')
-    dba="ipaddrbis=$ipb,IP0=$ip0,IP1=$ip1,SW=$sw,GW=$gw"
-cat - <<EOF
-epicsEnvSet("STREAM_PROTOCOL_PATH","./protocols")
-dbPvdTableSize($PVD_TABLE_SIZE)
-dbLoadDatabase("dbd/acq400ioc.dbd",0,0)
-acq400ioc_registerRecordDeviceDriver(pdbbase)
-dbLoadRecords("db/system.db","UUT=${HOST},$dba,SPORT=S0")
-EOF
-}
-
-load_system
 
 KB=/dev/acq400.0.knobs
 

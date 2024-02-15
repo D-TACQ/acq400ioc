@@ -4,6 +4,11 @@ set +e
 
 [ -e /dev/shm/ioc_ready ] && exit 0
 
+if [ ! -e /etc/sites ]; then
+	echo WAIT_IOC_READY no sites FAIL
+	sleep 3599
+	exit
+fi
 while [ -z $IOC_HOST ]; do
 	while [ ! -e /etc/profile.d/epics.sh ]; do
 		sleep 1
