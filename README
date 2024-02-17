@@ -112,6 +112,9 @@ export BURSTS_PER_BUFFER=2
 export RTM_BUFFER_MON=y
 export RTM_BUFFER_MON_VERBOSE=1
 
+# Window right limit: default nsam-4 should be good, but with 2xACQ424, -6 works better
+# export WIN_R_LIM=4
+
 
 ## rc.user:
 judgement() {

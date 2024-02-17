@@ -31,16 +31,18 @@ echo dbLoadRecords\(\"db/asynRecord.db\",\"P=${HOST}:,R=asyn:J1,PORT=J1,ADDR=3,O
 ix=0
 eval $(get.site 0 aggregator)
 
+WIN_R_LIM=${WIN_R_LIM:-4}
+
 for site in $(echo $sites | tr , \  ); do
 	nchan=$(get.site $site NCHAN)
 	for ch in $(seq 1 ${nchan}); do		
 		CH=$(printf "%02d" $ch)		
 		echo dbLoadRecords\(\"db/${CHDB}\",\"${PRAMS},FN=MU,PROKEY=MASK_UPPER,NSAM=${nsam},SITE=${site},CH=${CH},IX=${ix}\"\)
 		echo dbLoadRecords\(\"db/${CHDB}\",\"${PRAMS},FN=ML,PROKEY=MASK_LOWER,NSAM=${nsam},SITE=${site},CH=${CH},IX=${ix}\"\)
-		echo dbLoadRecords\(\"db/judgementWin.db\",\"${PRAMS},NSAM=${nsam},NSAM2=$((nsam-4)),SITE=${site},CH=${CH},IX=${ix}\"\)
+		echo dbLoadRecords\(\"db/judgementWin.db\",\"${PRAMS},NSAM=${nsam},NSAM2=$((nsam-WIN_R_LIM)),SITE=${site},CH=${CH},IX=${ix}\"\)
 		ix=$((ix+1))
 	done
-	echo dbLoadRecords\(\"db/judgementWinM.db\",\"${PRAMS},NSAM=${nsam},NSAM2=$((nsam-4)),SITE=${site},CH=ALL,IX=${NCHAN}\"\)
+	echo dbLoadRecords\(\"db/judgementWinM.db\",\"${PRAMS},NSAM=${nsam},NSAM2=$((nsam-WIN_R_LIM)),SITE=${site},CH=ALL,IX=${NCHAN}\"\)
 	echo >>/tmp/st_post.cmd "seq judge_win_clr_all \"uut=${HOST},site=${site},nchan=${nchan},wmin=2,wmax=${nsam},priority=0\""
 done
 
