@@ -24,9 +24,12 @@ getAggregator {
 getAggregatorSites {
 	in "reg=0x%*x sites=%s threshold=%*d DATA_MOVER_EN=%*s";	
 }
+#acq1102_005> cat /var/log/run0.log 
+#/usr/local/bin/run0 2,1 1,3,1 ssb=64
 
 getAggregatorS1 {
-	in "reg=0x%*x sites=%d%*s threshold=%*d DATA_MOVER_EN=%*s";
+        out "run0_log";
+	in "%*s %d";
 }
 
 getAggregatorEn {	

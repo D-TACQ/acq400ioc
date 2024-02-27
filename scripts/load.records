@@ -225,10 +225,7 @@ make_AI_TR_records() {
     FIRST_AI_TR_RECORDS=0
 }
 
-
-eval $(cat /dev/acq400.0.knobs/aggregator)
-SITES=$(echo $sites | tr , \  )
-
+SITES=$(awk '{ print $2 }' </etc/acq400/0/run0_log | sed -e s'/,/ /')
 if [ "x$SITES" != "xnone" ]; then
     for s in $SITES; do
         FIRST_SITE=$s

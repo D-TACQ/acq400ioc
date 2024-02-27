@@ -50,8 +50,9 @@ record(longout, "${UUT}:${SITE}:NACC") {
 }
 
 record(longout, "${UUT}:${SITE}:NACC:w") {
-	field(DTYP, "stream")
-	field(OUT,  "@acq43x.proto setNacc ${SPORT}")
+#	field(DTYP, "stream")
+#	field(OUT,  "@acq43x.proto setNacc ${SPORT}")   # ain't nobody going to write this sucker
+	field(DTYP, "Soft Channel")
 	field(DISV, "1")
 	field(SDIS, "${UUT}:${SITE}:NACC:s.PACT")
 	field(DOL,  "${UUT}:${SITE}:NACC PP")
@@ -62,7 +63,7 @@ record(longin, "${UUT}:${SITE}:NACC:r") {
 	field(DTYP, "stream")
 	field(INP,  "@acq43x.proto getNacc ${SPORT}")
 	field(SCAN, "1 second")
-	field(FLNK, "${UUT}:${SITE}:NACC:s")
+#	field(FLNK, "${UUT}:${SITE}:NACC:s")
 }
 
 record(longout, "${UUT}:${SITE}:NACC:s") {

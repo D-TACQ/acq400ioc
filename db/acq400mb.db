@@ -69,7 +69,7 @@ record(stringin, "${UUT}:0:AGGREGATOR:SITES") {
 record(longin, "${UUT}:0:AGGREGATOR:S1") {
 	field(DTYP,  "stream")
 	field(INP,   "@acq400mb.proto getAggregatorS1 ${SPORT2}")
-	field(SCAN,  "I/O Intr")
+	field(SCAN,  "5 second")
 }
 
 record(bi, "${UUT}:0:AGGREGATOR:ON") {
