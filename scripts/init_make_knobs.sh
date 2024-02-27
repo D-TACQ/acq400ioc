@@ -47,6 +47,7 @@ make_reset_knobs() {
 }
 make_epics_knobs() {
 	if [ -e /tmp/epics_knobs_done ]; then
+	       echo make_epics_knobs 2
 		return
 	fi
 	RLP=${RL%.*}P.dbl
@@ -112,15 +113,18 @@ make_epics_knobs() {
 		SITE=${NU%%:*}
 		make_caput $PV ${NU#*:} ${SITE}		
 	done
-	for PV in $(egrep -e :SYS:CLK )
+
+	for PV in $(egrep -e :SYS:CLK $RLP)
 	do
 		make_caput $PV ${PV#*:} 0
 	done
 	for PV in $(egrep -e R:S1 $RLP )
         do
+                echo make_caget_terse $PV ${PV#*0:} 0
                 make_caget_terse $PV ${PV#*0:} 0
+                echo make_caget_terse $PV ${PV#*0:} 0 99
         done
-	
+
 	for PV in $(egrep -e :[1-6]:CLK -e :[1-6]:TRG  -e :[1-6]:SYNC -e :[1-6]:EVE \
 			  -e :1:RGM -e :1:RTM -e :[1-6]:XDT -e :1:DT -e :[1-6]:ANATRG $RLP \
 			| grep -v ':[0-9a-z_]*$' )
@@ -181,12 +185,14 @@ make_epics_knobs() {
 			fi
 		fi
 	done
+
 	for PV in $(egrep -e SLOWMON $RLP)
 	do
 		pv1=${PV#*:}
 		kn1=${pv1#*:}
 		[ -e /etc/acq400/0/$kn1 ] || make_caput $PV $kn1 0  
 	done
+
 	for PV in $(egrep -e 0:WR $RLP)
 	do
 		pv1=${PV#*:}
@@ -197,28 +203,31 @@ make_epics_knobs() {
 			make_caget $PV $kn1 11
 		fi
 	done
+
 	for PV in $(egrep -e Si5326:TUNEPHASE:BUSY -e Si5326:TUNEPHASE:OK $RLP)
 	do
 		NU=${PV#*:}
 		SITE=${NU%%:*}
 		make_caget $PV ${NU#*:} ${SITE}
 	done
+
 	for PV in $(egrep -e COS:EN:L16 $RLP)
 	do
 		pv1=${PV#*:}
 		site=${pv1%%:*}
 		ln -s /usr/local/epics/scripts/COS_EN /etc/acq400/${site}/
 	done
-    for PV in $(egrep -e MGT.*TX_DISABLE$ $RLP)
-    do
-        sfp=$(echo $PV | awk -F: '{ print $4 }')
-        case $sfp in
-        1) make_caput $PV TX_DISABLE 13;;
-        2) make_caput $PV TX_DISABLE 12;;
-        3) make_caput $PV TX_DISABLE 11;;
-        4) make_caput $PV TX_DISABLE 10;;
-        esac
-    done
+
+        for PV in $(egrep -e MGT.*TX_DISABLE$ $RLP)
+        do
+                sfp=$(echo $PV | awk -F: '{ print $4 }')
+                case $sfp in
+                1) make_caput $PV TX_DISABLE 13;;
+                2) make_caput $PV TX_DISABLE 12;;
+                3) make_caput $PV TX_DISABLE 11;;
+                4) make_caput $PV TX_DISABLE 10;;
+                esac
+        done
 	make_reset_knobs 0 12 13
 		
 	make_site0_knobs	

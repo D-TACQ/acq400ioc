@@ -4,7 +4,7 @@
 cp /usr/local/CARE/acq400_streamd.0.conf-soft_trigger \
 	/etc/sysconfig/acq400_streamd.0.conf
 
-S1=$(get.site 0 AGGREGATOR:S1)
+S1=$(get.site 0 AGGREGATOR:S1 | awk '{print $2}')
 
 init_mb_clk() {
 		/usr/local/epics/scripts/wait_ioc_ready
