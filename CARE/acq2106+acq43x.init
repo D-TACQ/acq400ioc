@@ -4,13 +4,14 @@
 cp /usr/local/CARE/acq400_streamd.0.conf-soft_trigger \
 	/etc/sysconfig/acq400_streamd.0.conf
 
+S1=$(get.site 0 AGGREGATOR:S1)
 
 init_mb_clk() {
 		/usr/local/epics/scripts/wait_ioc_ready
 		set.site 0 SYS:CLK:FPMUX=XCLK
 		set.site 0 SIG:CLK_MB:FIN=32768000
 		set.site 0 SYS:CLK:OE_CLK1_ZYNQ 1
-		set.site 1 ACQ43X_SAMPLE_RATE=$1
+		set.site $S1 ACQ43X_SAMPLE_RATE=$1
 }
 
 init_mb_clk_fp() {
@@ -18,7 +19,7 @@ init_mb_clk_fp() {
 		set.site 0 SIG:CLK_MB:FIN=$1      
 		set.site 0 SYS:CLK:FPMUX=FPCLK
 		set.site 0 SYS:CLK:OE_CLK1_ZYNQ 1
-		set.site 1 ACQ43X_SAMPLE_RATE=$2
+		set.site $S1 ACQ43X_SAMPLE_RATE=$2
 }
 
 case $1 in
