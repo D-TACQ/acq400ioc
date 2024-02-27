@@ -542,7 +542,7 @@ load_400() {
             has_ch_gains=1;;
         esac
 
-        if [ "x${site}" = "x1" ]; then
+        if [ ${site} -eq $FIRST_SITE ]; then
             HAS_ACQ43X=1
             echo 1>&2 "HAS_ACQ43X Detected: $HAS_ACQ43X"
         fi
