@@ -36,7 +36,10 @@ P3=
 FIN_DEF=1000000
 FIN_CLKSTAR=20000000
 
-set.site 1 CLK=1 2>&1 > /dev/null
+[ -e /etc/acq400/0/run0_log ] && s1=$(tr , \  < /etc/acq400/0/run0_log | awk '{ print $2 }')
+S1=${s1:-1}
+
+set.site $S1 CLK=1 2>&1 > /dev/null
 
 let px=1
 for k in $*; do
@@ -81,10 +84,10 @@ set_mbclk() {
         let clkdiv="5*$FMIN/$fs"
         CLKDIV=$(printf "%d" $clkdiv)
         let fs=$CLKDIV*$fs
-        set.site 1 CLKDIV $CLKDIV
+        set.site $S1 CLKDIV $CLKDIV
     else
         # assert CLKDIV, possibly user
-        set.site 1 CLKDIV $CLKDIV
+        set.site $S1 CLKDIV $CLKDIV
     fi
     set.site 0 SIG:CLK_MB:SET $fs
 }
@@ -104,17 +107,17 @@ select_lo_xclk() {
 select_lo=select_lo_zclk
 
 set_acq43x_sample_rate() {
-    set.site 1 ACQ43X_SAMPLE_RATE $1
+    set.site $S1 ACQ43X_SAMPLE_RATE $1
 }
 
-if [ -e /etc/acq400/1/ACQ43X_SAMPLE_RATE ]; then
+if [ -e /etc/acq400/$S1/ACQ43X_SAMPLE_RATE ]; then
     select_lo=select_lo_xclk
     set_mb=set_acq43x_sample_rate
 fi
 
 sync_trg_to_clk() {
-	[ -e /etc/acq400/1/sync_trg_to_clk ] && \
-		set.site 1 sync_trg_to_clk $1
+	[ -e /etc/acq400/$S1/sync_trg_to_clk ] && \
+		set.site $S1 sync_trg_to_clk $1
 }
 
 
@@ -124,12 +127,12 @@ set_slave_acq1001() {
     set.site 0 SIG:SRC:CLK:${1:-1} HDMI
     set.site 0 SIG:SRC:TRG:0 HDMI
     set.site 0 SIG:SRC:SYNC:0 HDMI
-    set.site 1 "clk=1,d1,${CLK_SENSE}"
-    set.site 1 "trg=1,d0,${TRG_SENSE}"
+    set.site $S1 "clk=1,d1,${CLK_SENSE}"
+    set.site $S1 "trg=1,d0,${TRG_SENSE}"
     [ "x$ROLE" = "x${ROLE#*master}" ] && \
-	    [ -e /etc/acq400/1/sync ] && \
-	    	set.site 1 "sync=1,d0,rising"
-    set.site 1 CLKDIV=${CLKDIV:-1}
+        [ -e /etc/acq400/$S1/sync ] && \
+        set.site $S1 "sync=1,d0,rising"
+    set.site $S1 CLKDIV=${CLKDIV:-1}
 }
 
 set_slave_acq2106() {
@@ -140,8 +143,8 @@ set_slave_acq2106() {
 set_common_master_acq1001() {		
     set.site 0 SIG:SRC:CLK:1 MCLK
     sync_trg_to_clk 1
-    [ -e /etc/acq400/1/ACQ43X_SAMPLE_RATE ] || set.site 1 CLKDIV=${CLKDIV:-1}
-    [ -e /etc/acq400/1/sync ] && set.site 1 "sync=0,0,0"
+    [ -e /etc/acq400/$S1/ACQ43X_SAMPLE_RATE ] || set.site $S1 CLKDIV=${CLKDIV:-1}
+    [ -e /etc/acq400/$S1/sync ] && set.site $S1 "sync=0,0,0"
 }
 
 set_common_master_acq2106() {
@@ -151,7 +154,7 @@ set_common_master_acq2106() {
 }
 
 MOD=$(get.site 0 MODEL)
-MEZ=$(get.site 1 MODEL)
+MEZ=$(get.site $S1 MODEL)
 
 is_48x() {
     echo $MEZ | grep -q ACQ48
@@ -229,19 +232,19 @@ set_local_clock() {
     $select_lo
     $set_mb $1
     pv_read_lock CLK 1
-    set.site 1 "clk=1,${CLK_DX:-d1},${CLK_SENSE}"
+    set.site $S1 "clk=1,${CLK_DX:-d1},${CLK_SENSE}"
     pv_read_lock CLK 0
     pv_read_lock TRG 1
-    set.site 1 "trg=1,${TRG_DX:-d1},${TRG_SENSE}"
+    set.site $S1 "trg=1,${TRG_DX:-d1},${TRG_SENSE}"
     pv_read_lock TRG 0
 }
 
 set_master() {
     pv_read_lock CLK 1
-    set.site 1 "clk=1,${CLK_DX:-d1},${CLK_SENSE}"
+    set.site $S1 "clk=1,${CLK_DX:-d1},${CLK_SENSE}"
     pv_read_lock CLK 0
     pv_read_lock TRG 1
-    set.site 1 "trg=1,${TRG_DX:-d0},${TRG_SENSE}"
+    set.site $S1 "trg=1,${TRG_DX:-d0},${TRG_SENSE}"
     pv_read_lock TRG 0
     set.site 0 SIG:CLK_MB:FIN $2
     $set_mb $1
@@ -270,7 +273,7 @@ set_48x_override() {
     $set_mb $1
     set.site 0 SIG:SRC:CLK:1 MCLK
     [ $is_acq2106 -ne 0 ] && set.site 0 SYS:CLK:OE_CLK1_ZYNQ 1
-    set.site 1 CLKDIV=${CLKDIV:-1}
+    set.site $S1 CLKDIV=${CLKDIV:-1}
     # Configure HDMI Clock out
     set.site 0 SIG:SYNC_OUT:CLK:DX  d0
 }
@@ -278,7 +281,7 @@ set_48x_override() {
 set_43x_override() {
     hi_res_mode=1
     [ $1 -ge 52000 ] && hi_res_mode=0
-    set.site 1 hi_res_mode=$hi_res_mode
+    set.site $S1 hi_res_mode=$hi_res_mode
 }
 
 

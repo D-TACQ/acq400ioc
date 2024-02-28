@@ -36,7 +36,10 @@ P3=
 # always with WR:
 FIN_DEF=31M25
 
-set.site 1 CLK=1 2>&1 > /dev/null
+[ -e /etc/acq400/0/run0_log ] && s1=$(tr , \  < /etc/acq400/0/run0_log | awk '{ print $2 }')
+S1=${s1:-1}
+
+set.site $S1 CLK=1 2>&1 > /dev/null
 
 let px=1
 for k in $*; do
@@ -75,8 +78,8 @@ done
 
 
 sync_trg_to_clk() {
-	[ -e /etc/acq400/1/sync_trg_to_clk ] && \
-		set.site 1 sync_trg_to_clk $1
+	[ -e /etc/acq400/$S1/sync_trg_to_clk ] && \
+		set.site $S1 sync_trg_to_clk $1
 }
 
 
@@ -86,10 +89,10 @@ set_slave_acq1001() {
     set.site 0 SIG:SRC:CLK:${1:-1} HDMI
     set.site 0 SIG:SRC:TRG:0 HDMI
     set.site 0 SIG:SRC:SYNC:0 HDMI
-    set.site 1 "clk=1,d1,${CLK_SENSE}"
-    set.site 1 "trg=1,d0,${TRG_SENSE}"
-    [ "x$ROLE" = "x${ROLE#*master}" ] && set.site 1 "sync=1,d0,rising"
-    set.site 1 CLKDIV=${CLKDIV:-1}
+    set.site $S1 "clk=1,d1,${CLK_SENSE}"
+    set.site $S1 "trg=1,d0,${TRG_SENSE}"
+    [ "x$ROLE" = "x${ROLE#*master}" ] && set.site $S1 "sync=1,d0,rising"
+    set.site $S1 CLKDIV=${CLKDIV:-1}
 }
 
 set_slave_acq2106() {
@@ -100,8 +103,8 @@ set_slave_acq2106() {
 set_common_master_acq1001() {		
     set.site 0 SIG:SRC:CLK:1 MCLK
     sync_trg_to_clk 1
-    [ -e /etc/acq400/1/ACQ43X_SAMPLE_RATE ] || set.site 1 CLKDIV=${CLKDIV:-1}
-    set.site 1 "sync=0,0,0"
+    [ -e /etc/acq400/$S1/ACQ43X_SAMPLE_RATE ] || set.site $S1 CLKDIV=${CLKDIV:-1}
+    set.site $S1 "sync=0,0,0"
 }
 
 set_common_master_acq2106() {
@@ -111,7 +114,7 @@ set_common_master_acq2106() {
 }
 
 MOD=$(get.site 0 MODEL)
-MEZ=$(get.site 1 MODEL)
+MEZ=$(get.site $S1 MODEL)
 
 is_48x() {
     echo $MEZ | grep -q ACQ48
@@ -169,10 +172,10 @@ pv_read_lock() {
 
 set_local_clock() {	 
     pv_read_lock CLK 1
-    set.site 1 "clk=1,${CLK_DX:-d1},${CLK_SENSE}"
+    set.site $S1 "clk=1,${CLK_DX:-d1},${CLK_SENSE}"
     pv_read_lock CLK 0
     pv_read_lock TRG 1
-    set.site 1 "trg=1,${TRG_DX:-d1},${TRG_SENSE}"
+    set.site $S1 "trg=1,${TRG_DX:-d1},${TRG_SENSE}"
     pv_read_lock TRG 0
 }
 
@@ -205,7 +208,7 @@ in_the_plan() {
 if is_ds; then 
     FS_DEF=40000 
     FS=${P2:-$FS_DEF}  
-    set.site 1 ACQ43X_SAMPLE_RATE 0
+    set.site $S1 ACQ43X_SAMPLE_RATE 0
     case $FS in
     10000)
     	FMB_DEF=5M12; hrmode=1;;
@@ -220,7 +223,7 @@ if is_ds; then
     *)
     	echo "ERROR: SR options 10k 20k 40k 80k 128k"; exit 1
     esac
-    set.site 1  hi_res_mode $hrmode
+    set.site $S1  hi_res_mode $hrmode
 else
     CLKDIV=unknown
     if is_tiga; then
