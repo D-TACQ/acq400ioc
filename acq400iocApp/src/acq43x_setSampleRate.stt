@@ -21,26 +21,26 @@ Fs < 50 : MODE=HI_RES_512, else MODE=HI_SPEED_2
 program acq43x_setSampleRate
 option +r;
 
-double Fs;	assign Fs  to "{uut}:1:ACQ43X_SAMPLE_RATE";
+double Fs;	assign Fs  to "{uut}:{s1}:ACQ43X_SAMPLE_RATE";
 double fin;	assign fin to "{uut}:{fin}";
 double Fm;	assign Fm  to "{uut}:0:SIG:CLK_MB:FREQ";
 
 double Fmod;
 double Fmbclk;	
 
-int adc_mode;	assign adc_mode to "{uut}:1:ADC_MODE";
-int clkdiv;		assign clkdiv 	to "{uut}:1:CLKDIV";
+int adc_mode;	assign adc_mode to "{uut}:{s1}:ADC_MODE";
+int clkdiv;		assign clkdiv 	to "{uut}:{s1}:CLKDIV";
 int fp_mux;		assign fp_mux 	to "{uut}:SYS:CLK:FPMUX";
 int zclk_src; 	assign zclk_src to "{uut}:0:SIG:ZCLK_SRC";
 int src_clk;	assign src_clk 	to "{uut}:0:SIG:SRC:CLK:0";
 int mclk_out;	assign mclk_out to "{uut}:0:SIG:SRC:CLK:1";
 
-int adc_clk_src; 	assign adc_clk_src to "{uut}:1:CLK";
-int adc_clk_src_dx; 	assign adc_clk_src_dx to "{uut}:1:CLK:DX";
+int adc_clk_src; 	assign adc_clk_src to "{uut}:{s1}:CLK";
+int adc_clk_src_dx; 	assign adc_clk_src_dx to "{uut}:{s1}:CLK:DX";
 
-string info;	assign info to "{uut}:1:ACQ43X_SAMPLE_RATE:INFO";
-string srcname; assign srcname to "{uut}:1:ACQ43X_SRCNAME";
-string srcfreq; assign srcfreq to "{uut}:1:ACQ43X_SRCFREQ";
+string info;	assign info to "{uut}:{s1}:ACQ43X_SAMPLE_RATE:INFO";
+string srcname; assign srcname to "{uut}:{s1}:ACQ43X_SRCNAME";
+string srcfreq; assign srcfreq to "{uut}:{s1}:ACQ43X_SRCFREQ";
 
 double clk_mb_set; assign clk_mb_set to "{uut}:0:SIG:CLK_MB:SET";
 

@@ -232,6 +232,7 @@ if [ "x$SITES" != "xnone" ]; then
         break
     done
 fi
+
 make_AI_TR() {
     kctrl=/dev/acq400/data/.control
     if [ -e $kctrl ]; then
@@ -1377,7 +1378,7 @@ load_mb_sync() {
                 echo "dbpf ${HOST}:SYS:CLK:FPMUX XCLK"
                 echo "dbpf ${HOST}:SYS:FPCLK: 32768000"
                 ssr=acq43x_setSampleRate
-                echo "seq $ssr \"uut=${HOST},fin=0:SIG:CLK_MB:FIN\""
+                echo "seq $ssr \"uut=${HOST},s1=${FIRST_SITE},fin=0:SIG:CLK_MB:FIN\""
                 ) >>/tmp/st_post.cmd;;
             *)
                 # ACQ1001, ACQ2006 REVA has no ZCLK (and hardly ever XCLK)
@@ -1386,7 +1387,7 @@ load_mb_sync() {
                 else
                     ssr=acq43x_setSampleRate
                 fi
-                echo >>/tmp/st_post.cmd "seq $ssr \"uut=${HOST},fin=0:SIG:CLK_EXT:FREQ\"";;
+                echo >>/tmp/st_post.cmd "seq $ssr \"uut=${HOST},s1=${FIRST_SITE},fin=0:SIG:CLK_EXT:FREQ\"";;
             esac
     fi
 

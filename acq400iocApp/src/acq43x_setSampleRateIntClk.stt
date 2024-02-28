@@ -7,8 +7,8 @@ INPUT: Fs
 
 OUTPUTS:
 
-acq2006_014:1:ADC_MODE
-acq2006_014:1:CLKDIV
+acq2006_014:{s1}:ADC_MODE
+acq2006_014:{s1}:CLKDIV
 
 
 ALGORITHM:
@@ -18,21 +18,21 @@ Fs < 50 : MODE=HI_RES_512, else MODE=HI_SPEED_2
 program acq43x_setSampleRateIntClk
 option +r;
 
-double Fs;	assign Fs  to "{uut}:1:ACQ43X_SAMPLE_RATE";
+double Fs;	assign Fs  to "{uut}:{s1}:ACQ43X_SAMPLE_RATE";
 double fin = 	100e6;
 
 double Fmod;
 
 
-int adc_mode;	assign adc_mode to "{uut}:1:ADC_MODE";
-int clkdiv;	assign clkdiv 	to "{uut}:1:CLKDIV";
+int adc_mode;	assign adc_mode to "{uut}:{s1}:ADC_MODE";
+int clkdiv;	assign clkdiv 	to "{uut}:{s1}:CLKDIV";
 
-int adc_clk_src; 	assign adc_clk_src to "{uut}:1:CLK";
+int adc_clk_src; 	assign adc_clk_src to "{uut}:{s1}:CLK";
 
 
-string info;	assign info to "{uut}:1:ACQ43X_SAMPLE_RATE:INFO";
-string srcname; assign srcname to "{uut}:1:ACQ43X_SRCNAME";
-string srcfreq; assign srcfreq to "{uut}:1:ACQ43X_SRCFREQ";
+string info;	assign info to "{uut}:{s1}:ACQ43X_SAMPLE_RATE:INFO";
+string srcname; assign srcname to "{uut}:{s1}:ACQ43X_SRCNAME";
+string srcfreq; assign srcfreq to "{uut}:{s1}:ACQ43X_SRCFREQ";
 
 int state_not_idle; assign state_not_idle to "{uut}:MODE:TRANS_ACT:STATE_NOT_IDLE";
 
