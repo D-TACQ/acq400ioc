@@ -38,7 +38,7 @@ load_system() {
     ipb=$(echo $ipx | tr . :)
     sw=$(head -n1 /etc/acq400/0/software_version)
     gw=$(sed -e 's/TOP_//' /etc/acq400/0/fpga_version | awk '{ print $1 }' | sed -e 's/ACQ2106/216/' -e 's/ACQ2206/226/' -e 's/DMA/D/')
-    dba="ipaddrbis=$ipb,IP0=$ip0,IP1=$ip1,SW=$sw,GW=$gw"
+    dba="ipaddrbis=$ipb,IP0=$ip0,IP1=$ip1,SW=$sw,GW=${gw:0:39},GW1=${gw:0:21},GW2=${gw:21:66}"
 cat - <<EOF
 epicsEnvSet("STREAM_PROTOCOL_PATH","./protocols")
 dbPvdTableSize($PVD_TABLE_SIZE)

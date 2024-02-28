@@ -36,6 +36,16 @@ record (stringin, "${UUT}:SYS:VERSION:FPGA" ) {
 	field(VAL,  "${GW}")	
 	field(PINI, "YES")
 }
+record (stringin, "${UUT}:SYS:VERSION:FPGA1" ) {
+        field(DTYP, "Soft Channel")
+        field(VAL,  "${GW1}")
+        field(PINI, "YES")
+}
+record (stringin, "${UUT}:SYS:VERSION:FPGA2" ) {
+        field(DTYP, "Soft Channel")
+        field(VAL,  "${GW2}")
+        field(PINI, "YES")
+}
 
 
 record (stringin, "${UUT}:SYS:IFCONFIG:ETH0" ) {
