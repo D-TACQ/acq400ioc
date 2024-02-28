@@ -159,4 +159,8 @@ record(mbbo, "${UUT}:${SITE}:SIG:clk_counter_src")
 	field(SVST, "d7")
 	field(EIST, "DIV")
 }
+record(calc, "${UUT}:0:SIG:SYN_S${SITE}:FREQ") {
+        alias("${UUT}:${SITE}:ACQ43X_SR")
+}
+
 
