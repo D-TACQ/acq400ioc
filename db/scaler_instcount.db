@@ -11,5 +11,6 @@ record(calc, "${UUT}:${SITE}:CNT:FREQ:${ch}") {
 	field(INPC, "${UUT}:1:ACC")
 	field(INPD, "${UUT}:${SITE}:CNT:FREQ:${ch}.LA")
 	field(CALC, "C==0? A*B: ABS(A-D)")
+	field(PREC, "3")
 	field(EGU,  "Hz")
 }

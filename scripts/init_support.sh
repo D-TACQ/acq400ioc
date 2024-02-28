@@ -26,9 +26,8 @@ EOF
 
 make_caget_terse() {
         PFX=${1%*:$2}
-        VERB=/usr/local/bin/caget_$PFX
+        VERB=/usr/local/bin/caget_t_$PFX
         if [ ! -e $VERB ]; then
-                echo make_caget_terse $VERB creating..
 cat - >$VERB <<EOF
 #!/bin/sh
 PV=${PFX}:\$(basename \${0})
@@ -40,9 +39,7 @@ else
         echo ERROR \${VALUE}
 fi
 EOF
-                chmod 0555 $VERB
-        else
-                echo make_caget_terse $VERB already exists
+                chmod 0555 $VERB                
         fi
         ln -s $VERB /etc/acq400/$3/$2
 }
