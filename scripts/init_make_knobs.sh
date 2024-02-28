@@ -118,12 +118,6 @@ make_epics_knobs() {
 	do
 		make_caput $PV ${PV#*:} 0
 	done
-	for PV in $(egrep -e R:S1 $RLP )
-        do
-                echo make_caget_terse $PV ${PV#*0:} 0
-                make_caget_terse $PV ${PV#*0:} 0
-                echo make_caget_terse $PV ${PV#*0:} 0 99
-        done
 
 	for PV in $(egrep -e :[1-6]:CLK -e :[1-6]:TRG  -e :[1-6]:SYNC -e :[1-6]:EVE \
 			  -e :1:RGM -e :1:RTM -e :[1-6]:XDT -e :1:DT -e :[1-6]:ANATRG $RLP \
