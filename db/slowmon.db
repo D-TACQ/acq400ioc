@@ -104,4 +104,16 @@ record(calcout, "${UUT}:NACC:c") {
 	field(INPC, "${UUT}:0:NACC:START")	
 	field(INPD, "${UUT}:0:NACC:PRES")
 	field(OUT,  "@slowmon.proto setNACC ${SPORT}")
+        field(SDIS, "${UUT}:SLOWMON:NACC:DISA")
+        field(DISV, "1")
+}
+
+record(bo, "${UUT}:SLOWMON:NACC:DISA")
+{
+        field(DTYP, "Soft Channel")
+        field(DESC,  "Stop SLOWMON changing NACC")
+        field(ZNAM, "FALSE")
+        field(ONAM, "TRUE")
+        field(VAL,  "1")
+        field(PINI, "YES")
 }
