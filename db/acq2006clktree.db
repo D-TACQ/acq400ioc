@@ -60,16 +60,10 @@ record (calcout, "${UUT}:SYS:CLK:zclk") {
 	field(CALC, "A==3")	
 	field(OUT,  "${UUT}:SYS:CLK:_ZCLK_OE PP")
 	field(OOPT, "Transition To Non-zero")
-	field(FLNK, "${UUT}:SYS:CLK:fpclk1")
+	field(FLNK, "${UUT}:SYS:CLK:_FP_OE")
 }
 
-record (calcout, "${UUT}:SYS:CLK:fpclk1") {
-	field(INPA, "${UUT}:SYS:CLK:FPMUX")
-	field(CALC, "A==2")
-	field(OUT,  "${UUT}:SYS:CLK:_FP_OE PP")
-	field(OOPT, "Transition To Non-zero")
-	field(FLNK, "${UUT}:SYS:CLK:_OSC_X_OE")
-}
+# mux output OE's
 
 record (bo, "${UUT}:SYS:CLK:_FP_CLK_OE") {
 	field(ONAM, "ON")
@@ -77,16 +71,6 @@ record (bo, "${UUT}:SYS:CLK:_FP_CLK_OE") {
 	field(DESC, "Front Panel Clock Output En")
 	field(DTYP, "boAcqHost")
 	field(OUT,  "@/dev/gpio/CLK/FP_CLK_OE")
-	field(VAL,  "0")
-	field(PINI, "YES")
-}
-
-record (bo, "${UUT}:SYS:CLK:_FP_OE") {
-	field(ONAM, "ON")
-	field(ZNAM, "OFF")
-	field(DESC, "")
-	field(DTYP, "boAcqHost")
-	field(OUT,  "@/dev/gpio/CLK/FP_OE")
 	field(VAL,  "0")
 	field(PINI, "YES")
 }
@@ -101,22 +85,37 @@ record (bo, "${UUT}:SYS:CLK:_OSC_X_CLK_OE") {
 	field(PINI, "YES")
 }
 
-record (bo, "${UUT}:SYS:CLK:_OSC_X_OE") {
-	field(ONAM, "ON")
-	field(ZNAM, "OFF")
-	field(DESC, "")
-	field(DTYP, "boAcqHost")
-	field(OUT,  "@/dev/gpio/CLK/OSC_X_OE")
-	field(OMSL, "closed_loop")
-	field(DOL,  "${UUT}:SYS:CLK:xclk")		
-}
-
 record (bo, "${UUT}:SYS:CLK:_ZCLK_OE") {
 	field(ONAM, "ON")
 	field(ZNAM, "OFF")
-	field(DESC, " ")
+	field(DESC, "ZCLK Mux Select")
 	field(DTYP, "boAcqHost")
 	field(OUT,  "@/dev/gpio/CLK/ZCLK_OE")
 	field(VAL,  "0")
 	field(PINI, "YES")
+}
+
+# mux input OE's
+
+record (bo, "${UUT}:SYS:CLK:_FP_OE") {
+        field(ONAM, "ON")
+        field(ZNAM, "OFF")
+        field(DESC, "FP Mux Select")
+        field(DTYP, "boAcqHost")
+        field(OUT,  "@/dev/gpio/CLK/FP_OE")
+        field(VAL,  "0")
+        field(PINI, "YES")
+        field(OMSL, "closed_loop")
+        field(DOL,  "${UUT}:SYS:CLK:fpclk")
+        field(FLNK, "${UUT}:SYS:CLK:_OSC_X_OE")
+}
+
+record (bo, "${UUT}:SYS:CLK:_OSC_X_OE") {
+        field(ONAM, "ON")
+        field(ZNAM, "OFF")
+        field(DESC, "OSC X Mux Select")
+        field(DTYP, "boAcqHost")
+        field(OUT,  "@/dev/gpio/CLK/OSC_X_OE")
+        field(OMSL, "closed_loop")
+        field(DOL,  "${UUT}:SYS:CLK:xclk")
 }
