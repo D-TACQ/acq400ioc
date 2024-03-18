@@ -17,81 +17,17 @@ z7io)
 	exit 1;;
 esac
 
-list_int_configs() {
-	speeds=""
-	for file in /etc/si5326.d/si5326_33M333*
-	do
-		bn=$(basename $file)
-		fn1=${bn%*.txt}
-		speeds="$speeds ${fn1#si5326_33M333-*}"
-	done
-	echo $speeds
-}
-
-set.site 0 SIG:CLK_MB:FIN 0
-set.site 0 SIG:CLK_MB:SET 0
-
-if [ "x$1" = "xWR" ]; then
-	CLKMHZ=${2:-40M}
-	SICONF=si5326_31M25-${CLKMHZ}.txt
-	FREQ=${CLKMHZ%*M}
-	
-	set.site 0 SYS:CLK:FPMUX ZCLK
-	set.site 0 SIG:ZCLK_SRC WR31M25	
-# This enables the synchronous divide using the WR 1 PPS
-	set.site 1 sync 1,0,1
-# Set the WRTT source to Front Panel, Rising
-	set.site 0 wr_trg_src 1,0,1	
-else
-	if [ "x$1" != "x" ] && [ -f $1 -o -f /etc/si5326.d/$1 ]; then
-		SICONF=$1
-		if [ -f $1 ]; then
-			sif=$1
-		else
-			sif=/etc/si5326.d/$1
-		fi		 
-		FREQ=$(grep Frequency $sif | tail -n 1 | awk '{ print $4 }')
-	else
-		FREQ="x"
-		if [ "x$1" = "x" ]; then
-			FREQ=50M
-		else
-			echo available configs $(list_int_configs)
-			for sp in $(list_int_configs)
-			do
-				if [ "x$1" = "x$sp" ]; then
-					FREQ=$sp
-					break
-				fi
-			done
-		fi
-		if [ "$FREQ" = "x" ]; then
-			echo "ERROR rate $1 not supported default to 10M"
-			FREQ=10M
-		fi
-		SICONF=si5326_33M333-${FREQ}.txt
-		FREQ=${FREQ%*M}
-
-		set.site 0 SIG:ZCLK_SRC INT33M
-		set.site 0 SYS:CLK:FPMUX ZCLK
-	fi		
-fi
+# CLK 40MHz too fast with 16ch, so decimate /2
+set.site 1 ACQ480:FIR:01 LP_ODD_D2
+FREQ=20
 FREQHZ=$(($FREQ*1000000))
 
-#set.site 0 SYS:CLK:OE_CLK1_ZYNQ 1
-#load.si5326 $SICONF
 
 eval $(get.site 0 aggregator)
 if [ "x$sites" = "xnone" ]; then
 	logger -t $PNAME "WARNING: no sites in aggregator set"
 	exit 1
 fi
-
-for site in $(echo $sites | tr , \  )
-do
-	logger -t $PNAME "acq480_init_clk enable site $site"
-	set.site 0 SYS:CLK:OE_CLK1_ELF${site} 1
-done
 
 set.site 0 acq480_force_training 1
 caput ${IOC_HOST}:1:INTCLK_HZ $FREQHZ
@@ -106,5 +42,5 @@ if [ $(deltaF) -ne 0 ]; then
 	logger -t $PNAME "acq480_init_clk warning clock error"
 fi
 
-set.site 0 SIG:CLK_MB:READY 1
+#set.site 0 SIG:CLK_MB:READY 1
 
