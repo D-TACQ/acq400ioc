@@ -52,6 +52,7 @@ public:
 	static int factory(
 		const char *portName, int nchan, int maxPoints, unsigned data_size, int bursts_per_buffer, unsigned ndma);
 	static int verbose;
+	static int stub_es;
 	static const int _FIRST_SAM;
 	void task_get_params();
 	virtual void task();

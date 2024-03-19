@@ -120,7 +120,7 @@ acq400Judgement::acq400Judgement(const char* portName, int _nchan, int _nsam, in
 }
 
 int acq400Judgement::verbose = ::getenv_default("acq400Judgement_VERBOSE", 0);
-
+int acq400Judgement::stub_es = ::getenv_default("acq400Judgement_STUB_ES", 0);
 
 
 bool acq400Judgement::onCalculate(bool fail)
@@ -199,7 +199,18 @@ static AbstractES& ESX = *AbstractES::evX_instance();
 
 int acq400Judgement::handle_es(unsigned* raw)
 {
-	if (ESX.isES(raw)){
+	if (sample_count == 0){
+		printf("%s stub_es:%d\n", __FUNCTION__, stub_es);
+	}
+	if (stub_es){
+		/* maybe we don't want to look at the ES at all?. OK, fake the counts.. */
+		sample_count += nsam;
+		clock_count[1] += nsam;
+		/** @@todo: not sure how to merge EPICS and SAMPLING timestamps.. go pure EPICS */
+		++burst_count;
+		RESULT_FAIL[0] = burst_count;			// burst_count%256 .. maybe match to exact count and TS */
+		return 0;
+	}else if (ESX.isES(raw)){
 		sample_count = raw[4];
 		clock_count[1]= raw[5];
 		/** @@todo: not sure how to merge EPICS and SAMPLING timestamps.. go pure EPICS */
