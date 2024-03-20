@@ -35,6 +35,7 @@ WIN_R_LIM=${WIN_R_LIM:-4}
 
 for site in $(echo $sites | tr , \  ); do
 	nchan=$(get.site $site NCHAN)
+	echo dbLoadRecords\(\"db/judgementCommonSite.db\",\"${PRAMS},SITE=${site},SITEM1=$((site-1))\"\)
 	for ch in $(seq 1 ${nchan}); do		
 		CH=$(printf "%02d" $ch)		
 		echo dbLoadRecords\(\"db/${CHDB}\",\"${PRAMS},FN=MU,PROKEY=MASK_UPPER,NSAM=${nsam},SITE=${site},CH=${CH},IX=${ix}\"\)

@@ -108,21 +108,6 @@ record(longout, "${UUT}:JDG:SAMPLE_DELTA_NS")
 	field(LOPR,  "0")
 }
 
-record(longin, "${UUT}:JDG:CHX:FAIL:1")
-{
-	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),0,$(TIMEOUT))FAIL_MASK32")
-	field(SCAN, "I/O Intr")
-	field(TSE,  "-2")	
-}
-
-record(longin, "${UUT}:JDG:CHX:FAIL:2")
-{
-	field(DTYP, "asynInt32")
-	field(INP,  "@asyn($(PORT),1,$(TIMEOUT))FAIL_MASK32")
-	field(SCAN, "I/O Intr")
-	field(TSE,  "-2")	
-}
 
 
 record(longin, "${UUT}:JDG:CHX:SAMPLE_COUNT")
