@@ -225,8 +225,8 @@ int acq400Judgement::handle_es(unsigned* raw)
 		RESULT_FAIL[0] = burst_count;			// burst_count%256 .. maybe match to exact count and TS */
 		return 0;
 	}else if (ESX.isES(raw)){
-		sample_count = raw[4];
-		clock_count[1]= raw[5];
+		sample_count = raw[IX_SC];
+		clock_count[1]= raw[IX_SCC];
 		/** @@todo: not sure how to merge EPICS and SAMPLING timestamps.. go pure EPICS */
 		++burst_count;
 		RESULT_FAIL[0] = burst_count;			// burst_count%256 .. maybe match to exact count and TS */
