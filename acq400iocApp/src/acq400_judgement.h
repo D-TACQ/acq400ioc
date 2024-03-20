@@ -59,7 +59,7 @@ public:
 	virtual void fill_request_task(void) {};
 	virtual asynStatus updateTimeStamp(int offset);
 
-	std::vector<int> site_channels;
+
 
 protected:
 	int handle_es(unsigned* raw);
@@ -78,6 +78,7 @@ protected:
 	const int nsam;
 	int es_spread;
 	const int bursts_per_buffer;  /** aka bpb */
+	std::vector<int> site_channels;
 
 	/** Values used for pasynUser->reason, and indexes into the parameter library. */
 	int P_NCHAN;

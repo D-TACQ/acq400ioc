@@ -43,11 +43,7 @@ WIN_R_LIM=${WIN_R_LIM:-4}
 
 for site in $(echo $sites | tr , \  ); do
 	nchan=$(get.site $site NCHAN)
-        if [ $NCHAN -gt 32 ]; then
-                sitem1=$((site-1))
-        else
-                sitem1=0                # all sites share same record
-        fi
+        sitem1=$((site-1))
 	echo dbLoadRecords\(\"db/judgementCommonSite.db\",\"${PRAMS},SITE=${site},SITEM1=${sitem1}\"\)
 	for ch in $(seq 1 ${nchan}); do		
 		CH=$(printf "%02d" $ch)		

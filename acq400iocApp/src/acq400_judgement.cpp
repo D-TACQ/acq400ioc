@@ -30,7 +30,10 @@
 #include <unistd.h>
 
 #include "acq-util.h"
+#include <bits/stdc++.h>
 #include <vector>
+
+#include <split2.h>
 
 using namespace std;
 #include "Buffer.h"
@@ -47,6 +50,16 @@ void task_runner(void *drvPvt)
 	pPvt->task();
 }
 
+std::vector<int> csv2int(const char* _site_channels) {
+	std::vector<std::string> strings;
+	split2(_site_channels, strings, ',');
+	std::vector<int> vi;
+	for (std::string s: strings){
+		vi.push_back(stoi(s));
+	}
+	return vi;
+}
+
 /** abstract base class with Judgement common definitions. Use Judgement::factory() to instantiate a concrete class */
 acq400Judgement::acq400Judgement(const char* portName, int _nchan, int _nsam, const char* _site_channels, int _bursts_per_buffer):
 	asynPortDriver(portName,
@@ -59,7 +72,8 @@ acq400Judgement::acq400Judgement(const char* portName, int _nchan, int _nsam, co
 /* Default stack size*/ 0),
 	nchan(_nchan), nsam(_nsam),
 	bursts_per_buffer(_bursts_per_buffer),
-	fail_mask_len(std::max(nchan/32, 1)),
+	site_channels(csv2int(_site_channels)),
+	fail_mask_len(std::accumulate(site_channels.begin(), site_channels.end(), 0)),
 	sample_delta_ns(0),
 	fill_requested(false)
 {
@@ -739,7 +753,11 @@ public:
 		int isam;
 
 		for (isam = 0; isam < nsam-FIRST_SAM; ++isam){
-			for (int ic = 0; ic < nchan; ++ic){
+			for (int ic = 0, ic0 = 0, isite = 0; ic < nchan; ++ic){
+				if (ic - ic0 > site_channels[isite]){
+					++isite;
+					ic0 = ic;
+				}
 				int ib = (isam+FIRST_SAM)*nchan+ic;
 				ETYPE xx = raw[ib];        			// keep the ES out of the output data..
 
@@ -747,7 +765,7 @@ public:
 
 				if (isam >= WINL[ic] && isam <= WINR[ic]){  	// make Judgment inside window
 					if (xx > mu[ib] || xx < ml[ib]){
-						FAIL_MASK32[ic/32] |= 1 << (ic&0x1f);
+						FAIL_MASK32[isite] |= 1 << (ic-ic0);
 						RESULT_FAIL[ic+1] = 1;
 						fail = true;
 					}
