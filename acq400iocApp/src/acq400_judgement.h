@@ -50,7 +50,7 @@ public:
 			size_t nElements, size_t *nIn);
 
 	static int factory(
-		const char *portName, int nchan, int maxPoints, unsigned data_size, int bursts_per_buffer, unsigned ndma);
+		const char *portName, int nchan, int maxPoints, unsigned data_size, const char* site_channels, int bursts_per_buffer, unsigned ndma);
 	static int verbose;
 	static int stub_es;
 	static const int _FIRST_SAM;
@@ -58,6 +58,8 @@ public:
 	virtual void task();
 	virtual void fill_request_task(void) {};
 	virtual asynStatus updateTimeStamp(int offset);
+
+	std::vector<int> site_channels;
 
 protected:
 	int handle_es(unsigned* raw);
@@ -69,7 +71,7 @@ protected:
 	virtual void doDataUpdateCallbacks(int ic) = 0;
 	virtual void doMaskUpdateCallbacks(int ic) = 0;
 
-	acq400Judgement(const char* portName, int nchan, int nsam, int bursts_per_buffer=1);
+	acq400Judgement(const char* portName, int nchan, int nsam, const char* _site_channels, int bursts_per_buffer);
 	virtual ~acq400Judgement(void) {}
 
 	const int nchan;

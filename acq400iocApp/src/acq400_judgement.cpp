@@ -48,7 +48,7 @@ void task_runner(void *drvPvt)
 }
 
 /** abstract base class with Judgement common definitions. Use Judgement::factory() to instantiate a concrete class */
-acq400Judgement::acq400Judgement(const char* portName, int _nchan, int _nsam, int _bursts_per_buffer):
+acq400Judgement::acq400Judgement(const char* portName, int _nchan, int _nsam, const char* _site_channels, int _bursts_per_buffer):
 	asynPortDriver(portName,
 /* maxAddr */		_nchan+1,    /* nchan from 0 + ADDR_WIN_ALL */
 /* Interface mask */    asynEnumMask|asynInt32Mask|asynFloat64Mask|asynInt8ArrayMask|asynInt16ArrayMask|asynInt32ArrayMask|asynDrvUserMask,
@@ -438,8 +438,8 @@ protected:
 		assert(0);
 	}
 public:
-	acq400JudgementNJ(const char* portName, int _nchan, int _nsam, int _bursts_per_buffer, unsigned _ndma) :
-		acq400Judgement(portName, _nchan, _nsam, _bursts_per_buffer),
+	acq400JudgementNJ(const char* portName, int _nchan, int _nsam, const char* _site_channels, int _bursts_per_buffer, unsigned _ndma) :
+		acq400Judgement(portName, _nchan, _nsam, _site_channels, _bursts_per_buffer),
 		ndma(_ndma)
 	{
 		createParam(PS_RAW, AATYPE,    	&P_RAW);
@@ -695,8 +695,8 @@ class acq400JudgementImpl : public acq400Judgement {
 	bool flip_first_sample;
 	ETYPE *first_sample_buffer;
 public:
-	acq400JudgementImpl(const char* portName, int _nchan, int _nsam, int _bursts_per_buffer, unsigned _ndma, bool _flip_first_sample = false) :
-		acq400Judgement(portName, _nchan, _nsam, _bursts_per_buffer),
+	acq400JudgementImpl(const char* portName, int _nchan, int _nsam, const char* _site_channels, int _bursts_per_buffer, unsigned _ndma, bool _flip_first_sample = false) :
+		acq400Judgement(portName, _nchan, _nsam, _site_channels, _bursts_per_buffer),
 		ndma(_ndma), print_fails(0), flip_first_sample(_flip_first_sample), first_sample_buffer(0)
 	{
 		createParam(PS_MU,  AATYPE,    	&P_MU);
@@ -979,7 +979,7 @@ void acq400JudgementImpl<epicsInt32>::doMaskUpdateCallbacks(int ic){
 
 
 /** factory() method: creates concrete class with specialized data type: either epicsInt16 or epicsInt32 */
-int acq400Judgement::factory(const char *portName, int nchan, int maxPoints, unsigned data_size, int bursts_per_buffer, unsigned ndma)
+int acq400Judgement::factory(const char *portName, int nchan, int maxPoints, unsigned data_size,  const char* site_channels, int bursts_per_buffer, unsigned ndma)
 {
 	if (ndma != 1){
 		fprintf(stderr, "%s ERROR: 2D support NOT implemented\n", __FUNCTION__);
@@ -990,16 +990,16 @@ int acq400Judgement::factory(const char *portName, int nchan, int maxPoints, uns
 	switch(data_size){
 	case sizeof(short):
 		if (judgementNJ){
-			new acq400JudgementNJ<epicsInt16>   (portName, nchan, maxPoints, bursts_per_buffer, ndma);
+			new acq400JudgementNJ<epicsInt16>   (portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
 		}else{
-			new acq400JudgementImpl<epicsInt16> (portName, nchan, maxPoints, bursts_per_buffer, ndma);
+			new acq400JudgementImpl<epicsInt16> (portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
 		}
 		return(asynSuccess);
 	case sizeof(long):
 		if (judgementNJ){
-			new acq400JudgementNJ<epicsInt32> (portName, nchan, maxPoints, bursts_per_buffer, ndma);
+			new acq400JudgementNJ<epicsInt32> (portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
 		}else{
-			new acq400JudgementImpl<epicsInt32> (portName, nchan, maxPoints, bursts_per_buffer, ndma);
+			new acq400JudgementImpl<epicsInt32> (portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
 		}
 		return(asynSuccess);
 	default:
@@ -1017,24 +1017,25 @@ extern "C" {
 	/** EPICS iocsh callable function to call constructor for the testAsynPortDriver class.
 	  * \param[in] portName The name of the asyn port driver to be created.
 	  * \param[in] maxPoints The maximum  number of points in the volt and time arrays */
-	int acq400JudgementConfigure(const char *portName, int nchan, int maxPoints, unsigned data_size, unsigned bursts_per_buffer, unsigned ndma)
+	int acq400JudgementConfigure(const char *portName, int nchan, int maxPoints, unsigned data_size, const char* site_channels, unsigned bursts_per_buffer, unsigned ndma)
 	{
-		return acq400Judgement::factory(portName, nchan, maxPoints, data_size, bursts_per_buffer, ndma);
+		return acq400Judgement::factory(portName, nchan, maxPoints, data_size, site_channels, bursts_per_buffer, ndma);
 	}
 
 	/* EPICS iocsh shell commands */
 
-	static const iocshArg initArg0 = { "portName", iocshArgString};
-	static const iocshArg initArg1 = { "max chan", iocshArgInt};
-	static const iocshArg initArg2 = { "max points", iocshArgInt};
-	static const iocshArg initArg3 = { "data size", iocshArgInt};
-	static const iocshArg initArg4 = { "bursts_per_buffer", iocshArgInt};
-	static const iocshArg initArg5 = { "ndma", iocshArgInt};
-	static const iocshArg * const initArgs[] = { &initArg0, &initArg1, &initArg2, &initArg3, &initArg4, &initArg5 };
-	static const iocshFuncDef initFuncDef = { "acq400JudgementConfigure", 6, initArgs };
+	static const iocshArg initArg0 = { "portName", iocshArgString };
+	static const iocshArg initArg1 = { "max chan", iocshArgInt };
+	static const iocshArg initArg2 = { "max points", iocshArgInt };
+	static const iocshArg initArg3 = { "data size", iocshArgInt };
+	static const iocshArg initArg4 = { "site_channels", iocshArgString };
+	static const iocshArg initArg5 = { "bursts_per_buffer", iocshArgInt };
+	static const iocshArg initArg6 = { "ndma", iocshArgInt };
+	static const iocshArg * const initArgs[] = { &initArg0, &initArg1, &initArg2, &initArg3, &initArg4, &initArg5, &initArg6 };
+	static const iocshFuncDef initFuncDef = { "acq400JudgementConfigure", 7, initArgs };
 	static void initCallFunc(const iocshArgBuf *args)
 	{
-		acq400JudgementConfigure(args[0].sval, args[1].ival, args[2].ival, args[3].ival, args[4].ival, args[5].ival);
+		acq400JudgementConfigure(args[0].sval, args[1].ival, args[2].ival, args[3].ival, args[4].sval, args[5].ival, args[6].ival);
 	}
 
 	void acq400_judgementRegister(void)
