@@ -754,7 +754,7 @@ public:
 
 		for (isam = 0; isam < nsam-FIRST_SAM; ++isam){
 			for (int ic = 0, ic0 = 0, isite = 0; ic < nchan; ++ic){
-				if (ic - ic0 > site_channels[isite]){
+				if (ic - ic0 >= site_channels[isite]){
 					++isite;
 					ic0 = ic;
 				}
@@ -763,9 +763,10 @@ public:
 
 				RAW[ic*nsam+isam] = xx;			 	// for plotting
 
-				if (isam >= WINL[ic] && isam <= WINR[ic]){  	// make Judgment inside window
+				if (isam >= WINL[ic] && isam <= WINR[ic]){  	// make Judgement inside window
 					if (xx > mu[ib] || xx < ml[ib]){
 						FAIL_MASK32[isite] |= 1 << (ic-ic0);
+						//printf("calculate() is:%d ic:%d site:%d bit:%d\n", isam, ic, isite, (ic-ic0));
 						RESULT_FAIL[ic+1] = 1;
 						fail = true;
 					}
