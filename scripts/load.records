@@ -1019,7 +1019,8 @@ load_mb_base() {
             dblr '"db/acq2106clk3456.db","UUT='${HOST}',acq2106b='${acq2106b}',SPORT=S0C"';;
 
     z7io*)
-            dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}'"';;
+	    vadj=$(grep FMC_Vadj /tmp/mmcinfo1.txt | awk '{ print $3 }')
+            dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}',VADJ='${vadj}'"';;
     kmcu*)
             dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}'"';;
     *)

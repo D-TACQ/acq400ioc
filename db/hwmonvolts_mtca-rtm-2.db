@@ -148,4 +148,9 @@ record(calc, "${UUT}:SYS:VAN") {
         field(LOW,  "-7")                 
         field(HIGH, "-5")                 
 }                                         
-    
+
+record(ai, "${UUT}:SYS:VADJ") {
+	field(DTYP, "Soft Channel")
+	field(VAL,  "${VADJ}")
+	field(PINI, "YES")
+}
