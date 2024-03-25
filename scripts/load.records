@@ -998,11 +998,13 @@ load_mb_base() {
     ns=$1
     mt=$2
     zynq_hwmon Z
+    HWLN=/dev/hwmon/LNAMES
 
     load_400_statics 0 $mt
 
-    for SITE in $(seq 0 $ns)
+    [ ! -d $HWLN ] && for SITE in $(seq 0 $ns)
     do
+        echo '# legacy hwmon names by i2c bus num'
         CPRAMS="UUT=${HOST},lname=${SITE}"
         PRAMS="$CPRAMS,pname=/dev/hwmon/${SITE}/temp,scale=0.001,offset=0"
         dblr '"db/hwmontemp.db","'${PRAMS}'"'
@@ -1020,7 +1022,17 @@ load_mb_base() {
 
     z7io*)
 	    vadj=$(grep FMC_Vadj /tmp/mmcinfo1.txt | awk '{ print $3 }')
-            dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}',VADJ='${vadj}'"';;
+            dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}',VADJ='${vadj}'"'
+            if [ -d $HWLN ]; then
+                dblr '"db/hwmonvolts_mtca-rtm-2L.db","UUT='${HOST}',VADJ='${vadj}'"'
+                for sn in $HWLN/SITE?; do
+                        snb=$(basename $sn)
+                        site=${snb#SITE*}
+                        CPRAMS="UUT=${HOST},lname=${site}"
+                        PRAMS="$CPRAMS,pname=$sn/temp,scale=0.001,offset=0"
+                        dblr '"db/hwmontemp.db","'${PRAMS}'"'
+                done
+            fi;;
     kmcu*)
             dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}'"';;
     *)

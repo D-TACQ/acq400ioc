@@ -1,0 +1,35 @@
+
+# set up as a chain triggered on 10s scan .. avoids parallel access ?
+# but also ensures that VAN processes last with valid data
+
+record(ai, "${UUT}:SYS:5VP") {
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in3")
+}
+
+# Note this comes from hwmon/0 and says VADJ but is actually 2V5_REF
+
+record(ai, "${UUT}:SYS:2V5P_REF") {
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in4")
+}
+
+record(ai, "${UUT}:SYS:VAP") {
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in2")            
+}
+
+record(ai, "${UUT}:SYS:2V5P") {
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in12")
+}
+
+record(ai, "${UUT}:SYS:3V3P") {            
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in22")
+} 
+
+record(ai, "${UUT}:SYS:1V8P") {         
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in32")}
+
+record(ai, "${UUT}:SYS:5VP_REF") {    
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in42")} 
+
+record(ai, "${UUT}:SYS:_van") {
+        field(INP, "@/dev/hwmon/LNAMES/RTM/in1")                    
+}
