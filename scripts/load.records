@@ -1025,9 +1025,8 @@ load_mb_base() {
             dblr '"db/hwmonvolts_mtca-rtm-2.db","UUT='${HOST}',VADJ='${vadj}'"'
             if [ -d $HWLN ]; then
                 dblr '"db/hwmonvolts_mtca-rtm-2L.db","UUT='${HOST}',VADJ='${vadj}'"'
-                for sn in $HWLN/SITE?; do
-                        snb=$(basename $sn)
-                        site=${snb#SITE*}
+                for sn in $HWLN/[0123]; do
+                        site=$(basename $sn)
                         CPRAMS="UUT=${HOST},lname=${site}"
                         PRAMS="$CPRAMS,pname=$sn/temp,scale=0.001,offset=0"
                         dblr '"db/hwmontemp.db","'${PRAMS}'"'
