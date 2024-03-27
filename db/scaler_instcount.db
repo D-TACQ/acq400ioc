@@ -7,7 +7,7 @@ record(longin, "${UUT}:${SITE}:CNT:RAW:${ch}") {
 
 record(calc, "${UUT}:${SITE}:CNT:FREQ:${ch}") {
 	field(INPA, "${UUT}:${SITE}:CNT:RAW:${ch}")
-	field(INPB, "${UUT}:0:${FREQ}")
+	field(INPB, "${FREQ}")
 	field(INPC, "${UUT}:1:ACC")
 	field(INPD, "${UUT}:${SITE}:CNT:FREQ:${ch}.LA")
 	field(CALC, "C==0? A*B: ABS(A-D)")

@@ -10,17 +10,23 @@ echo "#load.scaler"
 
 create_asyn_channel S${site}C 127.0.0.1:$((4220+${site}))
 
-if [ "$(cat /dev/acq400.${site}.knobs/module_role)" = "MASTER" ]; then
-        freq_src=SIG:SYN_S{site}:FREQ
-else
-        agg_s1=$(get.site 0 run0_log | awk '{ print $2 }' | awk -F, '{ print $1 }')
+if [ ! -z $SCALER_FREQ ]; then
+	freq_src=$SCALER_FREQ
+elif [ "$(cat /dev/acq400.${site}.knobs/module_role)" = "MASTER" ]; then
+        freq_src=${HOST}:0:SIG:SYN_S{site}:FREQ
+elif [ -e /var/log/run0.log ]; then
+        agg_s1=$(cat /var/log/run0.log | awk '{ print $2 }' | awk -F, '{ print $1 }')
         case $agg_s1 in
         1|2|3|4|5|6)
-            freq_src=SIG:SYN_S${agg_s1}:FREQ;;
+            freq_src=${HOST}:0:SIG:SYN_S${agg_s1}:FREQ;;
         *)
 # don't know, assume 1ms.
+	    echo '# WARNING:Unable to find AGGREGATOR:S1, assume FREQ=1000, consider setting SCALER_FREQ'
             freq_src=1000;;
         esac
+else
+	echo '# WARNING: run0 has not been run, assume FREQ=1000, consider setting SCALER_FREQ'
+	freq_src=1000
 fi
 
 for kb in /etc/acq400/${site}/cnt.*; do
