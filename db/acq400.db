@@ -10,6 +10,12 @@ record (stringin, "${UUT}:${SITE}:MTYPE") {
 	field(PINI, "YES")	
 }
 
+record (stringin, "${UUT}:${SITE}:MODULE_ROLE") {
+        field(DTYP, "Soft Channel")
+        field(VAL, "${MODULE_ROLE}")
+        field(PINI, "YES")
+}
+
 record (stringin, "${UUT}:${SITE}:PART_NUM") {
 	field(DTYP, "Soft Channel")
 	field(VAL, "${PN}")

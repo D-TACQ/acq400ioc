@@ -403,13 +403,14 @@ load_400_statics() { (
     serial=$(cat ${ek}/SERIAL)
     role=$(cat ${ek}/module_role)
     d32=$(cat /dev/acq400.${site}.knobs/data32)
+    module_role=$(cat /dev/acq400.${site}.knobs/module_role)
 
     if [ "$(isDIO $mt)" = "yes" ]; then
         ssb=$((4*nc/32))
     else
         ssb=$((nc*(2+d32*2)))
     fi
-    dba="MODEL=$model,PN=$pn,NCHAN=$nc,SERIAL=$serial,ROLE=$role,MTYPE=$mt,SSB=$ssb"
+    dba="MODEL=$model,PN=$pn,NCHAN=$nc,SERIAL=$serial,ROLE=$role,MTYPE=$mt,SSB=$ssb,MODULE_ROLE=${module_role}"
 
     dblr '"db/acq400.db","'${cprams},${dba}'"'
 ) }
