@@ -218,9 +218,9 @@ if SITE=$S1 is_ds; then
     80000)
     	FMB_DEF=20M48; hrmode=0;; 
     125000)
-	FMB_DEF=20M; hrmode=0;;
+	FMB_DEF=32M;   hrmode=0;;
     128000)
-    	FMB_DEF=32M768; hrmode=0;;
+        FMB_DEF=32M768;hrmode=0;;
     *)
         echo "ERROR: SR options 10k 20k 40k 80k 125k 128k"; exit 1
     esac
