@@ -32,7 +32,6 @@ P1=
 P2=
 P3=
 	
-	
 # always with WR:
 FIN_DEF=31M25
 
@@ -205,9 +204,9 @@ in_the_plan() {
     echo $FMB_DEF
 }
 
-if is_ds; then 
+if SITE=$S1 is_ds; then
     FS_DEF=40000 
-    FS=${P2:-$FS_DEF}  
+    FS=$(egu2int ${P2:-$FS_DEF})
     set.site $S1 ACQ43X_SAMPLE_RATE 0
     case $FS in
     10000)
@@ -218,10 +217,12 @@ if is_ds; then
     	FMB_DEF=20M48; hrmode=1;; 
     80000)
     	FMB_DEF=20M48; hrmode=0;; 
+    125000)
+	FMB_DEF=20M; hrmode=0;;
     128000)
     	FMB_DEF=32M768; hrmode=0;;
     *)
-    	echo "ERROR: SR options 10k 20k 40k 80k 128k"; exit 1
+        echo "ERROR: SR options 10k 20k 40k 80k 125k 128k"; exit 1
     esac
     set.site $S1  hi_res_mode $hrmode
 else
@@ -235,9 +236,9 @@ else
 	    fi	    
     else
         FMB_DEF=40M
-        FS_DEF=200000; is_48x && FS_DEF=20M
-        FS=${P2:-$FS_DEF}
-        if [ "$FS" = "$FMB_DEF" ]; then
+        FS_DEF=20M; is_48x && FS_DEF=20M
+	FS=${P2:-$FS_DEF}
+        if [ $FS -eq $FMB_DEF  ]; then
             CLKDIV=1
         else
 	        plan=$(in_the_plan $FS)
@@ -251,8 +252,8 @@ else
 	fi
     
     if [ "$CLKDIV" = "unknown" ]; then	
-	    eval $(egu2int FS=${P2:-$FS_DEF})
-	    eval $(egu2int FMB=${FMB_DEF})	
+	    FS=$(egu2int ${P2:-$FS_DEF})
+	    FMB=$(egu2int ${FMB_DEF})
 	    CLKDIV=$(($FMB/$FS))
 	    echo calculated $CLKDIV
     fi
@@ -261,7 +262,7 @@ fi
 
 ROLE=$P1
 
-eval $(egu2int FIN=${FIN_DEF})
+FIN=$(egu2int ${FIN_DEF})
 
 D_TRG='d0'
 
