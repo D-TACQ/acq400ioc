@@ -224,10 +224,10 @@ record(longout, "${UUT}:${SITE}:PPW:${ch}:REPS:w") {
 record(bi, "${UUT}:${SITE}:PPW:1S") {
         field(DTYP, "Soft Channel")
         field(SCAN, "2 second")
-        field(FLNK, "${UUT}:${SITE}:PPW:CLK:FREQ")
+        field(FLNK, "${UUT}:${SITE}:SIG:PPW_CLK:FREQ")
 }
 
-record(calc, "${UUT}:${SITE}:PPW:CLK:FREQ") {
+record(calc, "${UUT}:${SITE}:SIG:PPW_CLK:FREQ") {
         field(INPA, "${UUT}:0:SIG:CLK_S${SITE}:FREQ")
         field(INPC, "${UUT}:0:SIG:CLK_MB:FREQ")
         field(CALC, "A > 0? A: C")
@@ -236,7 +236,7 @@ record(calc, "${UUT}:${SITE}:PPW:CLK:FREQ") {
 }
 
 record(calc, "${UUT}:${SITE}:PPW:TICK") {
-	field(INPC, "${UUT}:${SITE}:PPW:CLK:FREQ")
+	field(INPC, "${UUT}:${SITE}:SIG:PPW_CLK:FREQ")
 	field(INPD, "${UUT}:${SITE}:CLKDIV")
 	field(CALC, "1e9/C*D")
 	field(EGU,  "ns")
