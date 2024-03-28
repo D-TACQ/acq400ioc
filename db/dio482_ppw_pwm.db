@@ -223,7 +223,7 @@ record(longout, "${UUT}:${SITE}:PPW:${ch}:REPS:w") {
 
 
 record(calc, "${UUT}:${SITE}:PPW:TICK") {
-	field(INPC, "40e6")
+	field(INPC, "${UUT}:0:SIG:CLK_MB:FREQ")
 	field(INPD, "${UUT}:${SITE}:CLKDIV")
 	field(CALC, "1e9/C*D")
 	field(EGU,  "ns")
