@@ -3,7 +3,7 @@ source /etc/profile.d/epics.sh
 SITE=${SITE:-${1:-1}}
 EN=${2:-1}
 NCHAN=$(get.site $SITE NCHAN)
-DOFF=5
+DOFF=${DOFF:-6}
 
 HN=${IOC_HOST}
 eoff=0
