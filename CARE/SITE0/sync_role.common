@@ -395,4 +395,5 @@ fi
 # Configure distributor (XO) after AI.
 config_distributor_sites $D_TRG
 echo $CMDLINE > /dev/shm/role
+echo $FS > /dev/shm/role_fs_hz
 exit 0

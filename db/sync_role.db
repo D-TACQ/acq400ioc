@@ -21,6 +21,26 @@ record (stringin, "${UUT}:SYS:SYNC_ROLE:r") {
 	field(FLNK, "${UUT}:SYS:SYNC_ROLE:s")
 }
 
+record(longin, "${UUT}:SYS:SYNC_ROLE:FS:r") {
+        field(DTYP, "stream")
+        field(INP,  "@sync_role.proto get_sync_role_fs ${SPORT}")
+        field(SCAN, "2 second")
+        field(FLNK, "${UUT}:SYS:SYNC_ROLE:FS:s PP")
+}
+
+record(calcout, "${UUT}:SYS:SYNC_ROLE:FS:s") {
+        field(INPA, "${UUT}:SYS:SYNC_ROLE:FS:r")
+        field(CALC, "A > 1000? A: 0")
+        field(DOPT, "Use CALC")
+        field(OOPT, "On Change")
+        field(OUT, "${UUT}:SYS:SYNC_ROLE:FS pp")
+}
+
+record(longout, "${UUT}:SYS:SYNC_ROLE:FS") {
+        field(FLNK, "${UUT}:1:ACQ42X_DT")
+}
+
+
 
 record (stringout, "${UUT}:SYS:SYNC_ROLE:s") {
 	field(DTYP, "Soft Channel")

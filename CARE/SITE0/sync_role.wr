@@ -254,7 +254,8 @@ else
     if [ "$CLKDIV" = "unknown" ]; then	
 	    FS=$(egu2int ${P2:-$FS_DEF})
 	    FMB=$(egu2int ${FMB_DEF})
-	    CLKDIV=$(($FMB/$FS))
+	    CLKDIV=$((FMB/FS))
+	    FS=$((FMB/CLKDIV))
 	    echo calculated $CLKDIV
     fi
 fi
@@ -282,7 +283,8 @@ wr|whiterabbit|fpmaster|rpmaster|master|solo|slave)
 	[ -x /etc/acq400/0/on_sync_role ] && /etc/acq400/0/on_sync_role
 # Configure distributor (XO) after AI.
 	config_distributor_sites $D_TRG
-	echo "$CMDLINE ;# FIN=$FIN FMB_DEF=$FMB_DEF FIN_DEF=$FIN_DEF" > /dev/shm/role;;
+	echo "$CMDLINE ;# FIN=$FIN FMB_DEF=$FMB_DEF FIN_DEF=$FIN_DEF" > /dev/shm/role
+	echo $FS > /dev/shm/role_fs_hz;;
 *)
     echo "ERROR: role $1 not valid"; exit 1;;
 esac	

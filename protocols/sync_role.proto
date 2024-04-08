@@ -11,6 +11,11 @@ get_sync_role {
 	in "%40c";
 }
 
+get_sync_role_fs {
+        out "sync_role_fs";
+        in "%d";
+}
+
 
 setCounterLatch {
 	out "counter_latch %d";
