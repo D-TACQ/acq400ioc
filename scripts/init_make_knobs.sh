@@ -11,7 +11,7 @@ make_site_custom_knobs() {
 			fn=$(basename $file)
 			generic=${fn%.${special}}
 			knob=${generic/./_}
-			[ ! -L /etc/acq400/0/sync_role ] && ln -s $file /etc/acq400/${site}/$knob
+			[ ! -L /etc/acq400/0/$knob ] && ln -s $file /etc/acq400/${site}/$knob
 		fi
 	done
 }
