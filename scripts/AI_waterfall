@@ -1,0 +1,3 @@
+#!/bin/sh
+/usr/local/epics/scripts/set.AI.waterfall $SITE $1 > /dev/null
+

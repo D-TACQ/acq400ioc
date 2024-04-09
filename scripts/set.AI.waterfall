@@ -28,6 +28,7 @@ done
 
 else
 	caput $HN:$SITE:ADC_CAL default
+	sleep 1
 	caput $HN:$SITE:ADC_CAL calibrated
 fi
 

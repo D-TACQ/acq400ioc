@@ -13,14 +13,31 @@ record(mbbi, "${UUT}:${SITE}:AWG:STATE") {
 }
 
 record(mbbo, "${UUT}:${SITE}:DIO:MODE") {
-	field(DTYP, "SoftChannel")
+	field(DTYP, "Soft Channel")
 	field(NOBT, "2")
 	field(ZRST, "OFF")
 	field(ONST, "IMM")
 	field(TWST, "CLK")
-	field(FLNK, "${UUT}:${SITE}:DIO:fan")
+	field(FLNK, "${UUT}:${SITE}:DIO:MODE:w PP")
 	field(SDIS, "${UUT}:${SITE}:NOPOLL")
 	field(DISV, "1")
+}
+
+record(mbbo, "${UUT}:${SITE}:DIO:MODE:w") {
+        field(DTYP, "stream")
+        field(NOBT, "2")
+        field(ZRST, "OFF")
+        field(ONST, "IMM")
+        field(TWST, "CLK")
+
+        field(SDIS, "${UUT}:${SITE}:DIO:MODE:s.PACT")
+        field(DISV, "1")
+
+        field(OMSL, "closed_loop")
+        field(DOL,  "${UUT}:${SITE}:DIO:MODE")
+
+        field(OUT, "@dio432.proto set_mode() ${SPORT}")
+        field(FLNK, "${UUT}:${SITE}:DIO:fan")
 }
 
 record(mbbi, "${UUT}:${SITE}:DIO:MODE:r") {
@@ -34,23 +51,8 @@ record(mbbi, "${UUT}:${SITE}:DIO:MODE:r") {
         field(FLNK, "${UUT}:${SITE}:DIO:MODE:s")
 }
 
-
-record(mbbo, "${UUT}:${SITE}:DIO:MODE:w") {
-        field(DTYP, "stream")
-        field(NOBT, "2")
-        field(ZRST, "OFF")
-        field(ONST, "IMM")
-        field(TWST, "CLK")
-        field(SDIS, "${UUT}:${SITE}:DIO:MODE:s.PACT")
-        field(DISV, "1")
-        field(INP, "@dio432.proto set_mode() ${SPORT}")
-        field(SCAN, "1 second")
-        field(FLNK, "${UUT}:${SITE}:DIO:fan")
-}
-
-
-record(mbbi, "${UUT}:${SITE}:DIO:MODE:s") {
-        field(DTYP, "SoftChannel")
+record(mbbo, "${UUT}:${SITE}:DIO:MODE:s") {
+        field(DTYP, "Soft Channel")
         field(NOBT, "2")
         field(ZRST, "OFF")
         field(ONST, "IMM")
