@@ -1,6 +1,6 @@
 Terminator = LF;
 ExtraInput = Ignore;
-ReplyTimeout = 4000;
+ReplyTimeout = 10000;
 
 set_sync_role {
 	out "sync_role %s";
