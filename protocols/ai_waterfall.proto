@@ -3,6 +3,6 @@ ExtraInput = Ignore;
 ReplyTimeout = 5000;
 
 setAiWaterfall {
-        out "AI_waterfall %d";
+        out "ai_waterfall %d";
         in;
 }

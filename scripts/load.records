@@ -130,7 +130,7 @@ make_AI() {
     PRAMS="UUT=${HOST},SITE=${site}"
     dblr \"db/ai.db\",\"${PRAMS},SPORT=S${site}\"
 
-    [ -L /etc/acq400/0/AI_waterfall ] || ln -s /usr/local/epics/scripts/AI_waterfall  /etc/acq400/0/AI_waterfall
+    [ -L /etc/acq400/$site/ai_waterfall ] || ln -s /usr/local/epics/scripts/AI_waterfall  /etc/acq400/$site/ai_waterfall
 
     if [ $(is_data32 $site) -eq 1 ]; then
         type=LONG
