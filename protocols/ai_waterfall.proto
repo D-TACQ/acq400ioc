@@ -1,0 +1,8 @@
+Terminator = LF;
+ExtraInput = Ignore;
+ReplyTimeout = 5000;
+
+setAiWaterfall {
+        out "AI_waterfall %d";
+        in;
+}

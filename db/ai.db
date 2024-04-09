@@ -7,3 +7,10 @@ record(bi, "${UUT}:${SITE}:TRIGGERED") {
 	field(SCAN, ".2 second")
 }
 
+record(bo, "${UUT}:${SITE}:AI_WATERFALL") {
+        field(DESC, "enable waterfall display")
+        field(DTYP, "stream")
+        field(OUT,  "@ai_waterfall.proto setAiWaterfall ${SPORT}")
+        field(ZNAM, "NO")
+        field(ONAM, "YES")
+}

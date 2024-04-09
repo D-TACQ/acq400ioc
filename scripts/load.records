@@ -130,6 +130,8 @@ make_AI() {
     PRAMS="UUT=${HOST},SITE=${site}"
     dblr \"db/ai.db\",\"${PRAMS},SPORT=S${site}\"
 
+    [ -L /etc/acq400/0/AI_waterfall ] || ln -s /usr/local/epics/scripts/AI_waterfall  /etc/acq400/0/AI_waterfall
+
     if [ $(is_data32 $site) -eq 1 ]; then
         type=LONG
         maxcode=2147483648
@@ -187,7 +189,6 @@ make_AI_records() {
         dblr \"db/aiAcqHost.db\",\"$PRAMS\"
         let ch=$ch+1
     done
-
 }
 
 FIRST_AI_TR_RECORDS=1
