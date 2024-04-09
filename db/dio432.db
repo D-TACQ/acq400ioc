@@ -12,18 +12,55 @@ record(mbbi, "${UUT}:${SITE}:AWG:STATE") {
 	field(SCAN, ".1 second")
 }
 
-record(mbbi, "${UUT}:${SITE}:DIO:MODE") {
-	field(DTYP, "stream")
+record(mbbo, "${UUT}:${SITE}:DIO:MODE") {
+	field(DTYP, "SoftChannel")
 	field(NOBT, "2")
 	field(ZRST, "OFF")
 	field(ONST, "IMM")
 	field(TWST, "CLK")
-	field(INP, "@dio432.proto get_mode() ${SPORT}")
-	field(SCAN, "1 second")
 	field(FLNK, "${UUT}:${SITE}:DIO:fan")
 	field(SDIS, "${UUT}:${SITE}:NOPOLL")
 	field(DISV, "1")
 }
+
+record(mbbi, "${UUT}:${SITE}:DIO:MODE:r") {
+        field(DTYP, "stream")
+        field(NOBT, "2")
+        field(ZRST, "OFF")
+        field(ONST, "IMM")
+        field(TWST, "CLK")
+        field(INP, "@dio432.proto get_mode() ${SPORT}")
+        field(SCAN, "1 second")
+        field(FLNK, "${UUT}:${SITE}:DIO:MODE:s")
+}
+
+
+record(mbbo, "${UUT}:${SITE}:DIO:MODE:w") {
+        field(DTYP, "stream")
+        field(NOBT, "2")
+        field(ZRST, "OFF")
+        field(ONST, "IMM")
+        field(TWST, "CLK")
+        field(SDIS, "${UUT}:${SITE}:DIO:MODE:s.PACT")
+        field(DISV, "1")
+        field(INP, "@dio432.proto set_mode() ${SPORT}")
+        field(SCAN, "1 second")
+        field(FLNK, "${UUT}:${SITE}:DIO:fan")
+}
+
+
+record(mbbi, "${UUT}:${SITE}:DIO:MODE:s") {
+        field(DTYP, "SoftChannel")
+        field(NOBT, "2")
+        field(ZRST, "OFF")
+        field(ONST, "IMM")
+        field(TWST, "CLK")
+        field(DOL,  "${UUT}:${SITE}:DIO:MODE:r NPP")
+        field(OMSL, "closed_loop")
+        field(OUT,  "${UUT}:${SITE}:DIO:MODE PP")
+        field(FLNK, "${UUT}:${SITE}:DIO:fan")
+}
+
 
 # force DO's to process as they may be disabled.. from change of OUTPUT
 record(fanout, "${UUT}:${SITE}:DIO:fan") {
