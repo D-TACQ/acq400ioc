@@ -33,11 +33,22 @@ record(calcout, "${UUT}:SYS:SYNC_ROLE:FS:s") {
         field(CALC, "A > 1000? A: 0")
         field(DOPT, "Use CALC")
         field(OOPT, "On Change")
-        field(OUT, "${UUT}:SYS:SYNC_ROLE:FS pp")
+        field(OUT, "${UUT}:SYS:SYNC_ROLE:FS PP")
 }
 
 record(longout, "${UUT}:SYS:SYNC_ROLE:FS") {
-        field(FLNK, "${UUT}:1:ACQ42X_DT")
+        field(DTYP, "Soft Channel")
+        field(EGU, "Hz")
+        field(FLNK, "${UUT}:SYS:SYNC_ROLE:FS:w")
+}
+
+record(longout, "${UUT}:SYS:SYNC_ROLE:FS:w") {
+        field(DTYP, "Soft Channel")
+        field(EGU, "Hz")
+        field(DOL,  "${UUT}:SYS:SYNC_ROLE:FS")
+        field(OMSL, "closed_loop")
+        field(OUT,  "${UUT}:1:INTCLK_HZ PP")
+        field(FLNK, "${UUT}:1:INTCLK_HZ")
 }
 
 

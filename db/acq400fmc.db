@@ -20,7 +20,7 @@ record (longout, "${UUT}:${SITE}:INTCLK_HZ") {
 	field(LOPR, "10000")
 	field(HOPR, "${MAXHZ}")
 	field(EGU,  "Hz")
-	field(DISA, "1")
+#	field(DISA, "1")
 }
 
 record (longin, "${UUT}:${SITE}:SHOT") {

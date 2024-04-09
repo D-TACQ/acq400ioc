@@ -4,15 +4,13 @@
 
 record (longout, "${UUT}:${SITE}:INTCLK_HZ") {
 # see acq400fmc.db
-#	field(DISV, "1")
-#	field(SDIS, "${UUT}:${SITE}:CLK")
-	field(FLNK, "${UUT}:1:ACQ42X_DT")               
+        field(EGU, "Hz")
+        field(FLNK, "${UUT}:1:ACQ42X_DT")
 }
 
 record(calc, "${UUT}:1:ACQ42X_DT") {
 	field(INPA, "${UUT}:1:INTCLK_HZ")
-	field(INPB, "${UUT}:SYS:SYNC_ROLE:FS")
-	field(CALC, "A!=0? 1/A:  B!=0? 1/B: 1")
+	field(CALC, "A!=0? 1/A:  1")
 	field(FLNK, "${UUT}:1:DT")
 }
 record(longout, "${UUT}:1:XDT") {
@@ -32,9 +30,16 @@ record(calc, "${UUT}:1:DT") {
 
 record (fanout, "${UUT}:1:DT:f") {
 	field(SELM, "All")
-	field(LNK1, "${UUT}:1:INTCLK_calc")	
-	field(LNK2, "${UUT}:1:AI:WF:TB")
-	field(LNK3, "${UUT}:1:AI:TW:TB")
+	field(LNK1, "${UUT}:1:AI:WF:TB")
+	field(LNK2, "${UUT}:1:AI:TW:TB")
+	field(LNK3, "${UUT}:1:INTCLK_HZ:f")
+}
+
+record (fanout, "${UUT}:1:INTCLK_HZ:f") {
+        field(SELM, "All")
+        field(LNK1, "${UUT}:1:INTCLK_calc")
+        field(SDIS, "${UUT}:${SITE}:CLK")
+        field(DISV, "1")
 }
 
 record(longout, "${UUT}:${SITE}:LO"){
