@@ -106,8 +106,8 @@ make_epics_knobs() {
 		make_caget $PV ${NU#*:} ${NU%%:*}
 	done
 	
-	for PV in $(egrep -e FIR:01$ -e HPF:0[1-8] -e T50R -e ACQ480:MR \
-			-e LFNS -e INVERT -e ACQ4.X_SAMPLE_RATE -e GAIN -e RANGE -e ACQ465 -e QEN -e PPW $RLP)
+	for PV in $(grep -v :TRG: $RLP | egrep -e FIR:01$ -e HPF:0[1-8] -e T50R -e ACQ480:MR \
+			-e LFNS -e INVERT -e ACQ4.X_SAMPLE_RATE -e GAIN -e RANGE -e ACQ465 -e QEN -e PPW)
 	do
 		NU=${PV#*:}
 		SITE=${NU%%:*}
