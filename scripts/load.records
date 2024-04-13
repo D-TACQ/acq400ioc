@@ -1434,6 +1434,7 @@ seqMgtStop() {
 load_mb() {
     echo 1>&2 "load.records:load_mb"
 
+    hudp=0
     case $MB_MODEL in
         acq2206*)
                 ns=6; mt=acq2206;;
@@ -1442,6 +1443,7 @@ load_mb() {
         acq2006|acq2006b)
                 ns=6; mt=acq2006;;
         acq1102)
+                acq1102_classify_mgt | grep -q U && hudp=1
                 ns=2; mt=acq1102;;
         acq1002)
                 ns=2; mt=acq1001;;
@@ -1461,7 +1463,7 @@ load_mb() {
     load_mb_base $ns $mt
     load_mb_stats
 
-    hudp=0; grep -q UDP /tmp/fpga_status  && hudp=1
+    [ $hudp -eq 0 ] && grep -q UDP /tmp/fpga_status  && hudp=1
     if [ -e $KB ]; then
         load_mb_sites $KB $ns $mt $hudp
         if [ -e /dev/acq400.0.knobs/sync_out_clk ]; then
