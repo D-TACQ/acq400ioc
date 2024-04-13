@@ -1,4 +1,4 @@
-record(stringin, "${UUT}:10:HUDP:IP") {
+record(stringin, "${UUT}:${SITE}:HUDP:IP") {
 	field(DTYP,  "stream")
 	field(INP,   "@hudp.proto getIp ${SPORT}")
 #	field(SCAN,  "I/O Intr")
@@ -6,7 +6,7 @@ record(stringin, "${UUT}:10:HUDP:IP") {
 	field(PINI,  "YES")
 }
 
-record(stringin, "${UUT}:10:HUDP:TX:DST_IP") {
+record(stringin, "${UUT}:${SITE}:HUDP:TX:DST_IP") {
 	field(DTYP,  "stream")
 	field(INP,   "@hudp.proto getDstIp ${SPORT}")
 #	field(SCAN,  "I/O Intr")
@@ -14,7 +14,7 @@ record(stringin, "${UUT}:10:HUDP:TX:DST_IP") {
 	field(PINI,  "YES")
 }
 
-record(longin, "${UUT}:10:HUDP:TX:DST_PORT") {
+record(longin, "${UUT}:${SITE}:HUDP:TX:DST_PORT") {
 	field(DTYP,  "stream")
 	field(INP,   "@hudp.proto getDstPort ${SPORT}")
 #	field(SCAN,  "I/O Intr")
@@ -22,7 +22,7 @@ record(longin, "${UUT}:10:HUDP:TX:DST_PORT") {
 	field(PINI,  "YES")
 }
 
-record(longin, "${UUT}:10:HUDP:TX:PKT_SZ") {
+record(longin, "${UUT}:${SITE}:HUDP:TX:PKT_SZ") {
 	field(DTYP,  "stream")
 	field(DESC,  "TX Total PKT Size")
 	field(INP,   "@hudp.proto getTxPktSz ${SPORT}")
@@ -31,7 +31,7 @@ record(longin, "${UUT}:10:HUDP:TX:PKT_SZ") {
 	field(PINI,  "YES")
 }
 
-record(longin, "${UUT}:10:HUDP:TX:SPP") {
+record(longin, "${UUT}:${SITE}:HUDP:TX:SPP") {
 	field(DTYP,  "stream")
 	field(DESC,  "TX Samples Per Packet")
 	field(INP,   "@hudp.proto getTxSPP ${SPORT}")
@@ -40,7 +40,7 @@ record(longin, "${UUT}:10:HUDP:TX:SPP") {
 	field(PINI,  "YES")
 }
 
-record(stringin, "${UUT}:10:HUDP:RX:SRC_IP") {
+record(stringin, "${UUT}:${SITE}:HUDP:RX:SRC_IP") {
 	field(DTYP,  "stream")
 	field(INP,   "@hudp.proto getRxSrcIp ${SPORT}")
 #	field(SCAN,  "I/O Intr")
@@ -48,7 +48,7 @@ record(stringin, "${UUT}:10:HUDP:RX:SRC_IP") {
 	field(PINI,  "YES")
 }
 
-record(longin, "${UUT}:10:HUDP:RX:PORT") {
+record(longin, "${UUT}:${SITE}:HUDP:RX:PORT") {
 	field(DTYP,  "stream")
 	field(INP,   "@hudp.proto getRxPort ${SPORT}")
 #	field(SCAN,  "I/O Intr")
@@ -56,7 +56,7 @@ record(longin, "${UUT}:10:HUDP:RX:PORT") {
 	field(PINI,  "YES")
 }
 
-record(longin, "${UUT}:10:HUDP:RX:PKT_SZ") {
+record(longin, "${UUT}:${SITE}:HUDP:RX:PKT_SZ") {
 	field(DTYP,  "stream")
 	field(INP,   "@hudp.proto getRxPktLen ${SPORT}")
 #	field(SCAN,  "I/O Intr")
@@ -66,27 +66,27 @@ record(longin, "${UUT}:10:HUDP:RX:PKT_SZ") {
 
 
 
-record(mbbo, "${UUT}:10:HUDP:CONTROL") {
+record(mbbo, "${UUT}:${SITE}:HUDP:CONTROL") {
 	field(DTYP, "Soft Channel")
 	field(DESC, "Controls UDP")
 	field(NOBT, "2")
 	field(ZRST, "OFF")
 	field(ONST, "RESET")
 	field(TWST, "ON")
-	field(FLNK, "${UUT}:10:HUDP:CONTROL:w PP")
+	field(FLNK, "${UUT}:${SITE}:HUDP:CONTROL:w PP")
 }
 
-record(mbbo, "${UUT}:10:HUDP:CONTROL:w"){
+record(mbbo, "${UUT}:${SITE}:HUDP:CONTROL:w"){
 	field(DTYP, "stream")
 	field(OUT,  "@hudp.proto setCtrlEnum ${SPORT}")
 	field(NOBT, "2")
 	field(DISV, "1")
-	field(SDIS, "${UUT}:10:HUDP:CONTROL:s.PACT")
+	field(SDIS, "${UUT}:${SITE}:HUDP:CONTROL:s.PACT")
 	field(OMSL, "closed_loop")
-	field(DOL,  "${UUT}:10:HUDP:CONTROL PP")	
+	field(DOL,  "${UUT}:${SITE}:HUDP:CONTROL PP")	
 }
 
-record(mbbi, "${UUT}:10:HUDP:CONTROL:r"){
+record(mbbi, "${UUT}:${SITE}:HUDP:CONTROL:r"){
 	field(DTYP, "stream")
 	field(INP,  "@hudp.proto getCtrlEnum ${SPORT}")
 	field(NOBT, "2")
@@ -94,121 +94,121 @@ record(mbbi, "${UUT}:10:HUDP:CONTROL:r"){
 	field(ONST, "RESET")
 	field(TWST, "ON")
 	field(SCAN, "1 second")
-	field(FLNK, "${UUT}:10:HUDP:CONTROL:s")
+	field(FLNK, "${UUT}:${SITE}:HUDP:CONTROL:s")
 }
 
-record(mbbo, "${UUT}:10:HUDP:CONTROL:s") {
+record(mbbo, "${UUT}:${SITE}:HUDP:CONTROL:s") {
 	field(DTYP, "Soft Channel")
 	field(DESC, "Controls UDP")
 	field(NOBT, "2")
 	field(ZRST, "OFF")
 	field(ONST, "RESET")
 	field(TWST, "ON")
-	field(DOL, "${UUT}:10:HUDP:CONTROL:r NPP")
+	field(DOL, "${UUT}:${SITE}:HUDP:CONTROL:r NPP")
 	field(OMSL, "closed_loop")
-	field(OUT, "${UUT}:10:HUDP:CONTROL PP")
+	field(OUT, "${UUT}:${SITE}:HUDP:CONTROL PP")
 }
 
 
-record(bo, "${UUT}:10:HUDP:DISCO") {
+record(bo, "${UUT}:${SITE}:HUDP:DISCO") {
 	field(DTYP, "Soft Channel")
 	field(DESC, "Enable Discontinuity Tester")
 	field(ZNAM, "OFF")
 	field(ONAM, "ON")
-	field(FLNK, "${UUT}:10:HUDP:DISCO:w PP")
+	field(FLNK, "${UUT}:${SITE}:HUDP:DISCO:w PP")
 }
 
-record(bo, "${UUT}:10:HUDP:DISCO:w"){
+record(bo, "${UUT}:${SITE}:HUDP:DISCO:w"){
 	field(ONAM, "ON")
 	field(ZNAM, "OFF")
 	field(DESC, "")
 	field(DTYP, "stream")
 	field(OUT,  "@hudp.proto setDiscoEn ${SPORT}")	
 	field(DISV, "1")
-	field(SDIS, "${UUT}:10:HUDP:DISCO:s.PACT")
+	field(SDIS, "${UUT}:${SITE}:HUDP:DISCO:s.PACT")
 	field(OMSL, "closed_loop")
-	field(DOL,  "${UUT}:10:HUDP:DISCO PP")
-	field(FLNK, "${UUT}:10:HUDP:DISCO:IDX PP")
+	field(DOL,  "${UUT}:${SITE}:HUDP:DISCO PP")
+	field(FLNK, "${UUT}:${SITE}:HUDP:DISCO:IDX PP")
 }
 
-record(bi, "${UUT}:10:HUDP:DISCO:r"){
+record(bi, "${UUT}:${SITE}:HUDP:DISCO:r"){
 	field(ONAM, "ON")
 	field(ZNAM, "OFF")
 	field(DESC, "")
 	field(DTYP, "stream")
 	field(INP,  "@hudp.proto getDiscoEn ${SPORT}")	
 	field(SCAN, "2 second")
-	field(FLNK, "${UUT}:10:HUDP:DISCO:s")
+	field(FLNK, "${UUT}:${SITE}:HUDP:DISCO:s")
 }
 
-record(bo, "${UUT}:10:HUDP:DISCO:s") {
+record(bo, "${UUT}:${SITE}:HUDP:DISCO:s") {
 	field(ONAM, "ON")
 	field(ZNAM, "OFF")
 	field(DESC, "")
 	field(DTYP, "Soft Channel")
-	field(DOL, "${UUT}:10:HUDP:DISCO:r NPP")
+	field(DOL, "${UUT}:${SITE}:HUDP:DISCO:r NPP")
 	field(OMSL, "closed_loop")
-	field(OUT, "${UUT}:10:HUDP:DISCO PP")
+	field(OUT, "${UUT}:${SITE}:HUDP:DISCO PP")
 }
 
-record(longout, "${UUT}:10:HUDP:DISCO:IDX") {
+record(longout, "${UUT}:${SITE}:HUDP:DISCO:IDX") {
 	field(DTYP, "Soft Channel")
 	field(DESC, "Enable Discontinuity Tester")
 	field(DRVL, "0")
 	field(DRVH, "250")
-	field(FLNK, "${UUT}:10:HUDP:DISCO:IDX:w PP")
+	field(FLNK, "${UUT}:${SITE}:HUDP:DISCO:IDX:w PP")
 }
 
-record(longout, "${UUT}:10:HUDP:DISCO:IDX:w"){
+record(longout, "${UUT}:${SITE}:HUDP:DISCO:IDX:w"){
 	field(DTYP, "stream")
 	field(OUT,  "@hudp.proto setDiscoIdx ${SPORT}")	
 	field(DISV, "1")
-	field(SDIS, "${UUT}:10:HUDP:DISCO:IDX:s.PACT")
+	field(SDIS, "${UUT}:${SITE}:HUDP:DISCO:IDX:s.PACT")
 	field(OMSL, "closed_loop")
-	field(DOL,  "${UUT}:10:HUDP:DISCO:IDX PP")
-	field(FLNK, "${UUT}:10:HUDP:DISCO:IDX:IDX PP")
+	field(DOL,  "${UUT}:${SITE}:HUDP:DISCO:IDX PP")
+	field(FLNK, "${UUT}:${SITE}:HUDP:DISCO:IDX:IDX PP")
 }
 
-record(longin, "${UUT}:10:HUDP:DISCO:IDX:r"){
+record(longin, "${UUT}:${SITE}:HUDP:DISCO:IDX:r"){
 	field(DTYP, "stream")
 	field(INP,  "@hudp.proto getDiscoIdx ${SPORT}")	
 	field(SCAN, "2 second")
-	field(FLNK, "${UUT}:10:HUDP:DISCO:IDX:s")
+	field(FLNK, "${UUT}:${SITE}:HUDP:DISCO:IDX:s")
 }
 
-record(longout, "${UUT}:10:HUDP:DISCO:IDX:s") {
+record(longout, "${UUT}:${SITE}:HUDP:DISCO:IDX:s") {
 	field(DTYP, "Soft Channel")
-	field(DOL, "${UUT}:10:HUDP:DISCO:IDX:r NPP")
+	field(DOL, "${UUT}:${SITE}:HUDP:DISCO:IDX:r NPP")
 	field(OMSL, "closed_loop")
-	field(OUT, "${UUT}:10:HUDP:DISCO:IDX PP")
+	field(OUT, "${UUT}:${SITE}:HUDP:DISCO:IDX PP")
 }
 
-record(longin, "${UUT}:10:HUDP:CTRL") {
+record(longin, "${UUT}:${SITE}:HUDP:CTRL") {
 	field(DTYP,  "stream")
 	field(INP,   "@hudp.proto getCtrlRaw ${SPORT}")
 #	field(SCAN,  "I/O Intr")
 	field(SCAN,  "2 second")
 	field(PINI,  "YES")
-	field(FLNK,  "${UUT}:10:HUDP:RX:ENABLED PP")
+	field(FLNK,  "${UUT}:${SITE}:HUDP:RX:ENABLED PP")
 }
 
-record(calc, "${UUT}:10:HUDP:RX:ENABLED") {
-	field(INPA, "${UUT}:10:HUDP:RX:SRC_IP")
-	field(INPB, "${UUT}:10:HUDP:CTRL")
-	field(INPC, "${UUT}:10:HUDP:IP")
-	field(INPD, "${UUT}:10:HUDP:RX:PORT")
+record(calc, "${UUT}:${SITE}:HUDP:RX:ENABLED") {
+	field(INPA, "${UUT}:${SITE}:HUDP:RX:SRC_IP")
+	field(INPB, "${UUT}:${SITE}:HUDP:CTRL")
+	field(INPC, "${UUT}:${SITE}:HUDP:IP")
+	field(INPD, "${UUT}:${SITE}:HUDP:RX:PORT")
 	field(CALC, "A!=0 && B==1 && C!=0 && D!=0")
-	field(FLNK, "${UUT}:10:HUDP:TX:ENABLED PP")
+	field(FLNK, "${UUT}:${SITE}:HUDP:TX:ENABLED PP")
 }
 
-record(calc, "${UUT}:10:HUDP:TX:ENABLED") {
-	field(INPA, "${UUT}:10:HUDP:TX:DST_IP")
-	field(INPB, "${UUT}:10:HUDP:CTRL")
-	field(INPC, "${UUT}:10:HUDP:IP")
+record(calc, "${UUT}:${SITE}:HUDP:TX:ENABLED") {
+	field(INPA, "${UUT}:${SITE}:HUDP:TX:DST_IP")
+	field(INPB, "${UUT}:${SITE}:HUDP:CTRL")
+	field(INPC, "${UUT}:${SITE}:HUDP:IP")
 	field(CALC, "A!=0 && B==1 && C!=0")	
 }
 
-record(mbbo, "${UUT}:10:HUDP:UDP:DATA_SRC") {
+record(mbbo, "${UUT}:${SITE}:HUDP:UDP:DATA_SRC") {
 	field(DTYP, "stream")
 	field(OUT,  "@hdup.proto setUdpDataSrc) ${SPORT}")
 	field(NOBT, "2")
