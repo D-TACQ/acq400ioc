@@ -17,6 +17,8 @@ CTR28=268435456
 CTR16=65536
 CTR20=1048576
 
+ETC0=/etc/acq400/0
+
 source /tmp/u-boot_env
 SN=${dtsn:5:8}
 SN=${SN#0}
@@ -1125,7 +1127,7 @@ load_mb_sites() {
     dist3="CPU"
     if [ $MB_MODEL = "z7io" ]; then
         dist1="COMMSC"; dist2="COMMSC"
-    elif [ $hudp -ne 0 ]; then
+    elif [ $has_hudp -ne 0 ]; then
         dist3=HUDP
     fi
     dblr '"db/acq400mb.db","UUT='${HOST},dist1=${dist1},dist2=${dist2},dist3=${dist3}',SPORT=S0,SPORT2=S0A"'
@@ -1434,7 +1436,6 @@ seqMgtStop() {
 load_mb() {
     echo 1>&2 "load.records:load_mb"
 
-    hudp=0
     case $MB_MODEL in
         acq2206*)
                 ns=6; mt=acq2206;;
@@ -1443,7 +1444,6 @@ load_mb() {
         acq2006|acq2006b)
                 ns=6; mt=acq2006;;
         acq1102)
-                acq1102_classify_mgt | grep -q U && hudp=1
                 ns=2; mt=acq1102;;
         acq1002)
                 ns=2; mt=acq1001;;
@@ -1460,12 +1460,13 @@ load_mb() {
                 ns=1; mt=acq1001;;
     esac
 
+    has_hudp=$(cat $ETC0/has_hudp)
     load_mb_base $ns $mt
     load_mb_stats
 
-    [ $hudp -eq 0 ] && grep -q UDP /tmp/fpga_status  && hudp=1
     if [ -e $KB ]; then
-        load_mb_sites $KB $ns $mt $hudp
+# @@todo $mt redundant
+        load_mb_sites $KB $ns $mt
         if [ -e /dev/acq400.0.knobs/sync_out_clk ]; then
             load_mb_sync $KB
         fi
@@ -1476,18 +1477,19 @@ load_mb() {
     ls /dev | grep -q acq400.1[0123].knobs
     if [ $? -eq 0 ]; then    
         source /usr/local/epics/scripts/load.mgt400
+# @@todo seqMgtStop Aurora only?. Check $mt ..
         [ -e /dev/acq400.13.knobs ] && seqMgtStop A
         [ -e /dev/acq400.12.knobs ] && seqMgtStop B
         [ -e /dev/acq400.11.knobs ] && [ "$mt" = "z7io" ] && seqMgtStop C
-        if [ $hudp -eq 1 ]; then
-            create_asyn_channel S10 127.0.0.1:4230
-            PRAMS="UUT=${HOST},SITE=10"
+        for hs in $(echo $has_hudp | awk -F, '{ for(ii=1; ii <= NF; ++ii) print $ii }'); do
+            create_asyn_channel S$hs 127.0.0.1:$(4220+$hs)
+            PRAMS="UUT=${HOST},SITE=$hs"
             dblr '"db/counter.db","'${PRAMS},CTRMAX=2147483648,DT=1,DTC=1,lname=HUDP_RX_PKT,pname=rx_pkt_count'"'
             dblr '"db/counter.db","'${PRAMS},CTRMAX=2147483648,DT=1,DTC=1,lname=HUDP_TX_PKT,pname=tx_pkt_count'"'
             dblr '"db/counter.db","'${PRAMS},CTRMAX=1048576,DT=1,DTC=1,lname=HUDP_DISCO,pname=disco_count'"'
-            dblr '"db/hudp.db","'${PRAMS},SPORT=S10'"'
+            dblr '"db/hudp.db","'${PRAMS},SPORT=S$hs'"'
             echo "seq hudpResetOnStop \"uut=${HOST},verbose=${HUDP_VERBOSE:-0}\"" >>/tmp/st_post.cmd
-        fi
+        done
     fi
 
     if [ "x$SHOTBUSY_OK" = "xy" ] && [ -e /dev/gpio/LED/ACT_G ]; then
