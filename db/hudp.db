@@ -210,7 +210,7 @@ record(calc, "${UUT}:${SITE}:HUDP:TX:ENABLED") {
 
 record(mbbo, "${UUT}:${SITE}:HUDP:UDP:DATA_SRC") {
 	field(DTYP, "stream")
-	field(OUT,  "@hdup.proto setUdpDataSrc) ${SPORT}")
+	field(OUT,  "@hudp.proto setUdpDataSrc) ${SPORT}")
 	field(NOBT, "2")
 	field(ZRST, "AGG")
 	field(ONST, "COMMSA")
