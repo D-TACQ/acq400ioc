@@ -11,8 +11,10 @@ program calmon
 option +r;
 
 // nb : always site 1. That's a consequence of Master/Slave
-int hi_res_mode; assign hi_res_mode to "{uut}:1:ADC_MODE";
-monitor hi_res_mode;
+
+int agg_s1; 		assign agg_s1 to "{uut}:0:AGGREGATOR:S1";
+int hi_res_mode;  	assign hi_res_mode;	// dynamic assign and monitor
+
 int hi_res_mode0;
 
 int adc_cal_mode; assign adc_cal_mode to "{uut}:{site}:ADC_CAL";
@@ -70,13 +72,20 @@ static char* getKey(int hrm, int gain)
 ss calmon {
 	state init {
 		when() {
-			printf("calmon R1000 site:%s\n", site);
-			pvGet(hi_res_mode);  hi_res_mode0 = hi_res_mode;
-			pvGet(has_ch_gains);
-			uut = macValueGet("uut"); 
+			uut = macValueGet("uut");
 			if (macValueGet("site") != 0){
 				site = macValueGet("site");
 			}
+			printf("calmon R1000 %s site:%s\n", uut, site);
+
+			pvGet(agg_s1);
+			/* assign hi_res_mode to "{uut}:1:ADC_MODE"; */
+			snprintf(pvfield, 100, "%s:%d:ADC_MODE", uut, agg_s1);
+			pvAssign(hi_res_mode, pvfield);
+			pvMonitor(hi_res_mode);
+			pvGet(hi_res_mode);  hi_res_mode0 = hi_res_mode;
+			pvGet(has_ch_gains);
+
 			sprintf(fname, "/dev/sites/%s/caldef.xml",  site);			
 			doc = acq400_openDoc(fname, &nchan);
 			adc_cal_mode = adc_cal_mode0 = acq400_isCalibrated(doc);
