@@ -1127,7 +1127,7 @@ load_mb_sites() {
     dist3="CPU"
     if [ $MB_MODEL = "z7io" ]; then
         dist1="COMMSC"; dist2="COMMSC"
-    elif [ $has_hudp -ne 0 ]; then
+    elif [ ! -z $has_hudp ] && [ $has_hudp -ne 0 ]; then
         dist3=HUDP
     fi
     dblr '"db/acq400mb.db","UUT='${HOST},dist1=${dist1},dist2=${dist2},dist3=${dist3}',SPORT=S0,SPORT2=S0A"'
@@ -1460,7 +1460,7 @@ load_mb() {
                 ns=1; mt=acq1001;;
     esac
 
-    has_hudp=$(cat $ETC0/has_hudp)
+    has_hudp=$(cat $ETC0/has_hudp | grep -v none)
     load_mb_base $ns $mt
     load_mb_stats
 
