@@ -332,7 +332,56 @@ record(mbbi, "${UUT}:MODE:TRANS_ACT:STATE") {
 	field(PINI, "YES")
 }
 
+record(mbbo, "${UUT}:SIG:SOFT_TRIGGER:REPEAT") {
+        field(DTYP, "Soft Channel")
+        field(NOBT, "3")
+        field(ZRST, "IDLE")
+        field(ONST, "1 Hz")
+        field(TWST, "2 Hz")
+        field(THST, "5 Hz")
+        field(FRST, "10 Hz")
+        field(FVST, "20 Hz")
+        field(SXST, "50 Hz")
+        field(SVST, "100 Hz")
 
+        field(ZRVL, "0")
+        field(ONVL, "1")
+        field(TWVL, "2")
+        field(THVL, "5")
+        field(FRVL, "10")
+        field(FVVL, "20")
+        field(SXVL, "50")
+        field(SVVL, "100")
+
+        field(FLNK, "${UUT}:SIG:SOFT_TRIGGER:REPEAT:wz")
+}
+
+record(longout, "${UUT}:SIG:SOFT_TRIGGER:REPEAT:COUNT") {
+        field(FLNK, "${UUT}:SIG:SOFT_TRIGGER:REPEAT:wnz")
+        field(DRVL, "-1")
+        field(DRVH, "5000")
+        field(PINI, "YES")
+        field(VAL,  "-1")
+}
+
+record(calcout, "${UUT}:SIG:SOFT_TRIGGER:REPEAT:wz") {
+        field(DTYP, "stream")
+        field(INPA, "${UUT}:SIG:SOFT_TRIGGER:REPEAT.RVAL")
+        field(CALC, "A")
+        field(OOPT, "When Zero")
+        field(DOPT, "Use CALC")
+        field(OUT, "@mb.proto setSoftTrigger ${SPORT}")
+        field(FLNK, "${UUT}:SIG:SOFT_TRIGGER:REPEAT:wnz")
+}
+record(calcout, "${UUT}:SIG:SOFT_TRIGGER:REPEAT:wnz") {
+        field(DTYP, "stream")
+        field(INPA, "${UUT}:SIG:SOFT_TRIGGER:REPEAT.RVAL")
+        field(INPB, "${UUT}:SIG:SOFT_TRIGGER:REPEAT:COUNT")
+        field(CALC, "A")
+        field(OOPT, "When Non-zero")
+        field(DOPT, "Use CALC")
+        field(OUT, "@mb.proto setSoftTriggerRepeat ${SPORT}")
+}
 
 record(fanout, "${UUT}:MODE:TRANS_ACT:STATE_f") {
 	field(SELM, "All")
