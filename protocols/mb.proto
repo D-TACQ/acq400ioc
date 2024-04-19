@@ -155,7 +155,7 @@ setSoftTrigger {
 }
 
 setSoftTriggerRepeat {
-        out "soft_trigger -1 %d";
+        out "soft_trigger %(B)d %d";
         in;
 }
 
