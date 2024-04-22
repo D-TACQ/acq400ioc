@@ -1,5 +1,4 @@
-	# gpg_mode
-	# gpg_enable		
+# GPG [Gate] Pulse Generator
 
 record (bo, "${UUT}:${SITE}:GPG:ENABLE")	{
 	field(DESC, "Enable GPG")
@@ -11,7 +10,7 @@ record (bo, "${UUT}:${SITE}:GPG:ENABLE")	{
 
 record (bo, "${UUT}:${SITE}:GPG:ENABLE:w")	{
 	field(DTYP, "stream")
-	field(OUT,  "@mb.proto set_gpg_enable() ${SPORT}")
+	field(OUT,  "@gpg.proto set_gpg_enable() ${SPORT}")
 	field(DISV, "1")
 	field(SDIS, "${UUT}:${SITE}:GPG:ENABLE:s.PACT")
 	field(OMSL, "closed_loop")
@@ -20,7 +19,7 @@ record (bo, "${UUT}:${SITE}:GPG:ENABLE:w")	{
 
 record (bi, "${UUT}:${SITE}:GPG:ENABLE:r") {
 	field(DTYP, "stream")
-	field(INP,  "@mb.proto get_gpg_enable() ${SPORT}")	
+	field(INP,  "@gpg.proto get_gpg_enable() ${SPORT}")
 	field(SCAN, "1 second")
 	field(PINI, "YES")	
 	field(FLNK, "${UUT}:${SITE}:GPG:ENABLE:s")
@@ -45,7 +44,7 @@ record (mbbo, "${UUT}:${SITE}:GPG:MODE")	{
 
 record (mbbo, "${UUT}:${SITE}:GPG:MODE:w")	{
 	field(DTYP, "stream")
-	field(OUT,  "@mb.proto set_gpg_mode() ${SPORT}")	
+	field(OUT,  "@gpg.proto set_gpg_mode() ${SPORT}")
 	field(NOBT, "2")
 	field(DISV, "1")
 	field(SDIS, "${UUT}:${SITE}:GPG:MODE:s.PACT")
@@ -55,7 +54,7 @@ record (mbbo, "${UUT}:${SITE}:GPG:MODE:w")	{
 
 record (mbbi, "${UUT}:${SITE}:GPG:MODE:r") {
 	field(DTYP, "stream")
-	field(INP,  "@mb.proto get_gpg_mode() ${SPORT}")	
+	field(INP,  "@gpg.proto get_gpg_mode() ${SPORT}")
 	field(NOBT, "2")	
 	field(SCAN, "1 second")
 	field(PINI, "YES")	
@@ -72,13 +71,13 @@ record (mbbo, "${UUT}:${SITE}:GPG:MODE:s") {
 
 record(longin, "${UUT}:${SITE}:GPG:DBG:GPGTOP") {
 	field(DTYP, "stream")
-	field(INP,  "@mb.proto get_gpg_top(${UUT}:${SITE}:GPG:DBG) ${SPORT}")
+	field(INP,  "@gpg.proto get_gpg_top(${UUT}:${SITE}:GPG:DBG) ${SPORT}")
 	field(SCAN, "1 second")
 }
 
 record(longin, "${UUT}:${SITE}:GPG:DBG:RSTATE"){
 	field(DTYP, "stream")
-	field(INP,  "@mb.proto get_gpg_state(${UUT}:${SITE}:GPG:DBG) ${SPORT}")
+	field(INP,  "@gpg.proto get_gpg_state(${UUT}:${SITE}:GPG:DBG) ${SPORT}")
 	field(SCAN, ".1 second")
 	field(FLNK, "${UUT}:${SITE}:GPG:DBG:STATE")	
 	field(DISV, "1")
@@ -126,7 +125,7 @@ record(longin, "${UUT}:${SITE}:GPG:DBG:FIN"){
 # CNT PULSE1 PULSE2 SMS
 record(stringin, "${UUT}:${SITE}:GPG:DBG:DEF"){
 	field(DTYP, "stream")
-	field(INP,  "@mb.proto get_pulse_def ${SPORT}")
+	field(INP,  "@gpg.proto get_pulse_def ${SPORT}")
 	field(SCAN, "5 second")
 }
 
@@ -140,7 +139,7 @@ record (longout, "${UUT}:${SITE}:GPG:TIMESCALER")        {
 
 record (longout, "${UUT}:${SITE}:GPG:TIMESCALER:w")      {
         field(DTYP, "stream")
-        field(OUT,  "@mb.proto set_gpg_timescaler() ${SPORT}")
+        field(OUT,  "@gpg.proto set_gpg_timescaler() ${SPORT}")
         field(DISV, "1")
         field(SDIS, "${UUT}:${SITE}:GPG:TIMESCALER:s.PACT")
         field(OMSL, "closed_loop")
@@ -149,8 +148,8 @@ record (longout, "${UUT}:${SITE}:GPG:TIMESCALER:w")      {
 
 record (longin, "${UUT}:${SITE}:GPG:TIMESCALER:r") {
         field(DTYP, "stream")
-        field(INP,  "@mb.proto get_gpg_timescaler() ${SPORT}")      
-        field(SCAN, "5 second")
+        field(INP,  "@gpg.proto get_gpg_timescaler() ${SPORT}")
+        field(SCAN, "2 second")
         field(PINI, "YES")      
         field(FLNK, "${UUT}:${SITE}:GPG:TIMESCALER:s")
 }
@@ -159,17 +158,35 @@ record (longout, "${UUT}:${SITE}:GPG:TIMESCALER:s") {
         field(DTYP, "Soft Channel")
         field(OMSL, "closed_loop")      
         field(DOL, "${UUT}:${SITE}:GPG:TIMESCALER:r NPP")   
-        field(OUT, "${UUT}:${SITE}:GPG:TIMESCALER PP")      
+        field(OUT, "${UUT}:${SITE}:GPG:TIMESCALER PP")
+        field(FLNK, "${UUT}:${SITE}:GPG:TICK")
 }
 
-# deliberate hard code WF
+record(calcout, "${UUT}:${SITE}:GPG:CLOCKSCALE") {
+        field(INPA, "${UUT}:0:SIG:TRG_MB:FREQ")
+        field(INPB, "${UUT}:${SITE}:GPG:TIMESCALER")
+        field(CALC, "A/B")
+        field(EGU,  "Hz")
+        field(OCAL, "1e9/VAL")
+        field(DOPT, "Use OCAL")
+        field(OOPT, "Every Time")
+        field(FLNK, "${UUT}:${SITE}:GPG:TICK")
+}
+
+record(ao, "${UUT}:${SITE}:GPG:TICK") {
+        field(DTYP, "Soft Channel")
+        field(EGU,  "ns")
+}
+
 record(waveform, "${UUT}:${SITE}:GPG:STL") {       
         field(DTYP, "stream")
-        field(INP, "@mb.proto set_stl STL${SITE}")        
+        field(INP, "@gpg.proto set_stl STL${SITE}")
         field(DESC, "STL for PG pattern")
         field(NELM, "1024")
         field(FTVL,"STRING")
 }
+
+
 
 
 

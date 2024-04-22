@@ -1,0 +1,49 @@
+Terminator = LF;
+ExtraInput = Ignore;
+
+
+get_gpg_state {
+        out "gpg_debug";
+        in "%d,%(\$1:PTR)d,%(\$1:CTR)d,%(\$1:STATE)d,%(\$1:OSTATE)x,%(\$1:UNTIL)d";
+}
+
+get_gpg_enable {
+        out "gpg_enable";
+        in "%d";
+}
+set_gpg_enable {
+        out "gpg_enable=%d";
+        in;
+}
+
+get_gpg_mode {
+        out "gpg_mode";
+        in "%d";
+}
+set_gpg_mode {
+        out "gpg_mode=%d";
+        in;
+}
+
+get_gpg_top {
+        out "gpg_top_count";
+        in "%d,%(\$1:UBX)x,%(\$1:FIN)x";
+}
+
+get_pulse_def {
+        out "pulse_def";
+        in "%39c";
+}
+
+get_gpg_timescaler {
+        out "gpg_timescaler";
+        in "%d";
+}
+set_gpg_timescaler {
+        out "gpg_timescaler=%d";
+        in;
+}
+
+set_stl {
+        out "%s";
+}
