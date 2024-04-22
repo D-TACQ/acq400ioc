@@ -929,6 +929,12 @@ load_gpg() {
         dblr '"db/signal.db","'${PG0}',FNAM=SPAD1_US,FN=spad1_us,ZNAM=disable,ONAM=enable,DISV=1"'
     fi
     create_asyn_channel SG${site} 127.0.0.1:$((4220+${site}))
+    if [ $site -eq 0 ]; then
+        stlport=4541
+    else
+        stlport=$((45001+site*10))
+    fi
+    create_asyn_channel STL${site} 127.0.0.1:${stlport}
 }
 
 load_dio482pg() {

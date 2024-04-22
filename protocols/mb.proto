@@ -121,6 +121,10 @@ get_gpg_top {
 	in "%d,%(\$1:UBX)x,%(\$1:FIN)x";
 }
 
+set_stl {
+        out "%s";
+#        in
+}
 
 
 get_pulse_def {

@@ -162,5 +162,14 @@ record (longout, "${UUT}:${SITE}:GPG:TIMESCALER:s") {
         field(OUT, "${UUT}:${SITE}:GPG:TIMESCALER PP")      
 }
 
+# deliberate hard code WF
+record(waveform, "${UUT}:${SITE}:GPG:STL") {       
+        field(DTYP, "stream")
+        field(INP, "@mb.proto set_stl STL${SITE}")        
+        field(DESC, "STL for PG pattern")
+        field(NELM, "1024")
+        field(FTVL,"STRING")
+}
+
 
 
