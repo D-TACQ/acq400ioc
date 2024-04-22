@@ -175,7 +175,7 @@ record(calcout, "${UUT}:${SITE}:GPG:CLOCKSCALE") {
         field(OCAL, "1e9/(A/B)")
         field(DOPT, "Use OCAL")
         field(OOPT, "Every Time")
-        field(OUT, "${UUT}:${SITE}:GPG:TICK")
+        field(OUT, "${UUT}:${SITE}:GPG:TICK PP")
 }
 
 record(ao, "${UUT}:${SITE}:GPG:TICK") {
