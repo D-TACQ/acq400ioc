@@ -106,10 +106,22 @@ set_gpg_mode {
 	in;
 }
 
+get_gpg_timescaler {
+        out "gpg_timescaler";
+        in "%d";
+}
+set_gpg_timescaler {
+        out "gpg_timescaler=%d";
+        in;
+}
+
+
 get_gpg_top {
 	out "gpg_top_count";
 	in "%d,%(\$1:UBX)x,%(\$1:FIN)x";
 }
+
+
 
 get_pulse_def {
 	out "pulse_def";
