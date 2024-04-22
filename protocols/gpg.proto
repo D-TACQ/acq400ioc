@@ -35,6 +35,10 @@ get_pulse_def {
         in "%39c";
 }
 
+set_pulse_def {
+        out "pulse_def %s";
+}
+
 get_gpg_timescaler {
         out "gpg_timescaler";
         in "%d";

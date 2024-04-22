@@ -129,6 +129,11 @@ record(stringin, "${UUT}:${SITE}:GPG:DBG:DEF"){
 	field(SCAN, "5 second")
 }
 
+record(stringout, "${UUT}:${SITE}:GPG:PULSE_DEF"){
+        field(DTYP, "stream")
+        field(OUT,  "@gpg.proto set_pulse_def ${SPORT}")
+}
+
 record (longout, "${UUT}:${SITE}:GPG:TIMESCALER")        {
         field(DESC, "Enable GPG")
         field(DTYP, "Soft Channel")
@@ -159,23 +164,24 @@ record (longout, "${UUT}:${SITE}:GPG:TIMESCALER:s") {
         field(OMSL, "closed_loop")      
         field(DOL, "${UUT}:${SITE}:GPG:TIMESCALER:r NPP")   
         field(OUT, "${UUT}:${SITE}:GPG:TIMESCALER PP")
-        field(FLNK, "${UUT}:${SITE}:GPG:TICK")
+        field(FLNK, "${UUT}:${SITE}:GPG:CLOCKSCALE")
 }
 
 record(calcout, "${UUT}:${SITE}:GPG:CLOCKSCALE") {
-        field(INPA, "${UUT}:0:SIG:TRG_MB:FREQ")
+        field(INPA, "${UUT}:0:SIG:CLK_MB:FREQ")
         field(INPB, "${UUT}:${SITE}:GPG:TIMESCALER")
         field(CALC, "A/B")
         field(EGU,  "Hz")
-        field(OCAL, "1e9/VAL")
+        field(OCAL, "1e9/(A/B)")
         field(DOPT, "Use OCAL")
         field(OOPT, "Every Time")
-        field(FLNK, "${UUT}:${SITE}:GPG:TICK")
+        field(OUT, "${UUT}:${SITE}:GPG:TICK")
 }
 
 record(ao, "${UUT}:${SITE}:GPG:TICK") {
         field(DTYP, "Soft Channel")
         field(EGU,  "ns")
+        field(PINI, "YES")
 }
 
 record(waveform, "${UUT}:${SITE}:GPG:STL") {       
