@@ -461,7 +461,9 @@ load_rgm() {
         radj=${RTM_TRANSLEN_ADJ:-0};;
     esac
     blen=$(cat /sys/module/acq420fmc/parameters/bufferlen)
-    rgmprams="BLEN=${blen},RADJ=${radj},BPB=${BURSTS_PER_BUFFER:-1},ES_SPREAD=${esp:-1}"
+    esp=${esp:-1}
+    echo "ES_SPREAD=$esp" >>/tmp/st_internals.sh
+    rgmprams="BLEN=${blen},RADJ=${radj},BPB=${BURSTS_PER_BUFFER:-1},ES_SPREAD=${esp}"
     dblr '"db/acq4xx_rgm.db","'${mp},${rgmprams}'"'
 }
 
