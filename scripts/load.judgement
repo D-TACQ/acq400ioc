@@ -36,6 +36,9 @@ echo dbLoadRecords\(\"db/asynRecord.db\",\"P=${HOST}:,R=asyn:J1,PORT=J1,ADDR=0,O
 echo dbLoadRecords\(\"db/asynRecord.db\",\"P=${HOST}:,R=asyn:J1,PORT=J1,ADDR=3,OMAX=80,IMAX=80,TB3=0,TIB0=0\"\)
 
 
+if [ "x$acq400JudgementNJ" = "x1" ]; then
+        echo "# JudgementNJ, cut it short"
+else
 ix=0
 eval $(get.site 0 aggregator)
 
@@ -64,3 +67,4 @@ done
 # "${UUT}:JDG:CHX:BURST_COUNT"
 cprams="UUT=${HOST},SITE=JDG,SIG=CHX,CTRMAX=999999,DTC=1"
 dblr '"db/_counter.db","'${cprams},lname=BURST'"'
+fi
