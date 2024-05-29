@@ -423,11 +423,12 @@ short& RawBuffer<short, 2>::element(int is, int ic, short& val) {
 template <class ETYPE>
 class acq400JudgementNJ : public acq400Judgement {
 
+protected:
 	ETYPE* RAW;
 
 	static const asynParamType AATYPE;
 	const unsigned ndma;			/* 1 or 2 */
-
+private:
 	bool calculate(ETYPE* raw)
 	{
 		const int skip = FIRST_SAM;
@@ -476,6 +477,36 @@ public:
 		calculate(raw);
 	}
 };
+
+
+class acq400JudgementNJ_pack24: public acq400JudgementNJ<epicsInt32> {
+	bool calculate(epicsInt32* raw24);
+
+public:
+	acq400JudgementNJ_pack24(const char* portName, int _nchan, int _nsam, const char* _site_channels, int _bursts_per_buffer, unsigned _ndma) :
+		acq400JudgementNJ<epicsInt32>(portName, _nchan, _nsam, _site_channels, _bursts_per_buffer, _ndma)
+	{}
+
+	virtual void handle_burst(int vbn, int offset)
+	{
+		epicsInt32* raw = (epicsInt32*)Buffer::the_buffers[ib]->getBase()+offset;
+		handle_es((unsigned*)raw);
+
+
+		updateTimeStamp(offset);
+		setIntegerParam(P_SAMPLE_COUNT, sample_count);
+		setIntegerParam(P_CLOCK_COUNT,  clock_count[1]);
+		/** @@todo: not sure how to merge EPICS and SAMPLING timestamps.. go pure EPICS */
+		setIntegerParam(P_BURST_COUNT, burst_count);
+
+		calculate(raw);
+	}
+};
+
+bool acq400JudgementNJ_pack24::calculate(epicsInt32* raw24)
+{
+	return false;
+}
 
 template<>
 void acq400JudgementNJ<epicsInt16>::doDataUpdateCallbacks(int ic)
@@ -1005,6 +1036,7 @@ int acq400Judgement::factory(const char *portName, int nchan, int maxPoints, uns
 		exit(1);
 	}
 	int judgementNJ = ::getenv_default("acq400JudgementNJ", 0);
+	int pack24 = ::getenv_default("acq400JudgementNJ_P24", 0);
 
 	switch(data_size){
 	case sizeof(short):
@@ -1015,7 +1047,9 @@ int acq400Judgement::factory(const char *portName, int nchan, int maxPoints, uns
 		}
 		return(asynSuccess);
 	case sizeof(long):
-		if (judgementNJ){
+		if (pack24){
+			acq400JudgementNJ_pack24(portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
+		}else if (judgementNJ){
 			new acq400JudgementNJ<epicsInt32> (portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
 		}else{
 			new acq400JudgementImpl<epicsInt32> (portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
