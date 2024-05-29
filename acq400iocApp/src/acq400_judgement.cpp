@@ -563,6 +563,9 @@ bool acq400JudgementNJ_pack24::calculate(epicsInt32* raw24)
 			RAW[isam+nsam*ic++] = *pr24++;
 		}
 	}
+	for (int ic = 0; ic < nchan; ic++){
+		doCallbacksInt32Array(&RAW[ic*nsam], nsam, P_RAW, ic);
+	}
 
 	return false;
 }
