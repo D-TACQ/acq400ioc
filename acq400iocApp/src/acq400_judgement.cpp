@@ -479,13 +479,26 @@ public:
 };
 
 
+
 class acq400JudgementNJ_pack24: public acq400JudgementNJ<epicsInt32> {
 	bool calculate(epicsInt32* raw24);
 
+	const int nchan24;   // number of analog channels
+	const int chwords;   // number of words taken by the packed data
+	const int ssw;	     // sample size in words
+
 public:
 	acq400JudgementNJ_pack24(const char* portName, int _nchan, int _nsam, const char* _site_channels, int _bursts_per_buffer, unsigned _ndma) :
-		acq400JudgementNJ<epicsInt32>(portName, _nchan, _nsam, _site_channels, _bursts_per_buffer, _ndma)
-	{}
+		acq400JudgementNJ<epicsInt32>(portName, _nchan, _nsam, _site_channels, _bursts_per_buffer, _ndma),
+		nchan24((nchan/32)*32),
+		chwords((nchan/32)*24),
+		ssw(chwords+nchan%32)
+	{
+		if (verbose){
+			fprintf(stderr, "acq400JudgementNJ_pack24 nchan:%d nchan24:%d chwords:%d ssw:%d\n",
+				nchan, nchan24, chwords, ssw);
+		}
+	}
 
 	virtual void handle_burst(int vbn, int offset)
 	{
@@ -501,10 +514,56 @@ public:
 
 		calculate(raw);
 	}
+	static int verbose;
 };
+
+int acq400JudgementNJ_pack24::verbose = ::getenv_default("acq400JudgementNJ_pack24_verbose", 0);
+
+
+#define AAS 24
+#define BBS 16
+#define CCS  8
+#define DDS  0
+
+#define AA (0xFFU<<AAS)
+#define BB (0xFFU<<BBS)
+#define CC (0xFFU<<CCS)
+#define DD (0xFFU<<DDS)
+
+
+#define UNPACK24_0(ibp) ((ibp[0]&(BB|CC|DD)) <<  8                       | chid++)
+#define UNPACK24_1(ibp) ((ibp[0]&(AA      )) >> 16| (ibp[1]&(CC|DD)) <<16| chid++)
+#define UNPACK24_2(ibp) ((ibp[1]&(AA|BB   )) >>  8| (ibp[2]&(DD))    <<24| chid++)
+#define UNPACK24_3(ibp) ((ibp[2]&(AA|BB|CC))                             | chid++)
 
 bool acq400JudgementNJ_pack24::calculate(epicsInt32* raw24)
 {
+	if (verbose){
+		printf("INFO %s nchan %d raw24:%p\n", __FUNCTION__, nchan, raw24);
+	}
+	raw24 += FIRST_SAM*ssw;
+
+	for (int isam = 0; isam < nsam-FIRST_SAM; ++isam, raw24 += ssw){
+		epicsInt32* pr24 = raw24;
+		epicsInt32 ibp[3];
+		int ic = 0;
+		unsigned chid = 0x20;
+
+		for (; ic < nchan24; ){
+			ibp[0] = *pr24++;
+			ibp[1] = *pr24++;
+			ibp[2] = *pr24++;
+
+			RAW[isam+nsam*ic++] = UNPACK24_0(ibp);
+			RAW[isam+nsam*ic++] = UNPACK24_1(ibp);
+			RAW[isam+nsam*ic++] = UNPACK24_2(ibp);
+			RAW[isam+nsam*ic++] = UNPACK24_3(ibp);
+		}
+		for ( ; ic < nchan; ){
+			RAW[isam+nsam*ic++] = *pr24++;
+		}
+	}
+
 	return false;
 }
 
@@ -1048,7 +1107,7 @@ int acq400Judgement::factory(const char *portName, int nchan, int maxPoints, uns
 		return(asynSuccess);
 	case sizeof(long):
 		if (pack24){
-			acq400JudgementNJ_pack24(portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
+			new acq400JudgementNJ_pack24(portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
 		}else if (judgementNJ){
 			new acq400JudgementNJ<epicsInt32> (portName, nchan, maxPoints, site_channels, bursts_per_buffer, ndma);
 		}else{
