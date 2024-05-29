@@ -1092,7 +1092,7 @@ load_mb_base() {
         esac
     fi
     dblr '"db/sync_role.db","UUT='${HOST}',SPORT=S0R"'
-    load_gpg
+    [ -e /etc/acq400/0/gpg_timescaler ] && load_gpg
 }
 
 isRevA() {
