@@ -36,9 +36,6 @@ echo dbLoadRecords\(\"db/asynRecord.db\",\"P=${HOST}:,R=asyn:J1,PORT=J1,ADDR=0,O
 echo dbLoadRecords\(\"db/asynRecord.db\",\"P=${HOST}:,R=asyn:J1,PORT=J1,ADDR=3,OMAX=80,IMAX=80,TB3=0,TIB0=0\"\)
 
 
-if [ "x$acq400JudgementNJ" = "x1" ]; then
-        echo "# JudgementNJ, cut it short"
-else
 ix=0
 eval $(get.site 0 aggregator)
 
@@ -49,22 +46,26 @@ ES_SPREAD=${ES_SPREAD:-1}
 nsam2=$((nsam-WIN_R_LIM-ES_SPREAD))
 
 for site in $(echo $sites | tr , \  ); do
-	nchan=$(get.site $site NCHAN)
         sitem1=$((site-1))
 	echo dbLoadRecords\(\"db/judgementCommonSite.db\",\"${PRAMS},SITE=${site},SITEM1=${sitem1}\"\)
 
-	for ch in $(seq 1 ${nchan}); do		
-		CH=$(printf "%02d" $ch)		
-		echo dbLoadRecords\(\"db/${CHDB}\",\"${PRAMS},FN=MU,PROKEY=MASK_UPPER,NSAM=${nsam},SITE=${site},CH=${CH},IX=${ix}\"\)
-		echo dbLoadRecords\(\"db/${CHDB}\",\"${PRAMS},FN=ML,PROKEY=MASK_LOWER,NSAM=${nsam},SITE=${site},CH=${CH},IX=${ix}\"\)
-		echo dbLoadRecords\(\"db/judgementWin.db\",\"${PRAMS},NSAM=${nsam},NSAM2=${nsam2},SITE=${site},CH=${CH},IX=${ix}\"\)
-		ix=$((ix+1))
-	done
-	echo dbLoadRecords\(\"db/judgementWinM.db\",\"${PRAMS},NSAM=${nsam},NSAM2=${nsam2},SITE=${site},CH=ALL,IX=${NCHAN}\"\)
+	if [ "x$acq400JudgementNJ" = "x199" ]; then
+		echo "# JudgementNJ, cut it short"
+	else
+		nchan=$(get.site $site NCHAN)
+		for ch in $(seq 1 ${nchan}); do
+			CH=$(printf "%02d" $ch)
+			echo dbLoadRecords\(\"db/${CHDB}\",\"${PRAMS},FN=MU,PROKEY=MASK_UPPER,NSAM=${nsam},SITE=${site},CH=${CH},IX=${ix}\"\)
+			echo dbLoadRecords\(\"db/${CHDB}\",\"${PRAMS},FN=ML,PROKEY=MASK_LOWER,NSAM=${nsam},SITE=${site},CH=${CH},IX=${ix}\"\)
+			echo dbLoadRecords\(\"db/judgementWin.db\",\"${PRAMS},NSAM=${nsam},NSAM2=${nsam2},SITE=${site},CH=${CH},IX=${ix}\"\)
+			ix=$((ix+1))
+		done
+		echo dbLoadRecords\(\"db/judgementWinM.db\",\"${PRAMS},NSAM=${nsam},NSAM2=${nsam2},SITE=${site},CH=ALL,IX=${NCHAN}\"\)
+	fi
 	echo >>/tmp/st_post.cmd "seq judge_win_clr_all \"uut=${HOST},site=${site},nchan=${nchan},wmin=2,wmax=${nsam},priority=0\""
 done
 
 # "${UUT}:JDG:CHX:BURST_COUNT"
 cprams="UUT=${HOST},SITE=JDG,SIG=CHX,CTRMAX=999999,DTC=1"
 dblr '"db/_counter.db","'${cprams},lname=BURST'"'
-fi
+
