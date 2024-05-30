@@ -50,6 +50,12 @@ ss rtm_buffer_mon {
 				verbose = macValueGet("verbose")[0] - '0';
 			}
 			pvGet(maxblen);
+			pvGet(blen);
+			if (blen != maxblen){
+				printf(PNAME "init: change maxblen from %d to blen %d\n", maxblen, blen);
+				maxblen = blen;
+				pvPut(maxblen);
+		        }
 		} state wait_rgm_change
 	}
 	state wait_rgm_change {
