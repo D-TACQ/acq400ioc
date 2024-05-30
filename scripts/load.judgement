@@ -22,12 +22,6 @@ else
     CHDB=judgementCh.db
 fi
 
-if [ -e /etc/acq400/$S1/pack24 ] && [ $(cat /etc/acq400/$S1/pack24) -eq 1 ]; then
-        echo export acq400JudgementNJ_P24=1
-        export acq400JudgementNJ_P24=1
-fi
-
-
 SITEC=
 DELIM=
 for s in $(echo $sites | tr , \  ); do
