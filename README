@@ -13,6 +13,15 @@ however, any aliases set in /mnt/local/sysconfig/site-aliases.db will be loaded 
 at build time. So we hope that sites can tolerate the canonical ACQ400 names along with their
 site-conformant names as aliases.
 
+## alias_all
+
+create an alias for every public PV name. This is more reliable than "HOST prefix substitution" below.
+
+### Boot the system
+### run this once : ./scripts/alias_all ALIAS_PREFIX
+### reboot
+
+
 ## HOST prefix substitution
 
 -make aliases for all public names by change the PV PREFIX from $(hostname)

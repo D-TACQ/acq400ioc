@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# creates an alias for every public record.
+# run this ONCE after boot, then reboot.
+
+# inputs: $1=ALIASNAME, $2=HOSTNAME (default: $(hostname))
+# uses: /tmp/records.dbl
+# outputs: /mnt/local/sysconfig/site-aliases.db
+
+AN=${1:-z7io_999}
+HN=${2:-$(hostname)}
+
+
+grep ^${HN} /tmp/records.dbl | grep -v [a-z]$ >/tmp/records.pub
+cat /tmp/records.pub | sed -e "s/$HN/$AN/" > /tmp/alias.pub
+paste /tmp/records.pub /tmp/alias.pub | paste  /tmp/records.pub /tmp/alias.pub | awk '{ printf ("alias(%s, %s)\n", $1, $2)}' > /mnt/local/sysconfig/site-aliases.db
+
