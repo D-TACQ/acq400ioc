@@ -111,21 +111,50 @@ export WF_ACQ_HOST_WINDOW_PER_CHANNEL=y
 # /usr/local/epics/scripts/add_W1.init W2 LNK2
 
 # JUDGEMENT:
-append to /mnt/local/sysconfig/epics.sh
-export SIZE=1024
-# # single script handles data16 and data32..
-export IOC_PREINIT=./scripts/load.judgement
-export acq400_Judgement_FIRST_SAM=1
-# for 50Hz and above, RTM adjusts buffer size full auto
-export BURSTS_PER_BUFFER=2
-export RTM_BUFFER_MON=y
-export RTM_BUFFER_MON_VERBOSE=1
+## JUDGMENT: a burst mode rapid scope / mask / windowed stats function
+## on a modern SYSCONFIG, this is configured by a single setting in acq400.sh;
+## then, epics.sh, a shell function completes the EPICS configuration and
+## in rc.user, a shell function completes the BURST mode definition.
 
-# Window right limit: default nsam-4 should be good, but with 2xACQ424, -6 works better
-# export WIN_R_LIM=4
+see /mnt/local/sysconfig/acq400.sh, uncomment one of:
+
+```
+# ACQ400_JUDGEMENT: Burst mode rapid update, with mask and stats
+# Rapid Scope, 256 points, external trigger to 50Hz
+#ACQ400_JUDGEMENT="256 d0"
+# Rapid Scope, 256 points, internal trigger to 50Hz
+#ACQ400_JUDGEMENT="256 d1"
+# Rapid Scope, 1024 points, internal trigger to 10Hz
+#ACQ400_JUDGEMENT="1024 d1"
+# Rapid Scope, 4096 points, internal trigger to 2Hz
+#ACQ400_JUDGEMENT="4096 d1"
+# for normal streaming, leave all ACQ400_JUDGEMENT above commented out
+```
+## The goal is to have a single setting to change all, but there are other specialist ttweaks available in /mnt/local/sysconfig/epics.sh
+```
+judgement() {
+# short trace length, rapid update 50Hz possible
+# $1:size, $2:dX (don't care) $3:BPB
+	export SIZE=${1:-128}
+# round to the nearest 10
+	export SIZE=$((${SIZE%[123456789]*}*10))
+	export IOC_PREINIT=./scripts/load.judgement
+	export BURSTS_PER_BUFFER=${3:-1}
+	export RTM_BUFFER_MON=y
+	export RTM_BUFFER_MON_VERBOSE=1
+}
+
+```
+## adjustment for off by one error in some personalities eg ACQ424
+export RTM_TRANSLEN_ADJ=2
+## bufferlength optimisation for burst mode is now AUTOMATED by rtm_buffer_mon
+## if the burst rate is high >10Hz, you might get better results with multiple bursts per buffer.
+## increase bufferlen accordingly, and set this variable (default is 1)
 
 
-## rc.user:
+
+## function in rc.user (do not change):
+```
 judgement() {
 # short trace length, rapid update 50Hz possible
 set.site 1 RTM_TRANSLEN 128
@@ -133,31 +162,7 @@ set.site 1 RGM RTM
 set.site 1 RGM:DX d0
 set.site 1 RGM:SENSE rising
 }
-## epics.sh
-judgement() {
-# short trace length, rapid update 50Hz possible
-export SIZE=128
-export IOC_PREINIT=./scripts/load.judgement
-export acq400_Judgement_FIRST_SAM=1
-}
-
-# adjustment for off by one error in some personalities eg ACQ424
-export RTM_TRANSLEN_ADJ=2
-# bufferlength optimisation for burst mode is now AUTOMATED by rtm_buffer_mon
-# if the burst rate is high >10Hz, you might get better results with multiple bursts per buffer.
-# increase bufferlen accordingly, and set this variable (default is 1)
-export BURSTS_PER_BUFFER=${BURSTS_PER_BUFFER:-1}
-
-# for rapid judgement update, single call for easy comment out ..
-# ENABLE JUDGEMENT
-judgement() {
-export SIZE=120
-export IOC_PREINIT=./scripts/load.judgement
-export acq400_Judgement_FIRST_SAM=1
-export acq400JudgementImpl_VERBOSE=0
-export acq400JudgementImpl_CBCUTOFF=999
-}
-# judgement
+```
 
 # BURST MODE LIVE SCOPE. 
 # This is largely superceded by "Judgement", but for the record:
@@ -168,6 +173,17 @@ echo >> /etc/sysconfig/acq400.conf "export StreamHead_LDI_SOURCE=%s.bq"
 #echo >> /etc/sysconfig/acq400.conf "export DemuxBufferVerbose=1"
 echo >> /etc/sysconfig/acq400.conf "export DemuxBufferSize=131072"
 echo "STREAM_OPTS=" >> /etc/sysconfig/acq400_streamd.conf
+
+
+# Rapid live plot with continuous data: JUDGEMENT_NJ
+## variant of the Judgement module, does rapid plots with "No Judgement".
+## works with continuous data, to enable, uncomment in /mnt/local/sysconfig/acq400.sh:
+```
+# for rapid update with normal streaming, not burst
+# Rapid update, no trigger, No Judgment:
+#ACQ400_JUDGEMENT_NJ="1024"
+```
+
 
 example python app:
 
