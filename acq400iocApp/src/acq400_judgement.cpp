@@ -261,9 +261,23 @@ void acq400Judgement::task_get_params()
 	fprintf(stderr, "%s set FIRST_SAM=%d\n", __FUNCTION__, FIRST_SAM);
 
 }
+
+bool epicsTimeDiffLessThan(epicsTimeStamp& t1, epicsTimeStamp& t0, double tgts)
+{
+	epicsTime et1 = t1;
+	epicsTime et0 = t0;
+
+
+	return (et1 - et0) < tgts;
+}
+
 void acq400Judgement::task()
 {
 	task_get_params();
+
+	int throttle = ::getenv_default("acq400Judgement_THROTTLE_HZ", 0);
+	double throttle_s = 1.0/throttle;
+	unsigned update = 0;
 
 	int fc = open("/dev/acq400.0.bq", O_RDONLY);
 	assert(fc >= 0);
@@ -280,6 +294,16 @@ void acq400Judgement::task()
 
 	while((ib = getBufferId(fc)) >= 0){
 		epicsTimeGetCurrent(&t1);
+		if (throttle){
+			if (epicsTimeDiffLessThan(t1, t0, throttle_s)){
+				continue;
+			}else{
+				++update;
+				if (acq400Judgement::verbose){
+					fprintf(stderr, "%s update %d period %.3f\n", __FUNCTION__, update, throttle_s);
+				}
+			}
+		}
 		const int blen = nsam*nchan;
 
 		for (int ii = 0; ii < bursts_per_buffer; ++ii){
