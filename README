@@ -151,7 +151,8 @@ export RTM_TRANSLEN_ADJ=2
 ## if the burst rate is high >10Hz, you might get better results with multiple bursts per buffer.
 ## increase bufferlen accordingly, and set this variable (default is 1)
 
-
+# .. reduce network load on fast updates
+# export acq400Judgement_THROTTLE_HZ=2
 
 ## function in rc.user (do not change):
 ```
