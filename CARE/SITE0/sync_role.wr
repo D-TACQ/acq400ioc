@@ -238,7 +238,10 @@ else
         FMB_DEF=40M
         FS_DEF=20M; is_48x && FS_DEF=20M
 	FS=${P2:-$FS_DEF}
-        if [ $FS -eq $FMB_DEF  ]; then
+	if [ $FS -gt 100 ]; then
+		FS=$((FS/10000000))0M
+	fi
+        if [ "$FS" = "$FMB_DEF"  ]; then
             CLKDIV=1
         else
 	        plan=$(in_the_plan $FS)
