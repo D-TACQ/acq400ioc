@@ -302,7 +302,7 @@ load_AO() {
         chg=0
 
         case $mtype in
-        $MT_AO420)
+        $MT_AO420|$MT_AO422)
             if [ $site -ge 101 ]; then
                 nchan=2
                 dblr '"db/dac_mux.db","'${cprams},MUXNAME=DAC_MUX,mknob=dac_mux'"'
@@ -311,7 +311,7 @@ load_AO() {
                 fi
             else
                 chg=1
-                nchan=4;
+                nchan=$(cat /etc/acq400/$site/NCHAN)
                 dblr '"db/aoALL.db","'${cprams}'"'
             fi
             for ch in $(seq 1 $nchan)
@@ -615,7 +615,7 @@ load_400() {
         [ $t50r -ne 0 ] && dblr '"db/acq480fmc50R.db","'${mprams},CH=,RAW='"';;
     $MT_ACQ494)
         load_acq494 ${site} "${cprams}";;
-    $MT_AO420|$MT_AO424|$MT_AO428|$MT_AO4220)
+    $MT_AO420|$MT_AO422|$MT_AO424|$MT_AO428|$MT_AO4220)
         create_asyn_channel S${site}A 127.0.0.1:$((4220+${site}))
         has_rgm=1
         load_AO $site $model $cprams
