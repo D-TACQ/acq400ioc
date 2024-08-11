@@ -23,8 +23,6 @@ monitor gain;
 int ref0;
 int gain0;
 
-int fmc_set = 0;
-
 double denom = 65535;
 
 int first_time = 1;
@@ -41,12 +39,12 @@ ss gain_set
 				denom = 0xffffffffU;
 			}	
 		
-			/* FMC is always fixed 5V */
-			if (!fmc_set && strncmp(model, "AO420FMC", 8) == 0){
+			/* AO420FMC and AO422 is always fixed 5V */
+			if (strncmp(model, "AO420FMC", 8) == 0 ||
+			    strncmp(model, "AO422",    5) == 0){
 				ref0 = ref = 1;
 				pvPut(ref);
-				fmc_set = 1;							
-			}				
+			}
 		} state run
 	}
 	state run 
