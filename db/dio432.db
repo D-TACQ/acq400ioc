@@ -49,6 +49,8 @@ record(mbbi, "${UUT}:${SITE}:DIO:MODE:r") {
         field(INP, "@dio432.proto get_mode() ${SPORT}")
         field(SCAN, "1 second")
         field(FLNK, "${UUT}:${SITE}:DIO:MODE:s")
+        field(SDIS, "${UUT}:${SITE}:NOPOLL")
+        field(DISV, "1")
 }
 
 record(mbbo, "${UUT}:${SITE}:DIO:MODE:s") {
