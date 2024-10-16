@@ -59,6 +59,7 @@ acq400ioc_DBD += rtm_buffer_mon.dbd
 acq400ioc_DBD += mgt_ssb.dbd
 acq400ioc_DBD += slowmon_rate_adjust.dbd
 acq400ioc_DBD += hudpResetOnStop.dbd
+acq400ioc_DBD += continuous_wdg.dbd
 acq400ioc_DBD += sfp_txen.dbd
 acq400ioc_DBD += ppw_tick_scaler.dbd
 
@@ -119,6 +120,7 @@ acq400ioc_SRCS += rtm_buffer_mon.st
 acq400ioc_SRCS += mgt_ssb.st
 acq400ioc_SRCS += slowmon_rate_adjust.st
 acq400ioc_SRCS += hudpResetOnStop.st
+acq400ioc_SRCS += continuous_wdg.st
 acq400ioc_SRCS += sfp_txen.st
 acq400ioc_SRCS += ppw_tick_scaler.st
 

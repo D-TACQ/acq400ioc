@@ -1637,6 +1637,7 @@ IOC_READY_DELAY=${IOC_READY_DELAY:-3}
 cat - >>/tmp/st_final.cmd <<EOF
 dbpf ${HOST}:LIVE:PREPCT 50
 seq on_delay "pv=${HOST}:IOC_READY,val=1,delay=$IOC_READY_DELAY,priority=0"
+seq continuous_wdg "uut=${HOST},verbose=${CONTINUOUS_WDG_VERBOSE:-0}"
 system(/usr/local/epics/scripts/onIocReady)
 EOF
 echo 1>&2 "load.records 99"
