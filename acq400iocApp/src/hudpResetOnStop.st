@@ -2,7 +2,7 @@
 hudpResetOnStop.st : reset HUDP when stream stops to ensure no FIFO residuals on next start
 
 INPUT
-{uut}:MODE:CONTINUOUS
+{uut}:MODE:CONTINUOUS:STATE
 {uut}:10:HUDP:TX:ENABLED
 
 OUTPUT
@@ -12,15 +12,17 @@ OUTPUT
 program hudpResetOnStop
 option +r;
 
-int cmode; assign cmode to "{uut}:MODE:CONTINUOUS"; monitor cmode;
+int cstate; assign cstate to "{uut}:MODE:CONTINUOUS:STATE"; monitor cstate;
 int txen;  assign txen to "{uut}:10:HUDP:TX:ENABLED"; monitor txen;
 int ctrl;  assign ctrl to "{uut}:10:HUDP:CONTROL";
 
 
-#define CM_DIS		0
 #define CTRL_OFF 	0
 #define CTRL_RESET 	1
 #define CTRL_ON		2
+
+#define CS_STOP 0
+#define CS_RUN 	2
 
 
 int verbose;
@@ -30,36 +32,42 @@ ss hudpResetOnStop {
 		entry {
 			if (macValueGet("verbose")){
 				verbose = macValueGet("verbose")[0] - '0';
-			}			
+			}
+			if (verbose) printf("hudpResetOnStop::init\n");
 		}		
 		
-		when(cmode == CM_DIS) {
+		when(cstate != CS_RUN) {
 
 		} state waitContinuousActive
 		
-		when(cmode != CM_DIS){
+		when(cstate == CS_RUN){
 
 		} state waitContinuousStop	
 	}
 	state waitContinuousActive {
-		when(cmode != CM_DIS){
+		entry {
+			if (verbose) printf("hudpResetOnStop::waitContinuousActive\n");
+		}		
+		when(cstate == CS_RUN){
 			
 		} state waitContinuousStop
 	}
 	
 	state waitContinuousStop {
-		when (txen == 1 && cmode == 0){
+		entry {
+			if (verbose) printf("hudpResetOnStop::waitContinuousStop\n");
+		}
+		when (txen == 1 && cstate == CS_STOP){
 			
 		} state resetOnStop
-		
-		when (cmode == CM_DIS){
+		when (txen != 1 && cstate == CS_STOP){
 			
 		} state waitContinuousActive
 	}
 	state resetOnStop {
-		entry {
-			if (verbose) printf("hudpResetOnStop RESET\n");
+		entry {			
 			ctrl = CTRL_RESET; pvPut(ctrl);
+			if (verbose) printf("hudpResetOnStop::resetOnStop\n");
 		}
 		when(delay(2)) {
 			
@@ -67,9 +75,9 @@ ss hudpResetOnStop {
 	}
 	
 	state clearReset {
-		entry {
-			if (verbose) printf("hudpResetOnStop ON\n");
+		entry {			
 			ctrl = CTRL_ON; pvPut(ctrl);
+			if (verbose) printf("hudpResetOnStop::clearReset\n");
 		}
 		when(){
 			
