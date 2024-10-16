@@ -16,11 +16,12 @@ int cmode; assign cmode to "{uut}:MODE:CONTINUOUS"; monitor cmode;
 int txen;  assign txen to "{uut}:10:HUDP:TX:ENABLED"; monitor txen;
 int ctrl;  assign ctrl to "{uut}:10:HUDP:CONTROL";
 
-/* symbolic constants WBN..
+
+#define CM_DIS		0
 #define CTRL_OFF 	0
 #define CTRL_RESET 	1
 #define CTRL_ON		2
-*/
+
 
 int verbose;
 
@@ -32,16 +33,16 @@ ss hudpResetOnStop {
 			}			
 		}		
 		
-		when(cmode == 0) {
+		when(cmode == CM_DIS) {
 
 		} state waitContinouousActive
 		
-		when(cmode != 0){
+		when(cmode != CM_DIS){
 
 		} state waitContinuousStop	
 	}
 	state waitContinouousActive {
-		when(cmode != 0){
+		when(cmode != CM_DIS){
 			
 		} state waitContinuousStop
 	}
@@ -51,14 +52,14 @@ ss hudpResetOnStop {
 			
 		} state resetOnStop
 		
-		when (cmode == 0){
+		when (cmode == CM_DIS){
 			
 		} state waitContinouousActive
 	}
 	state resetOnStop {
 		entry {
 			if (verbose) printf("hudpResetOnStop RESET\n");
-			ctrl = 1 /*CTRL_RESET*/; pvPut(ctrl);
+			ctrl = CTRL_RESET; pvPut(ctrl);
 		}
 		when(delay(2)) {
 			
@@ -68,7 +69,7 @@ ss hudpResetOnStop {
 	state clearReset {
 		entry {
 			if (verbose) printf("hudpResetOnStop ON\n");
-			ctrl = 2 /*CTRL_ON*/; pvPut(ctrl);
+			ctrl = CTRL_ON; pvPut(ctrl);
 		}
 		when(){
 			
