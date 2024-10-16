@@ -35,13 +35,13 @@ ss hudpResetOnStop {
 		
 		when(cmode == CM_DIS) {
 
-		} state waitContinouousActive
+		} state waitContinuousActive
 		
 		when(cmode != CM_DIS){
 
 		} state waitContinuousStop	
 	}
-	state waitContinouousActive {
+	state waitContinuousActive {
 		when(cmode != CM_DIS){
 			
 		} state waitContinuousStop
@@ -54,7 +54,7 @@ ss hudpResetOnStop {
 		
 		when (cmode == CM_DIS){
 			
-		} state waitContinouousActive
+		} state waitContinuousActive
 	}
 	state resetOnStop {
 		entry {
@@ -73,6 +73,6 @@ ss hudpResetOnStop {
 		}
 		when(){
 			
-		} state waitContinouousActive
+		} state waitContinuousActive
 	}
 }
