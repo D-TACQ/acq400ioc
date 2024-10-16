@@ -31,8 +31,16 @@ monitor cmode;
 
 int enable; assign enable to "{uut}:asyn:NP.ENBL";
 
+int verbose;
+
 ss onSetTransient {
 	state init {
+		entry {
+			if (macValueGet("verbose")){
+				verbose = macValueGet("verbose")[0] - '0';
+			}
+			if (verbose) printf("onSetTransient::init\n");
+		}
 		when(transient != 0) {
 			pvGet(pre);
 			pre0 = pre;
@@ -40,12 +48,18 @@ ss onSetTransient {
 	}
 	
 	state wait_pre {
+		entry {
+			if (verbose) printf("onSetTransient::wait_pre\n");
+		}
 		when(pre != pre0){
 			pre0 = pre;	
 		} state action
 	}
 	
 	state action {
+		entry {
+			if (verbose) printf("onSetTransient::action\n");
+		}
 		when() {
 			if (pre == 0){
 				event = 0;	pvPut(event);
@@ -61,15 +75,18 @@ ss onSetTransient {
 
 ss actOnContinuous {
 	state init {
+		entry {
+			if (verbose) printf("actOnContinuous::init\n");
+		}
 		when(cmode == 0){
-			printf("actOnContinuous DISABLE link\n");
+			if (verbose) printf("actOnContinuous::init DISABLE link\n");
 			enable = 0; pvPut(enable);
 		} state wait_run
 		
 		when(cmode == 1){
 			reset = 1; pvPut(reset, SYNC);
 			resetl = 1; pvPut(resetl, SYNC);
-			printf("actOnContinuous ENABLE link\n");
+			if (verbose) printf("actOnContinuous::init ENABLE link\n");
 			enable = 1; pvPut(enable);
 			reset = 0; pvPut(reset);
 			resetl = 0; pvPut(resetl);
@@ -78,7 +95,7 @@ ss actOnContinuous {
 	
 	state wait_run {
 		when(cmode == 1 && delay(2)){
-			printf("actOnContinuous RUN detect .. delay\n");
+			if (verbose) printf("actOnContinuous::wait_run RUN detect .. delay\n");
 		} state wait_run_delay
 	}
 	
@@ -89,6 +106,9 @@ ss actOnContinuous {
 	}
 	
 	state wait_stop {
+		entry {
+			if (verbose) printf("actOnContinuous::wait_stop\n");
+		}
 		when(cmode == 0){
 			
 		} state init

@@ -1388,7 +1388,7 @@ load_mb_sync() {
 
     echo >>/tmp/st_post.cmd "seq autoRepeat \"uut=${HOST},debug=${AUTO_REPEAT_DEBUG:-/dev/null}\""
     [ "$ONSETTRANSIENT" = "1" ] && \
-        echo >>/tmp/st_post.cmd "seq onSetTransient \"uut=${HOST}\""
+        echo >>/tmp/st_post.cmd "seq onSetTransient \"uut=${HOST},verbose=${ON_SET_TRANSIENT_VERBOSE:-0}\""
 
     is_tiga && return
 
