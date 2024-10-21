@@ -1,0 +1,85 @@
+record(mbbo, "${UUT}:${SITE}:ANATRG:ALL:M")   {
+        field(DTYP, "Soft Channel")
+        field(OUT,  "@anatrg.proto setAnaTrg(${UUT}:${SITE}:ANATRG:ALL,ALL) ${SPORT}")
+        field(DTYP, "stream")
+        field(NOBT, "3")        
+        field(ZRST, "none")
+        field(ONST, "rising")
+        field(TWST, "falling")
+        field(THST, "inside")
+        field(FRST, "outside")
+        field(FLNK, "${UUT}:${SITE}:ANATRG:ALL:l2en")
+        field(DESC, "analog trigger mode")              
+}
+
+record(calc, "${UUT}:${SITE}:ANATRG:ALL:l2en") {
+        field(INPA, "${UUT}:${SITE}:ANATRG:ALL:M")
+        field(CALC, "(A==3||A==4)")
+}
+
+record(ao, "${UUT}:${SITE}:ANATRG:ALL:L1") {
+        field(DTYP, "Soft Channel") 
+        field(DRVH, "10")
+        field(DRVL, "-10")
+        field(HOPR, "10")
+        field(LOPR, "-10")
+        field(LINR, "LINEAR")
+        field(ESLO, "0.0787")
+        field(EOFF, "0")
+        field(EGU,  "V")
+        field(DESC, "analog trigger Level1")
+        field(PINI, "YES")
+}
+
+record(ao, "${UUT}:${SITE}:ANATRG:ALL:L2") {  
+        field(DTYP, "Soft Channel")        
+        field(DRVH, "10")
+        field(DRVL, "-10")
+        field(HOPR, "10")
+        field(LOPR, "-10")
+        field(LINR, "LINEAR")
+        field(ESLO, "0.0787")
+        field(EOFF, "0")
+        field(EGU,  "V")
+        field(SDIS, "${UUT}:${SITE}:ANATRG:ALL:l2en")
+        field(DISV, "0")                
+        field(DESC, "analog trigger Level2")
+        field(PINI, "YES")
+}
+
+record(mbbo, "${UUT}:${SITE}:ANATRG:ALL:H") {
+        field(DTYP, "Soft Channel")
+        field(NOBT, "3")
+        field(ZRST, "0")
+        field(ONST, "1")
+        field(TWST, "2")
+        field(THST, "5")
+        field(FRST, "10")
+        field(FVST, "20")
+        field(ZRVL, "0")
+        field(ONVL, "1")
+        field(TWVL, "3")
+        field(THVL, "6")
+        field(FRVL, "13")
+        field(FVVL, "25")
+        field(DESC, "analog trigger hysterisis")
+        field(PINI, "YES")
+        field(VAL,  "1")
+}
+
+record(bo, "${UUT}:${SITE}:ANATRG:ALL:SET") {
+       field(DTYP, "Soft Channel")
+       field(ZNAM, "off")
+       field(ONAM, "on") 
+}
+record(bo, "${UUT}:${SITE}:ANATRG:GROUP:ALL:SET") {
+       field(DTYP, "Soft Channel")
+       field(ZNAM, "off")
+       field(ONAM, "on") 
+}
+
+record(bo, "${UUT}:${SITE}:ANATRG:GROUP:ALL:CLR") {
+       field(DTYP, "Soft Channel")
+       field(ZNAM, "off")
+       field(ONAM, "on") 
+}

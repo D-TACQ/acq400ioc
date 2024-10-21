@@ -12,7 +12,6 @@ double ESLO[64];	assign ESLO to {};
 double HOPR[64];	assign HOPR to {};
 double LOPR[64];	assign LOPR to {};
 
-
 int scale; assign scale to "{uut}:{site}:ANATRG:SCALE"; monitor scale;
 
 /* force initial update */

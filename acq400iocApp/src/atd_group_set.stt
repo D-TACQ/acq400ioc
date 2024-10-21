@@ -1,0 +1,108 @@
+/*************************************************************************\
+atd_group_set.st : set ALL, set groups:ALL
+\*************************************************************************/
+program atd_group_set
+option +r;
+
+/* arrays of PV's are 1D L1[32], L2[32] */
+
+
+int all_M; 	assign all_M to  "{uut}:{site}:ANATRG:ALL:M";
+double all_L1; 	assign all_L1 to "{uut}:{site}:ANATRG:ALL:L1";
+double all_L2; 	assign all_L2 to "{uut}:{site}:ANATRG:ALL:L2";
+double all_H;	assign all_H  to "{uut}:{site}:ANATRG:ALL:H";
+
+int all_SET;	 assign all_SET     to "{uut}:{site}:ANATRG:ALL:SET";       monitor all_SET;
+
+
+int grp_all_SET; assign grp_all_SET to "{uut}:{site}:ANATRG:GROUP:ALL:SET"; monitor grp_all_SET;
+int grp_all_CLR; assign grp_all_CLR to "{uut}:{site}:ANATRG:GROUP:ALL:CLR"; monitor grp_all_CLR;
+
+int ch_M[33];   	assign ch_M to {};
+double ch_L1[33]; 	assign ch_L1 to {};
+double ch_L2[33]; 	assign ch_L2 to {};
+double ch_H[33]; 	assign ch_H to {};
+
+int group_mask; 	assign group_mask to  "{uut}:{site}:ANATRG:GROUP_MASK";
+int group_mask2; 	assign group_mask2 to "{uut}:{site}:ANATRG:GROUP_MASK2";
+
+char* uut;
+char* site = "1";		// default site 1, should override
+int verbose = 0;
+
+char* pvfmt = "%s:%s:ANATRG:%02d:%%s";
+
+int ch;
+
+%{
+#include <stdlib.h>
+}%
+
+ss atd_group_set
+{
+	state init
+	{
+		entry {
+			printf("atd_range_set R1001\n");
+
+			uut = macValueGet("uut"); 
+			if (macValueGet("site") != 0) site = macValueGet("site");
+			if (macValueGet("verbose") != 0) verbose = atoi(macValueGet("verbose"));
+			
+			for (ch = 1; ch <= 32; ++ch){
+				char pvroot[80];
+				char pvname[80];
+				
+				snprintf(pvroot, sizeof(pvroot), pvfmt, uut, site, ch);
+				
+				snprintf(pvname, sizeof(pvname), pvroot, "M");
+				if (verbose>1 || (verbose && ch==0)) printf("%s\n", pvname);
+				
+				pvAssign(ch_M[ch], pvname);
+				
+				snprintf(pvname, sizeof(pvname), pvroot, "L1");
+				pvAssign(ch_L1[ch], pvname);
+				
+				snprintf(pvname, sizeof(pvname), pvroot, "L2");
+				pvAssign(ch_L2[ch], pvname);
+				
+				snprintf(pvname, sizeof(pvname), pvroot, "H");
+				pvAssign(ch_H[ch], pvname);
+			}		
+		}
+		
+		when() {
+
+		} state update
+	}
+	
+	state update 
+	{
+		when(all_SET){			
+			for (ch = 1; ch <= 32; ++ch){
+				pvGet(all_M);
+				pvGet(all_L1);
+				pvGet(all_L2);
+				pvGet(all_H);
+				
+				ch_M[ch]  = all_M;  pvPut(ch_M[ch]);
+				ch_L1[ch] = all_L1; pvPut(ch_L1[ch]);
+				ch_L2[ch] = all_L2; pvPut(ch_L2[ch]);
+				ch_H[ch]  = all_H;  pvPut(ch_H[ch]);				
+			}
+			all_SET = 0; pvPut(all_SET);
+		} state update
+		
+		when(grp_all_SET){
+			group_mask =  0x0000ffff; pvPut(group_mask);
+			group_mask2 = 0x0000ffff; pvPut(group_mask2);
+			grp_all_SET = 0; pvPut(grp_all_SET);
+		} state update
+		
+		when(grp_all_CLR){
+			group_mask =  0x0; pvPut(group_mask);
+			group_mask2 = 0x0; pvPut(group_mask2);
+			grp_all_CLR = 0; pvPut(grp_all_CLR);
+		} state update
+	}
+}

@@ -108,7 +108,7 @@ record(bo, "${UUT}:${SITE}:ANATRG:GROUP_MODE") {
 	field(ONAM, "HISTORY")	
 }
 
-record(longout, "${UUT}:${SITE}:ANATRG:GROUP:N") {
+record(longout, "${UUT}:${SITE}:ANATRG:GROUP:FIRST_N") {
 	field(DTYP, "stream")
 	field(OUT, "@anatrg.proto set_group_first_n ${SPORT}")
 	field(DESC, "group trg if N mmbr active (0=ALL)")

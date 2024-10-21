@@ -15,10 +15,12 @@ make_anatrg() {
 
 		dblr \"db/anatrg.db\",\"${PRAMS}\"
 	done
+	dblr \"db/anatrg_all.db\",\"UUT=${HOST},SITE=${site}\"
 	create_asyn_channel SA${site} 127.0.0.1:422${site}
 	create_asyn_channel S14 127.0.0.1:4234	
 	
 	echo "seq atd_range_set \"uut=${HOST},site=${site},verbose=${ATD_VERBOSE:-0}\"" >>/tmp/st_post.cmd
+	echo "seq atd_group_set \"uut=${HOST},site=${site},verbose=${ATD_VERBOSE:-0}\"" >>/tmp/st_post.cmd
 }
 
 

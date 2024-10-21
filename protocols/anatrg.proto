@@ -43,7 +43,7 @@ get_group_status_mode {
 }
 
 set_group_first_n {
-	out "group_first_n %d";
+	out "group_first_n_triggers %d";
 	in;
 }
 
