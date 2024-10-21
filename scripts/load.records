@@ -511,7 +511,7 @@ load_400() {
     is_acq425=0
 
     case $model in
-    $MT_ACQ420|$MT_ACQ420F|$MT_ACQ424|$MT_ACQ425|$MT_ACQ425F|$MT_ACQ427|$MT_ACQ427F|$MT_ACQ423)
+    $MT_ACQ420|$MT_ACQ420F|$MT_ACQ424|$MT_ACQ425|$MT_ACQ425F|$MT_ACQ427|$MT_ACQ427F|$MT_ACQ423|$MT_ACQ426)
         is_adc="sar"
         has_rgm=1
         calmon=calmon42x
@@ -528,6 +528,8 @@ load_400() {
         $MT_ACQ424)
             has_ch_gains=0
             LO=66000000;;
+        $MT_ACQ426)
+            echo '# ACQ426 placeholder';;
         *)
             ;;
         esac;;

@@ -13,6 +13,7 @@ MT_ACQ430=3
 MT_ACQ424=4
 MT_ACQ425=5
 MT_ACQ425F=A5
+MT_ACQ426=C
 MT_ACQ427=7
 MT_ACQ427F=A7
 MT_ACQ436=6D
@@ -66,7 +67,9 @@ nameFromMT() {
 	$MT_ACQ423)     echo "acq423";;
 	$MT_ACQ424)	echo "acq424";;
 	$MT_ACQ425|$MT_ACQ425F)		
-			echo "acq425";;	
+			echo "acq425";;
+	$MT_ACQ426)
+	                echo "acq426";;
 	$MT_ACQ427|$MT_ACQ427F)	
 			echo "acq427";;
 	$MT_ACQ436)	echo "acq436";;
