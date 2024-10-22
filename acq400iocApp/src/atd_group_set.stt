@@ -14,6 +14,7 @@ double all_H;	assign all_H  to "{uut}:{site}:ANATRG:ALL:H";
 
 int all_SET;	 assign all_SET     to "{uut}:{site}:ANATRG:ALL:SET";       monitor all_SET;
 
+int lock;	assign lock to "{uut}:{site}:ANATRG:LOCK";
 
 int grp_all_SET; assign grp_all_SET to "{uut}:{site}:ANATRG:GROUP:ALL:SET"; monitor grp_all_SET;
 int grp_all_CLR; assign grp_all_CLR to "{uut}:{site}:ANATRG:GROUP:ALL:CLR"; monitor grp_all_CLR;
@@ -85,10 +86,12 @@ ss atd_group_set
 				pvGet(all_L2);
 				pvGet(all_H);
 				
-				ch_M[ch]  = all_M;  pvPut(ch_M[ch]);
+				lock=1; pvPut(lock);
 				ch_L1[ch] = all_L1; pvPut(ch_L1[ch]);
 				ch_L2[ch] = all_L2; pvPut(ch_L2[ch]);
-				ch_H[ch]  = all_H;  pvPut(ch_H[ch]);				
+				ch_H[ch]  = all_H;  pvPut(ch_H[ch]);
+				lock=0; pvPut(lock);
+				ch_M[ch]  = all_M;  pvPut(ch_M[ch]);
 			}
 			all_SET = 0; pvPut(all_SET);
 		} state update

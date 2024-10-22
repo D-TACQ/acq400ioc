@@ -1,8 +1,6 @@
 
 record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:M")	{
-	field(DTYP, "stream")
-	field(OUT,  "@anatrg.proto setAnaTrg(${UUT}:${SITE}:ANATRG:${CH},${CH}) ${SPORT}")
-	field(DTYP, "stream")
+        field(DTYP, "Soft Channel")
 	field(NOBT, "3")	
 	field(ZRST, "none")
 	field(ONST, "rising")
@@ -16,11 +14,11 @@ record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:M")	{
 record(calc, "${UUT}:${SITE}:ANATRG:${CH}:l2en") {
 	field(INPA, "${UUT}:${SITE}:ANATRG:${CH}:M")
 	field(CALC, "(A==3||A==4)")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
 }
 
-record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1") {	
-	field(DTYP, "stream")
-	field(OUT,  "@anatrg.proto setAnaTrg(${UUT}:${SITE}:ANATRG:${CH},${CH}) ${SPORT}")
+record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1") {
+        field(DTYP, "Soft Channel")
 	field(DRVH, "10")
 	field(DRVL, "-10")
 	field(HOPR, "10")
@@ -31,11 +29,11 @@ record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L1") {
 	field(EGU,  "V")
 	field(DESC, "analog trigger Level1")
 	field(PINI, "YES")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
 }
 
 record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L2") {	
-	field(DTYP, "stream")
-	field(OUT,  "@anatrg.proto setAnaTrg(${UUT}:${SITE}:ANATRG:${CH},${CH}) ${SPORT}")
+        field(DTYP, "Soft Channel")
 	field(DRVH, "10")
 	field(DRVL, "-10")
 	field(HOPR, "10")
@@ -48,11 +46,11 @@ record(ao, "${UUT}:${SITE}:ANATRG:${CH}:L2") {
 	field(DISV, "0")		
 	field(DESC, "analog trigger Level2")
 	field(PINI, "YES")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
 }
 
 record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:H") {
-	field(DTYP, "stream")
-	field(OUT,  "@anatrg.proto setAnaTrg(${UUT}:${SITE}:ANATRG:${CH},${CH}) ${SPORT}")
+        field(DTYP, "Soft Channel")
 	field(NOBT, "3")
 	field(ZRST, "0")
 	field(ONST, "1")
@@ -69,6 +67,19 @@ record(mbbo, "${UUT}:${SITE}:ANATRG:${CH}:H") {
 	field(DESC, "analog trigger hysterisis")
 	field(PINI, "YES")
 	field(VAL,  "1")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:${CH}:w PP")
+}
+
+record(bo, "${UUT}:${SITE}:ANATRG:LOCK" ){
+        field(DTYP, "Soft Channel")
+        field(ZNAM, "unlocked")
+        field(ONAM, "locked")
+}
+record(bo, "${UUT}:${SITE}:ANATRG:${CH}:w") {
+        field(DTYP, "stream")
+        field(OUT,  "@anatrg.proto setAnaTrg(${UUT}:${SITE}:ANATRG:${CH},${CH}) ${SPORT}")
+        field(DISV, "1")
+        field(SDIS, "${UUT}:${SITE}:ANATRG:LOCK")
 }
 
 

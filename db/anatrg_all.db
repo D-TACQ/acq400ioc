@@ -1,7 +1,5 @@
 record(mbbo, "${UUT}:${SITE}:ANATRG:ALL:M")   {
         field(DTYP, "Soft Channel")
-        field(OUT,  "@anatrg.proto setAnaTrg(${UUT}:${SITE}:ANATRG:ALL,ALL) ${SPORT}")
-        field(DTYP, "stream")
         field(NOBT, "3")        
         field(ZRST, "none")
         field(ONST, "rising")
