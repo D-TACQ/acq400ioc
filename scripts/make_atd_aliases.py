@@ -10,15 +10,15 @@ Usage:
 import os
 
 def run_main():
-    hostname, atd_sites = get_atd_sites()
+    hn, atd_sites = get_atd_sites()
 
     for site in atd_sites:
-        nchan = int(cmd(f"cat /etc/acq400/{site}/NCHAN"))
-        for chan in range(1, nchan + 1):
-            idk = "" if chan <= 16 else "2"
-            bit = f"B{(chan-1)%16:x}".upper()
-            print(f"alias( {hostname}:{site}:ANATRG:SRC{idk}.{bit}, {hostname}:{site}:ANATRG:LIVE:CH{chan:02} )")
-            print(f"alias( {hostname}:{site}:ANATRG:GROUP_MASK{idk}.{bit}, {hostname}:{site}:ANATRG:GROUP:CH{chan:02} )")
+        nch = int(cmd(f"cat /etc/acq400/{site}/NCHAN"))
+        for ch in range(1, nch + 1):
+            idk = "" if ch <= 16 else "2"
+            bit = f"B{(ch-1)%16:x}".upper()
+            print(f"alias( {hn}:{site}:ANATRG:SRC{idk}.{bit}, {hn}:{site}:ANATRG:LIVE:CH{ch:02} )")
+            print(f"alias( {hn}:{site}:ANATRG:GROUP_MASK{idk}.{bit}, {hn}:{site}:ANATRG:GROUP:CH{ch:02} )")
 
 def get_atd_sites():
     atd_sites = []
