@@ -24,11 +24,11 @@ make_anatrg() {
 	
 	if [ -e /mnt/local/sysconfig/atd-aliases.db ]; then
 	       if [ ! -e /tmp/st_pre_atd-aliases.cmd ]; then
-	               echo 'dblr "/mnt/local/sysconfig/atd-aliases.db"' > /tmp/st_pre_atd-aliases.cmd
+	               dblr \"/mnt/local/sysconfig/atd-aliases.db\",\"\" > /tmp/st_pre_atd-aliases.cmd
 	       fi
 	else
-	       echo "WARNING: aliases file not found, create it like this:"
-	       echo "./scripts/make_atd_aliases.py > /mnt/local/sysconfig/atd-aliases.db"
+	       echo 1>&2 "load.anatrg:WARNING: aliases file not found, create it like this:"
+	       echo 1>&2 "./scripts/make_atd_aliases.py > /mnt/local/sysconfig/atd-aliases.db"
 	fi
 	       
 }

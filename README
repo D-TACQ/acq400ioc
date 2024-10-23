@@ -58,9 +58,10 @@ export IOC_PREINIT=./scripts/load.ddc
 ATD : ANALOG THRESHOLD DETECT (TRIGGER) : mostly automated
 But, it's necessary to create a set of aliases, do this ONCE:
 ./scripts/make_atd_aliases.py > /mnt/local/sysconfig/atd-aliases.db
+sync;sync;reboot
 #was export IOC_PREINIT=./scripts/load.anatrg
 
-DTD : DELTA TRIGGER DETECT : automated
+# deprecated: DTD : DELTA TRIGGER DETECT : automated
 #was export IOC_PREINIT=./scripts/load.deltrg
 
 
