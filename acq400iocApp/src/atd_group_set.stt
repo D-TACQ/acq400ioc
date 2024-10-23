@@ -45,13 +45,15 @@ ss atd_group_set
 	state init
 	{
 		entry {
-			printf("atd_range_set R1001\n");
+			printf("atd_range_set R1002\n");
 
 			uut = macValueGet("uut"); 
 			if (macValueGet("site") != 0) site = macValueGet("site");
 			if (macValueGet("nchan") != 0 ) nchan = atoi(macValueGet("nchan"));
 			if (macValueGet("verbose") != 0) verbose = atoi(macValueGet("verbose"));
 			
+			if (verbose) printf("atd_range_set verbose:%d\n", verbose);
+
 			for (ch = 1; ch <= nchan; ++ch){
 				char pvroot[80];
 				char pvname[80];
@@ -81,7 +83,29 @@ ss atd_group_set
 	
 	state update 
 	{
+		entry {
+			if (verbose) printf("atd_group_set::update\n");
+		}
 		when(all_SET){
+
+		} state all_SET_action
+
+		when(grp_all_SET){
+			group_mask =  0x0000ffff; pvPut(group_mask);
+			group_mask2 = 0x0000ffff; pvPut(group_mask2);
+			grp_all_SET = 0; pvPut(grp_all_SET);
+		} state update
+
+		when(grp_all_CLR){
+			group_mask =  0x0; pvPut(group_mask);
+			group_mask2 = 0x0; pvPut(group_mask2);
+			grp_all_CLR = 0; pvPut(grp_all_CLR);
+		} state update
+	}
+
+	state all_SET_action {
+		entry {
+			if (verbose) printf("atd_group_set::all_SET_action\n");
 			pvGet(all_M);
 			pvGet(all_L1);
 			pvGet(all_L2);
@@ -96,18 +120,9 @@ ss atd_group_set
 				ch_M[ch]  = all_M;  pvPut(ch_M[ch]);
 			}
 			all_SET = 0; pvPut(all_SET);
-		} state update
-		
-		when(grp_all_SET){
-			group_mask =  0x0000ffff; pvPut(group_mask);
-			group_mask2 = 0x0000ffff; pvPut(group_mask2);
-			grp_all_SET = 0; pvPut(grp_all_SET);
-		} state update
-		
-		when(grp_all_CLR){
-			group_mask =  0x0; pvPut(group_mask);
-			group_mask2 = 0x0; pvPut(group_mask2);
-			grp_all_CLR = 0; pvPut(grp_all_CLR);
+		}
+		when(){
+
 		} state update
 	}
 }
