@@ -4,7 +4,7 @@
 Generates aliases for analogue trigger
 
 Usage:
-    ./make_atd_aliases.py > /mnt/local/sysconfig/st_pre_atd-aliases.cmd
+    ./scripts/make_atd_aliases.py > /mnt/local/sysconfig/st_pre_atd-aliases.cmd
 """
 
 import os
