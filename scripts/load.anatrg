@@ -19,9 +19,9 @@ make_anatrg() {
 	create_asyn_channel SA${site} 127.0.0.1:422${site}
 	create_asyn_channel S14 127.0.0.1:4234	
 	
-	echo "seq atd_range_set \"uut=${HOST},site=${site},verbose=${ATD_VERBOSE:-0}\"" >>/tmp/st_post.cmd
-	echo "seq atd_group_set \"uut=${HOST},site=${site},verbose=${ATD_VERBOSE:-0}\"" >>/tmp/st_post.cmd
-	
+	echo "seq atd_range_set \"uut=${HOST},site=${site},nchan=${nchan},verbose=${ATD_VERBOSE:-0}\"" >>/tmp/st_post.cmd
+	echo "seq atd_group_set \"uut=${HOST},site=${site},nchan=${nchan},verbose=${ATD_VERBOSE:-0}\"" >>/tmp/st_post.cmd
+
 	if [ -e /mnt/local/sysconfig/atd-aliases.db ]; then
 	       if [ ! -e /tmp/st_pre_atd-aliases.cmd ]; then
 	               dblr \"/mnt/local/sysconfig/atd-aliases.db\",\"\" > /tmp/st_pre_atd-aliases.cmd
@@ -30,7 +30,6 @@ make_anatrg() {
 	       echo 1>&2 "load.anatrg:WARNING: aliases file not found, create it like this:"
 	       echo 1>&2 "./scripts/make_atd_aliases.py > /mnt/local/sysconfig/atd-aliases.db"
 	fi
-	       
 }
 
 

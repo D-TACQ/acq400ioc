@@ -34,6 +34,7 @@ int verbose = 0;
 char* pvfmt = "%s:%s:ANATRG:%02d:%%s";
 
 int ch;
+int nchan = 32;
 
 %{
 #include <stdlib.h>
@@ -48,9 +49,10 @@ ss atd_group_set
 
 			uut = macValueGet("uut"); 
 			if (macValueGet("site") != 0) site = macValueGet("site");
+			if (macValueGet("nchan") != 0 ) nchan = atoi(macValueGet("nchan"));
 			if (macValueGet("verbose") != 0) verbose = atoi(macValueGet("verbose"));
 			
-			for (ch = 1; ch <= 32; ++ch){
+			for (ch = 1; ch <= nchan; ++ch){
 				char pvroot[80];
 				char pvname[80];
 				
@@ -79,13 +81,13 @@ ss atd_group_set
 	
 	state update 
 	{
-		when(all_SET){			
-			for (ch = 1; ch <= 32; ++ch){
-				pvGet(all_M);
-				pvGet(all_L1);
-				pvGet(all_L2);
-				pvGet(all_H);
-				
+		when(all_SET){
+			pvGet(all_M);
+			pvGet(all_L1);
+			pvGet(all_L2);
+			pvGet(all_H);
+
+			for (ch = 1; ch <= nchan; ++ch){
 				lock=1; pvPut(lock);
 				ch_L1[ch] = all_L1; pvPut(ch_L1[ch]);
 				ch_L2[ch] = all_L2; pvPut(ch_L2[ch]);
