@@ -91,21 +91,18 @@ ss atd_group_set
 		} state all_SET_action
 
 		when(grp_all_SET){
-			group_mask =  0x0000ffff; pvPut(group_mask);
-			group_mask2 = 0x0000ffff; pvPut(group_mask2);
-			grp_all_SET = 0; pvPut(grp_all_SET);
-		} state update
+
+		} state grp_all_SET_action
 
 		when(grp_all_CLR){
-			group_mask =  0x0; pvPut(group_mask);
-			group_mask2 = 0x0; pvPut(group_mask2);
-			grp_all_CLR = 0; pvPut(grp_all_CLR);
-		} state update
+
+		} state grp_all_CLR_action
 	}
 
 	state all_SET_action {
 		entry {
 			if (verbose) printf("atd_group_set::all_SET_action\n");
+
 			pvGet(all_M);
 			pvGet(all_L1);
 			pvGet(all_L2);
@@ -122,6 +119,32 @@ ss atd_group_set
 			all_SET = 0; pvPut(all_SET);
 		}
 		when(){
+
+		} state update
+	}
+
+	state grp_all_SET_action {
+		entry {
+			if (verbose) printf("atd_group_set::grp_all_SET_action\n");
+
+			group_mask =  0x0000ffff; pvPut(group_mask);
+			group_mask2 = 0x0000ffff; pvPut(group_mask2);
+			grp_all_SET = 0; pvPut(grp_all_SET);
+		}
+		when() {
+
+		} state update
+	}
+
+	state grp_all_CLR_action {
+		entry {
+			if (verbose) printf("atd_group_set::grp_all_CLR_action\n");
+
+			group_mask =  0; pvPut(group_mask);
+			group_mask2 = 0; pvPut(group_mask2);
+			grp_all_CLR = 0; pvPut(grp_all_CLR);
+		}
+		when() {
 
 		} state update
 	}
