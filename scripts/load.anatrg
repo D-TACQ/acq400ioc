@@ -21,6 +21,7 @@ make_anatrg() {
 		PRAMS="UUT=${HOST},SITE=${site},CH=${cid},BX=${bx},BANK=${bank},SPORT=SA${site},S14=S14"
 
 		dblr \"db/anatrg.db\",\"${PRAMS}\"
+		ch0=$((ch0+1))
 	done
 	dblr \"db/anatrg_all.db\",\"UUT=${HOST},SITE=${site}\"
 	create_asyn_channel SA${site} 127.0.0.1:422${site}
