@@ -7,11 +7,17 @@ make_anatrg() {
 
 	echo "#nchan $nchan"
 
-	let ch=0; while [ $ch -lt $nchan ]; do
-		let ch=$ch+1
+	let ch0=0; while [ $ch0 -lt $nchan ]; do
+		ch=$((ch0+1))
+		bank=0
 		cid=$(printf "%02d" $ch)
 
-		PRAMS="UUT=${HOST},SITE=${site},CH=${cid},SPORT=SA${site},S14=S14"
+		if [ $ch0 -ge 16 ]; then
+		      bank=1
+		      ch0=$((ch0-16))
+		fi
+
+		PRAMS="UUT=${HOST},SITE=${site},CH=${cid},CH0=${ch0},BANK=${bank},SPORT=SA${site},S14=S14"
 
 		dblr \"db/anatrg.db\",\"${PRAMS}\"
 	done

@@ -83,13 +83,15 @@ record(bo, "${UUT}:${SITE}:ANATRG:${CH}:w") {
 }
 
 
-record(mbbiDirect, "${UUT}:${SITE}:ANATRG:SRC") {
+record(mbbiDirect, "${UUT}:${SITE}:ANATRG:SRC1") {
 	field(DTYP, "stream")
 	field(INP,  "@anatrg.proto getAnaTrgSrc(${UUT}:${SITE}:ANATRG:SRC2) ${SPORT}")
 	field(SCAN, ".2 second")
+	field(FLNK, "${UUT}:${SITE}:ANATRG:SRC:FAN1 PP")
 }
 
 record(mbbiDirect, "${UUT}:${SITE}:ANATRG:SRC2") {
+        field(FLNK, "${UUT}:${SITE}:ANATRG:SRC:FAN2 PP")
 }
 
 record(mbbiDirect, "${UUT}:${SITE}:ANATRG:GROUP_SRC") {
@@ -101,7 +103,7 @@ record(mbbiDirect, "${UUT}:${SITE}:ANATRG:GROUP_SRC") {
 record(mbbiDirect, "${UUT}:${SITE}:ANATRG:GROUP_SRC2") {
 }
 
-record(mbboDirect, "${UUT}:${SITE}:ANATRG:GROUP_MASK") {
+record(mbboDirect, "${UUT}:${SITE}:ANATRG:GROUP_MASK1") {
 	field(DTYP, "stream")
 	field(OUT, "@anatrg.proto setAnaTrgGroupMask(${UUT}:${SITE}:ANATRG:GROUP_MASK2) ${SPORT}")
         field(VAL, "0")
@@ -164,6 +166,27 @@ record(mbbo, "${UUT}:${SITE}:ANATRG:SCALE") {
 	field(VAL,  "0")	
 }
 
+record(fanout, "${UUT}:${SITE}:ANATRG:SRC:FAN${BANK}") {
+        field(LNK${CH0}, "${UUT}:${SITE}:ANATRG:LIVE:${CH} PP")
+}
+
+record(bi "${UUT}:${SITE}:ANATRG:LIVE:${CH}") {
+        field(DTYP, "Soft Channel")
+        field(INP,  "${UUT}:${SITE}:ANATRG:SRC${BANK}.B${CH0}")
+}
+
+record(bo, "${UUT}:${SITE}:ANATRG:GROUP:${CH}") {
+        field(DTYP, "Soft Channel")
+        field(OUT,  "${UUT}:${SITE}:ANATRG:GROUP_MASK${BANK}.B${CH0}")
+        field(FLNK, "${UUT}:${SITE}:ANATRG:GROUP:w")
+}
+
+record(bo, "${UUT}:${SITE}:ANATRG:GROUP:w") {
+        field(DTYP, "Soft Channel")
+        field(FLNK, "${UUT}:${SITE}:ANATRG:SRC1")
+        field(DISV, "1")
+        field(SDIS, "${UUT}:${SITE}:ANATRG:LOCK")
+}
 
 
 
