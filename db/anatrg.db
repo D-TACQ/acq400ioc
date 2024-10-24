@@ -94,7 +94,7 @@ record(mbbiDirect, "${UUT}:${SITE}:ANATRG:SRC2") {
         field(FLNK, "${UUT}:${SITE}:ANATRG:SRC:FAN2 PP")
 }
 
-record(mbbiDirect, "${UUT}:${SITE}:ANATRG:GROUP_SRC") {
+record(mbbiDirect, "${UUT}:${SITE}:ANATRG:GROUP_SRC1") {
 	field(DTYP, "stream")
 	field(INP,  "@anatrg.proto getAnaTrgGroupStatus(${UUT}:${SITE}:ANATRG:GROUP_SRC2) ${SPORT}")
 	field(SCAN, ".2 second")
@@ -167,23 +167,28 @@ record(mbbo, "${UUT}:${SITE}:ANATRG:SCALE") {
 }
 
 record(fanout, "${UUT}:${SITE}:ANATRG:SRC:FAN${BANK}") {
-        field(LNK${CH0}, "${UUT}:${SITE}:ANATRG:LIVE:${CH} PP")
+        field(LNK${BX}, "${UUT}:${SITE}:ANATRG:LIVE:${CH} PP")
 }
 
-record(bi "${UUT}:${SITE}:ANATRG:LIVE:${CH}") {
+
+record(bi, "${UUT}:${SITE}:ANATRG:LIVE:${CH}") {
         field(DTYP, "Soft Channel")
         field(INP,  "${UUT}:${SITE}:ANATRG:SRC${BANK}.B${BX}")
+        field(ZNAM, "0")
+        field(ONAM, "1")
 }
 
 record(bo, "${UUT}:${SITE}:ANATRG:GROUP:${CH}") {
         field(DTYP, "Soft Channel")
         field(OUT,  "${UUT}:${SITE}:ANATRG:GROUP_MASK${BANK}.B${BX}")
         field(FLNK, "${UUT}:${SITE}:ANATRG:GROUP:w")
+        field(ZNAM, "0")
+        field(ONAM, "1")
 }
 
 record(bo, "${UUT}:${SITE}:ANATRG:GROUP:w") {
         field(DTYP, "Soft Channel")
-        field(FLNK, "${UUT}:${SITE}:ANATRG:SRC1")
+        field(FLNK, "${UUT}:${SITE}:ANATRG:GROUP_MASK1")
         field(DISV, "1")
         field(SDIS, "${UUT}:${SITE}:ANATRG:LOCK")
 }
