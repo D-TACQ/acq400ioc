@@ -172,12 +172,12 @@ record(fanout, "${UUT}:${SITE}:ANATRG:SRC:FAN${BANK}") {
 
 record(bi "${UUT}:${SITE}:ANATRG:LIVE:${CH}") {
         field(DTYP, "Soft Channel")
-        field(INP,  "${UUT}:${SITE}:ANATRG:SRC${BANK}.B${CH0}")
+        field(INP,  "${UUT}:${SITE}:ANATRG:SRC${BANK}.B${BX}")
 }
 
 record(bo, "${UUT}:${SITE}:ANATRG:GROUP:${CH}") {
         field(DTYP, "Soft Channel")
-        field(OUT,  "${UUT}:${SITE}:ANATRG:GROUP_MASK${BANK}.B${CH0}")
+        field(OUT,  "${UUT}:${SITE}:ANATRG:GROUP_MASK${BANK}.B${BX}")
         field(FLNK, "${UUT}:${SITE}:ANATRG:GROUP:w")
 }
 
