@@ -1,0 +1,13 @@
+# source me please
+# dac_step : load up a dac_step systems
+
+echo '# dac_step site:'$site' store env to /tmp/dac_step.env'
+env > /tmp/dac_step.env
+
+DAC_STEP_SZ=${DAC_STEP_SZ:-65536}
+
+create_asyn_channel bqs 127.0.0.1:4237
+for ch in 1 2 3 4; do
+        dblr '"db/dac_step.db","'${cprams},CH=${ch},BQS=bqs,size=${DAC_STEP_SZ}'"'
+done
+

@@ -409,6 +409,42 @@ long bitmask(aSubRecord* prec)
 	return 0;
 }
 
+long bitmask(aSubRecord* prec)
+{
+	unsigned char* channels = (unsigned char*)(prec->a);
+	int nchan = prec->noa;
+	const char *fname = (char *)prec->f;
+
+	ChannelMask cm = createBitsetFromByteArray(channels, nchan);
+
+	std::stack<unsigned char> nibbles;
+
+	unsigned char nibble = 0;
+	for (unsigned char ic = 0, bx = 0; ic < cm.size(); ++ic, ++bx){
+		nibble |= cm[ic]<<(bx%4);
+		if (bx%4 == 3){
+			nibbles.push(nibble);
+			nibble = 0;
+		}
+	}
+	if (nibble){
+		nibbles.push(nibble);
+	}
+
+	FILE* fp = fopen(fname, "w");
+	if (fp == 0){
+		perror(fname);
+		exit(errno);
+	}
+	fprintf(fp, "0x");
+	for( ; !nibbles.empty(); nibbles.pop()){
+		fprintf(fp, "%x", nibbles.top());
+	}
+	fprintf(fp, "\n");
+	fclose(fp);
+	return 0;
+}
+
 long timebase(aSubRecord *prec) {
 	long pre = *(long*)prec->a;
 	long post = *(long*)prec->b;

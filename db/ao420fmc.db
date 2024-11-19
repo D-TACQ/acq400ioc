@@ -116,7 +116,6 @@ record(bo, "${UUT}:${SITE}:AWG:DIST") {
 record(ao, "${UUT}:${SITE}:AO:SLOW_SET:CH:ALL") {
         field(DTYP, "dsSysfsAo")
         field(OUT, "@/dev/null")
-        field(DTYP, "Soft Channel")
         field(DESC, "Slow set AO ALL")
         field(DRVL, "-10")
         field(DRVH, "+9.999")

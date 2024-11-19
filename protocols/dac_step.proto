@@ -1,0 +1,7 @@
+Terminator = LF;
+ExtraInput = Ignore;
+
+
+getBQ {
+        in "%0d";
+}

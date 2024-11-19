@@ -166,7 +166,6 @@ record(longout, "${UUT}:${SITE}:HUDP:DISCO:IDX:w"){
 	field(SDIS, "${UUT}:${SITE}:HUDP:DISCO:IDX:s.PACT")
 	field(OMSL, "closed_loop")
 	field(DOL,  "${UUT}:${SITE}:HUDP:DISCO:IDX PP")
-	field(FLNK, "${UUT}:${SITE}:HUDP:DISCO:IDX:IDX PP")
 }
 
 record(longin, "${UUT}:${SITE}:HUDP:DISCO:IDX:r"){

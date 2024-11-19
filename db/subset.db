@@ -7,7 +7,7 @@ record(waveform, "${UUT}:0:STREAM_SUBSET_MASK") {
 }
 
 record(aSub, "${UUT}:0:STREAM_SUBSET_MASK:w") {
-        field(SNAM, "volts_to_raw_SHORT")
+        field(SNAM, "bitmask")
 
         field(FTA,  "UCHAR")
         field(NOA,  "${NCHAN}")
@@ -15,5 +15,5 @@ record(aSub, "${UUT}:0:STREAM_SUBSET_MASK:w") {
 
         field(FTF, "STRING")
         field(NOF, "80")
-        field(INPF, "/etc/acq400/0/stream_subset")
+        field(INPF, "/etc/acq400/0/stream_subset_mask")
 }
