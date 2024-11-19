@@ -10,7 +10,7 @@ record(longin, "${UUT}:0:BQ") {
 record(calcout, "${UUT}:0:AO:STEP:CURSOR:c") {
         field(DTYP, "Soft Channel")
         field(INPA, "${UUT}:0:AO:STEP:CURSOR")
-        field(INPB, "${UUT}:${SITE}:AO:STEP:${CH}.NORD")
+#        field(INPB, "${UUT}:${SITE}:AO:STEP:${CH}.NORD")
         field(CALC, "A<B? A+1: A")
         field(OUT,  "${UUT}:0:AO:STEP:CURSOR PP")
 }
@@ -30,8 +30,9 @@ record(waveform, "${UUT}:${SITE}:AO:STEP:${CH}") {
 
 record(subArray, "${UUT}:${SITE}:AO:STEP:${CH}:i") {
         field(DTYP, "Soft Channel")
+        field(FTVL, "FLOAT")
         field(INP,  "${UUT}:${SITE}:AO:STEP:${CH}")
-        field(MALM, "1")
+        field(MALM, "${size}")
         field(NELM, "1")
         field(FLNK, "${UUT}:${SITE}:AO:STEP:${CH}:w")
 }
@@ -40,15 +41,15 @@ record(ao, "${UUT}:${SITE}:AO:STEP:${CH}:w") {
         field(DTYP, "Soft Channel")
         field(DOL,  "${UUT}:${SITE}:AO:STEP:${CH}:i")
         field(OMSL, "closed_loop")
-        field(OUT,  "${UUT}:${SITE}:AO:SLOW_SET:${CH} PP")
+        field(OUT,  "${UUT}:${SITE}:AO:SLOW_SET:CH:${CH} PP")
 }
 record(fanout, "${UUT}:0:AO:STEP:f0") {
-        field(LNK0, "${UUT}:0:AO:STEP:f1")
+        field(LNK${SITE}, "${UUT}:${SITE}:AO:STEP:f1")
 }
 
-record(dfanout, "${UUT}:0:AO:STEP:f1") {
+record(dfanout, "${UUT}:${SITE}:AO:STEP:f1") {
        field(DOL, "${UUT}:0:AO:STEP:CURSOR")
        field(OMSL, "closed_loop")
-       field(OUTA, "${UUT}:${SITE}:AO:STEP:${CH}:i.INDX PP")   
+       field(OUT${CHA}, "${UUT}:${SITE}:AO:STEP:${CH}:i.INDX PP")   
 }
 

@@ -7,7 +7,22 @@ env > /tmp/dac_step.env
 DAC_STEP_SZ=${DAC_STEP_SZ:-65536}
 
 create_asyn_channel bqs 127.0.0.1:4237
+
+
+cha() {
+        case $1 in
+        1) echo A;;
+        2) echo B;;
+        3) echo C;;
+        4) echo D;;
+        *) echo X;;
+        esac   
+}
 for ch in 1 2 3 4; do
-        dblr '"db/dac_step.db","'${cprams},CH=${ch},BQS=bqs,size=${DAC_STEP_SZ}'"'
+        dblr '"db/dac_step.db","'${cprams},CH=${ch},CHA=$(cha $ch),BQS=bqs,size=${DAC_STEP_SZ}'"'
+        if [ ! -e /tmp/dac_step_first_time_done ]; then
+                dblr '"db/dac_step1.db","'${cprams},CH=${ch},BQS=bqs,size=${DAC_STEP_SZ}'"'
+                echo 1 > /tmp/dac_step_first_time_done
+        fi
 done
 
