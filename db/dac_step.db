@@ -25,7 +25,7 @@ record(longin, "${UUT}:0:BQ") {
 record(calcout, "${UUT}:0:AO:STEP:CURSOR:c") {
         field(DTYP, "Soft Channel")
         field(INPA, "${UUT}:0:AO:STEP:CURSOR")
-#        field(INPB, "${UUT}:${SITE}:AO:STEP:${CH}.NORD")
+        field(INPB, "${UUT}:${SITE}:AO:STEP:${CH}.NORD")
         field(CALC, "A<B? A+1: A")
         field(OUT,  "${UUT}:0:AO:STEP:CURSOR PP")
         field(DISV, "1")
