@@ -75,10 +75,31 @@ strip_all opkg/usr/local/bin
 fi
 #cp -a ../seq/lib/linux-arm/libpv.so ../seq/lib/linux-arm/libseq.so opkg/usr/local/lib
 
-tar cvzf release/${SEQ}-acq400ioc-${DC}.tgz -C opkg .
+
+DEFBR=epics7
+BR=$(git branch --show-current)
+
+if [[ -n $(git status --porcelain) ]]; then
+	GS="dirty_"
+else
+	GS=""
+fi
+
+if [ "$BR" = "epics7" ]; then
+	echo building default branch epics7, nothing to say
+	BC=$GS
+else
+	echo building branch $BR
+	BC="${BR}_${GS}"
+fi
+RN=${SEQ}-acq400ioc-${BC}${DC}.tgz
+tar cvzf release/$RN -C opkg .
 echo git tag -a -m R${DC} R${DC}
-git tag -a -m R${DC} R${DC}
-ls -l release/${SEQ}-acq400ioc-${DC}.tgz
-rm -f ../PACKAGES/${SEQ}-acq400ioc*
-cp release/${SEQ}-acq400ioc-${DC}.tgz ../PACKAGES/
+git tag -a -m "R${DC} ${BR}" R${DC}
+ls -l release/$RN
+if [ "$BR" = "epics7" ]; then
+	echo "default branch $BR, releasing package"
+	rm -f ../PACKAGES/${SEQ}-acq400ioc*
+	cp release/${SEQ}-acq400ioc-${DC}.tgz ../PACKAGES/
+fi
 
