@@ -5,4 +5,22 @@ bin/
 lib
 opkg/
 release/
+# pgm
+.cproject
+.project
+.settings/
+TODO
+acq2iocApp/Db/O.linux-arm/
+acq2iocApp/Db/O.linux-x86_64/
+acq2iocApp/src/O.Common/
+acq2iocApp/src/O.linux-arm/
+acq2iocApp/src/O.linux-x86_64/
+acq400iocApp/src/split2.h
+configure/O.linux-arm/
+configure/O.linux-x86_64/
+db/acq426.db
+db/intclk_noinhibit.db
+dbd/acq2ioc.dbd
+dbd/acq400ioc.dbd
+include/
 
