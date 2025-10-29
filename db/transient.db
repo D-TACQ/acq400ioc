@@ -48,9 +48,10 @@ record(fanout, "${UUT}:MODE:CONTINUOUS:STATE_f") {
 #        field(FLNK, "$(UUT):0:SLOWMON:EN:c PP")
 }
 
-record(longin, "${UUT}:MODE:CONTINUOUS:SC") {
+record(ai, "${UUT}:MODE:CONTINUOUS:SC") {
 	field(DTYP, "Soft Channel")
 	field(DESC, "samples streamed so far")
+    field(PREC, "0")
 }
 
 
