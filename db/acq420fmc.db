@@ -2,15 +2,9 @@
 # Internal clock: with full feedback
 
 
-record (longout, "${UUT}:${SITE}:INTCLK_HZ") {
-# see acq400fmc.db
-        field(EGU, "Hz")
-        field(FLNK, "${UUT}:1:ACQ42X_DT")
-}
 
 record(calc, "${UUT}:1:ACQ42X_DT") {
-	field(INPA, "${UUT}:1:INTCLK_HZ")
-	field(CALC, "A!=0? 1/A:  1")
+	field(CALC, "1")
 	field(FLNK, "${UUT}:1:DT")
 }
 record(longout, "${UUT}:1:XDT") {
@@ -32,39 +26,19 @@ record (fanout, "${UUT}:1:DT:f") {
 	field(SELM, "All")
 	field(LNK1, "${UUT}:1:AI:WF:TB")
 	field(LNK2, "${UUT}:1:AI:TW:TB")
-	field(LNK3, "${UUT}:1:INTCLK_HZ:f")
 }
 
-record (fanout, "${UUT}:1:INTCLK_HZ:f") {
-        field(SELM, "All")
-        field(LNK1, "${UUT}:1:INTCLK_calc")
-        field(SDIS, "${UUT}:${SITE}:CLK")
-        field(DISV, "1")
-}
 
 record(longout, "${UUT}:${SITE}:LO"){
 	field(DTYP, "Soft Channel")
 	field(VAL,  "${LO}")
-	field(FLNK, "${UUT}:${SITE}:INTCLK_calc")
-}
-record (calc, "${UUT}:${SITE}:INTCLK_calc") {
-	field(INPA, "${UUT}:${SITE}:LO")
-	field(INPB, "${UUT}:${SITE}:INTCLK_HZ")
-	field(CALC, "A/B")
-	field(PREC, "0")
-	field(DESC, "calculates INTCLK clkdiv")
 	field(FLNK, "${UUT}:${SITE}:clkdiv:i")
-	field(DISV, "1")
-	field(SDIS, "${UUT}:${SITE}:INTCLK_calc:r.PACT")
 }
 
 record (longout, "${UUT}:${SITE}:clkdiv:i") {
 	field(DTYP, "longoutAcqHost")
-	field(DOL,  "${UUT}:${SITE}:INTCLK_calc")
 	field(OUT, "@/dev/acq400.${SITE}.knobs/clkdiv")
 	field(OMSL, "closed_loop")
-	field(DISV, "1")
-	field(SDIS, "${UUT}:${SITE}:CLK")	
 }
 
 record (longin, "${UUT}:${SITE}:clkdiv:r") {
@@ -72,20 +46,7 @@ record (longin, "${UUT}:${SITE}:clkdiv:r") {
 	field(INP, "@/dev/acq400.${SITE}.knobs/clkdiv")
 	field(SCAN, "1 second")
 	field(PINI, "YES")
-	field(FLNK, "${UUT}:${SITE}:INTCLK_calc:r")		
-}
-
-record (calcout, "${UUT}:${SITE}:INTCLK_calc:r") {
-	field(INPA, "${UUT}:${SITE}:LO")
-	field(INPB, "${UUT}:${SITE}:clkdiv:r")
-	field(CALC, "A/B")
-	field(PREC, "0")
-	field(DESC, "calculates INTCLK clkdiv")
-	field(OUT, "${UUT}:${SITE}:INTCLK_HZ PP")
-	field(OOPT, "On Change")
-	field(DISV, "1")
-	field(SDIS, "${UUT}:${SITE}:CLK")
-	field(FLNK, "${UUT}:${SITE}:clkdiv:ir")		
+	field(FLNK, "${UUT}:${SITE}:clkdiv:ir")	
 }
 
 # Clkdiv with external clock - go direct.
@@ -104,19 +65,15 @@ record (longout, "${UUT}:${SITE}:clkdiv:e") {
 	field(DOL,  "${UUT}:${SITE}:CLKDIV")
 	field(OUT, "@/dev/acq400.${SITE}.knobs/clkdiv")
 	field(OMSL, "closed_loop")
-	field(DISV, "0")
-	field(SDIS, "${UUT}:${SITE}:CLK")	
 }
 
 # but record correct value when internal ..
 
-record (longout, "${UUT}:${SITE}:clkdiv:ir") {
-	field(DTYP, "Soft Channel")
-	field(DOL,  "${UUT}:${SITE}:clkdiv:r")
-	field(OUT, "${UUT}:${SITE}:CLKDIV")
-	field(OMSL, "closed_loop")
-	field(DISV, "1")
-	field(SDIS, "${UUT}:${SITE}:CLK")	
+record(longout, "${UUT}:${SITE}:clkdiv:ir") {
+    field(DTYP, "Soft Channel")
+    field(DOL,  "${UUT}:${SITE}:clkdiv:r")
+    field(OUT,  "${UUT}:${SITE}:CLKDIV PP")
+    field(OMSL, "closed_loop")
 }
 
 record(bo, "${UUT}:${SITE}:simulate") {
