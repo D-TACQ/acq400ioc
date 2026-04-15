@@ -1,4 +1,4 @@
-/* shot_busy.stt .. use LED:ACT to indicate busy (AMBER), then leave it at Green */
+/* wr_clk_mon.stt .. use LED:ACT to indicate busy (AMBER), then leave it at Green */
 
 
 program wrClkMon

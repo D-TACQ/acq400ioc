@@ -95,4 +95,43 @@ record(stringout, "${UUT}:${SITE}:WRTD_TXI_ID")
 	field(OUT,  "@wr.proto set_wrtd_txi_id ${SPORT}")	
 }
 
+record(bo, "${UUT}:${SITE}:WR_RESET")
+{
+	field(DTYP, "Soft Channel")
+	field(DTYP, "Soft Channel")
+	field(ZNAM, "RESET OFF")
+	field(ONAM, "RESET ON")
+	field(HIGH, "2")
+	field(FLNK, "${UUT}:${SITE}:WR_RESET:c")
+}
+
+record(calcout, "${UUT}:${SITE}:WR_RESET:c"){
+	field(INPA, "${UUT}:${SITE}:WR_RESET")
+	field(CALC, "A")
+	field(OOPT, "When Non-zero")
+	field(DOPT, "Use CALC")
+	field(OUT,  "${UUT}:${SITE}:WR_RESET:w PP")
+}
+
+
+record(bo, "${UUT}:${SITE}:WR_RESET:w")
+{
+	field(DTYP, "stream")
+	field(OUT,  "@wr.proto set_wr_reset ${SPORT}")
+}
+
+record(stringin, "${UUT}:${SITE}:WR_MAC")
+{
+	field(DTYP, "stream")
+	field(INP,  "@wr.proto get_wr_mac ${SPORT}")
+	field(SCAN, "I/O Intr")
+}
+
+record(longin, "${UUT}:${SITE}:WR_DELAY")
+{
+	field(DTYP, "stream")
+	field(INP,  "@wr.proto get_wr_delay ${SPORT}")
+	field(SCAN, "I/O Intr")
+}
+
 

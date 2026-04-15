@@ -1,6 +1,6 @@
 Terminator = LF;
 ExtraInput = Ignore;
-ReplyTimeout = 2500;
+ReplyTimeout = 10000;
 
 getCount {
 	out "\$1*";
@@ -54,6 +54,22 @@ set_wrtd_txi_id {
 	in "";
 }
 
+#mac_buf:ac:ac:ac:ac:00:21:54:34:00:58
+#setting delays 242482 200482
+
+set_wr_reset {
+	out "wr_reset";
+	in "mac_buf:ac:ac:ac:ac:%*s";
+	in "setting delays %*d %*d";
+}
+
+get_wr_mac {
+	in "mac_buf:ac:ac:ac:ac:%s";
+}
+
+get_wr_delay {
+	in "setting delays %d %*d";
+}
 
 setBypassTrgDeb {
 	out "bypass_trg_debounce %d";
