@@ -114,7 +114,7 @@ for SITE in 13 12 11 10; do
 	    case ${mt} in
 	    9[01234])
 	        MGTPORTS=$(($MGTPORTS+1))
-	        [ ! -z $MGTLIST ] && MGTLIST="$MGTLIST,"
+	        [ ! -z "${MGTLIST}" ] && MGTLIST="${MGTLIST}\\,"
 	        MGTLIST="$MGTLIST$id"
 		load_mgt400 $SITE $id;;
 	    97)
@@ -125,7 +125,7 @@ for SITE in 13 12 11 10; do
 	fi
 done
 
-dblr '"db/acq2106_mgtports.db","UUT='${HOST}',MGTPORTS='${MGTPORTS}',MGTLIST='''${MGTLIST}'''"'
+dblr '"db/acq2106_mgtports.db","UUT='${HOST}',MGTPORTS='${MGTPORTS}',MGTLIST='${MGTLIST}'"'
 
 if [ "$mt" != "z7io" ]; then
 # SFP1 at 4291
