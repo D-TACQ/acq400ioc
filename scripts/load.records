@@ -468,7 +468,7 @@ load_400() {
     is_acq425=0
 
     case $model in
-    $MT_ACQ420|$MT_ACQ420F|$MT_ACQ424|$MT_ACQ425|$MT_ACQ425F|$MT_ACQ427|$MT_ACQ427F|$MT_ACQ423|$MT_ACQ426|$MT_ACQ428)
+    $MT_ACQ420|$MT_ACQ420F|$MT_ACQ424|$MT_ACQ425|$MT_ACQ425F|$MT_ACQ427|$MT_ACQ427F|$MT_ACQ423|$MT_ACQ426|$MT_ACQ428|$MT_FLASHELF)
         is_adc="sar"
         has_rgm=1
         calmon=calmon42x
