@@ -20,13 +20,18 @@ NMAX=DRVL=0,DRVH=0
 
 trprams=${mprams},SCAN="2 second"
 for pvprams in \
-            FUN=INDEX_HOME,fun=index_home,${SMAX} \
-            FUN=ABS_TRG,fun=abs_trg_count,${SMAX} \
-            FUN=PRD_TRG,fun=prd_trg_count,${SMAX} \
             FUN=PRD_TRG_ACT,fun=pos_prd_count,${NMAX},SCAN=".2 second" \
             FUN=PRD_TRG_HYST,fun=prd_hyst_count,${SMAX}
 do
 	dblr '"db/qen_tr.db","'${trprams},${pvprams}'"'
+done
+
+for pvprams in \
+            FUN=INDEX_HOME,fun=index,${SMAX} \
+            FUN=ABS_TRG,fun=abs_trg,${SMAX} \
+            FUN=PRD_TRG,fun=prd_trg,${SMAX} \
+do
+        dblr '"db/qen_tr3.db","'${trprams},${pvprams}'"'
 done
 
 for enprams in \

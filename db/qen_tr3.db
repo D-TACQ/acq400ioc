@@ -1,0 +1,36 @@
+# generalised <diamond> pattern for qen trigger regs
+# ${UUT} ${SITE}
+# ${FUN} : epics function name
+# ${fun} : knob name
+# ${SCAN}: scan instruction, eg "2 second"
+
+record(longout, "${UUT}:${SITE}:QEN:${FUN}") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Enable Discontinuity Tester")
+	field(DRVL, "${DRVL}")
+	field(DRVH, "${DRVH}")
+	field(FLNK, "${UUT}:${SITE}:QEN:${FUN}:w PP")
+}
+
+record(longout, "${UUT}:${SITE}:QEN:${FUN}:w"){
+	field(DTYP, "stream")
+	field(OUT,  "@qen.proto set_tr3(${fun}) ${SPORT}")
+	field(DISV, "1")
+	field(SDIS, "${UUT}:${SITE}:QEN:${FUN}:s.PACT")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:${SITE}:QEN:${FUN} PP")
+}
+
+record(longin, "${UUT}:${SITE}:QEN:${FUN}:r"){
+	field(DTYP, "stream")
+	field(INP,  "@qen.proto get_tr(${fun}) ${SPORT}")
+	field(SCAN, "${SCAN}")
+	field(FLNK, "${UUT}:${SITE}:QEN:${FUN}:s")
+}
+
+record(longout, "${UUT}:${SITE}:QEN:${FUN}:s") {
+	field(DTYP, "Soft Channel")
+	field(DOL, "${UUT}:${SITE}:QEN:${FUN}:r NPP")
+	field(OMSL, "closed_loop")
+	field(OUT, "${UUT}:${SITE}:QEN:${FUN} PP")
+}

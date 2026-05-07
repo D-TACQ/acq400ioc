@@ -40,6 +40,15 @@ set_tr {
 	in;
 }
 
+set_tr3 {
+        out "\$1_en 0";
+        in;
+        out "\$1_count %d";
+        in;
+        out "\$1_en 1";
+        in;
+}
+
 get_en {
 	out "\$1";
 	in "%d";
