@@ -1,0 +1,81 @@
+
+/* calmon0.stt: aggregate all AI:CAL in aggregator set in single PV:0:AI:CAL:ESLO/EOFF
+ * 
+ * calmon0 sites=1,2,3,4,5,6
+ * calmon0 sites=1,1,1,1,1,1   # fake for testing.
+ * 
+ * ie reproduce this HAPI function (for non-HAPI systems):
+     def fetch_all_calibration(self):
+        """Gets uut calibration and stores in instance"""
+        try:
+            for m in self.get_aggregator_svc_list():
+                self.cal_eslo.extend(m.AI_CAL_ESLO.split(' ')[3:])
+                self.cal_eoff.extend(m.AI_CAL_EOFF.split(' ')[3:])
+        except:
+            pass
+ * 
+ */
+
+program calmon0
+option +r;
+
+%{
+#include <stdlib.h>	
+	
+#define MAX_SITES	6
+#define MAX_CHAN	32
+
+int ai_sites[MAX_SITES];    // populate from sites= macro N,N,N terminate on MAX_SITES or zero.
+float** site_eslo;          // build from sites= macro nb each site index from 1.
+float** site_eoff;
+
+float* agg_eslo;      // 0..TOTAL+1  all channels, index from 1.
+float* agg_eoff;      // 0..TOTAL+1  all channels, index from 1.
+
+int allocate_sites(const char* sitelist)
+{
+	printf("allocate_sites %s\n", sitelist);
+	const char* ps = sitelist;
+	int is = 0;
+	for (ps = sitelist; *ps; ++ps){
+		switch(*ps){
+		case ',':
+			break;
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+			site_eslo[is] = calloc(MAX_CHAN+1, sizeof(float));
+			site_eoff[is] = calloc(MAX_CHAN+1, sizeof(float));
+			ai_sites[is++] = *ps - '0';
+			break;
+		default:
+			printf("ERROR: bad site %c\n", *ps);
+		}
+	}
+	return is;
+}
+}%
+
+ss calmon00 {
+	state init {
+		when() {
+			if (macValueGet("sites") && allocate_sites(macValueGet("sites"))){
+				printf("calmon0 %s\n", macValueGet("sites"));
+			}else{
+				printf("ERROR calmon0 sites macro undefined\n");
+%{				
+				exit(1);
+}%				
+			}
+		} state wait_changes
+	} 
+	
+	state wait_changes {
+		when(delay(1000)){
+			
+		} state wait_changes
+	} 
+}
