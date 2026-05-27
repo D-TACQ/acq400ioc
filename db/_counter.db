@@ -20,7 +20,7 @@ record(calc, "${UUT}:${SITE}:${SIG}:${lname}:ACTIVE") {
 	field(INPE, "${UUT}:${SITE}:${SIG}:${lname}:ACTIVE.LD")
 	field(INPF, "${UUT}:${SITE}:${SIG}:${lname}:ACTIVE.LE")
 	field(INPL, "4294967296")
-	field(CALC, "C||D||E||F; A:=A<0?L+A:A; C:=(A-B)?1:0")
+	field(CALC, "D||E||F; A:=A<0?L+A:A; C:=(A-B)?1:0")
 	field(PREC, "1")
 	field(FLNK, "${UUT}:${SITE}:${SIG}:${lname}:nzcount")
 	field(DESC, "True is signal changed from last")
