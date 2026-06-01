@@ -1,0 +1,12 @@
+#!/bin/sh
+
+host=${1}
+site=${2}
+
+if [ -z $host ] || [ -z $site ]; then
+	echo "# load.flashelf FAIL $host $site"
+	exit 1
+fi
+echo "# load.flashelf $HOST $host $site"
+
+
