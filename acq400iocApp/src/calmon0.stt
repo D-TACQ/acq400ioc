@@ -19,24 +19,43 @@
 program calmon0
 option +r;
 
-%{
-#include <stdlib.h>	
-	
 #define MAX_SITES	6
 #define MAX_CHAN	32
 
+%{
+#include <stdlib.h>	
+	
+
+	
+
+char* uut;
 int ai_sites[MAX_SITES];    // populate from sites= macro N,N,N terminate on MAX_SITES or zero.
-float** site_eslo;          // build from sites= macro nb each site index from 1.
-float** site_eoff;
+int site_nchan[MAX_SITES];
+}%
+//float** site_eslo;          // build from sites= macro nb each site index from 1.
+//float** site_eoff;
+
+float site_eslo[MAX_SITES][MAX_CHAN]; assign site_eslo to {};
+//assign site_eslo to {};
+//assign site_eoff to {};
 
 float* agg_eslo;      // 0..TOTAL+1  all channels, index from 1.
 float* agg_eoff;      // 0..TOTAL+1  all channels, index from 1.
 
+assign agg_eslo to "{uut}:0:AI:CAL:ESLO";
+assign agg_eoff to "{uut}:0:AI:CAL:EOFF";
+
+int nag_sites;        // number of sites in set
+int is;               // index of site in set 0..nagsites
+int site = 0;         // site # 1..6
+char* pvname[80];
+int nchan;		assign nchan to {};
+
+%{
 int allocate_sites(const char* sitelist)
 {
 	printf("allocate_sites %s\n", sitelist);
 	const char* ps = sitelist;
-	int is = 0;
 	for (ps = sitelist; *ps; ++ps){
 		switch(*ps){
 		case ',':
@@ -62,7 +81,9 @@ int allocate_sites(const char* sitelist)
 ss calmon00 {
 	state init {
 		when() {
-			if (macValueGet("sites") && allocate_sites(macValueGet("sites"))){
+			uut = macValueGet("uut");
+			if (macValueGet("sites") && 
+			    (nag_sites = allocate_sites(macValueGet("sites")))){
 				printf("calmon0 %s\n", macValueGet("sites"));
 			}else{
 				printf("ERROR calmon0 sites macro undefined\n");
@@ -70,8 +91,30 @@ ss calmon00 {
 				exit(1);
 }%				
 			}
-		} state wait_changes
+		} state init2
 	} 
+	state init2 {
+		entry {
+			for (is =0; is < MAX_SITES && ai_sites[is] != 0; ++is){
+				/*
+				snprintf(pvname, 80, "%s:%d:AI:CAL:ESLO", uut, ai_sites[is]);
+				pvAssign(site_eslo[ch], pvname);
+				pvMonitor(site_eslo[ch]);
+				snprintf(pvname, 80, "%s:%d:AI:CAL:EOFF", uut, ai_sites[is]);
+				pvAssign(site_eslo[ch], pvname);
+				pvMonitor(site_eoff[ch]);
+				*/
+				snprintf(pvname, 80, "%s:%d:NCHAN", uut, ai_sites[is]);
+				/*
+				pvAssign(nchan, pvname);
+				site_nchan[is] = pvGet(nchan);
+				*/
+			}
+		}
+		when() {
+			
+		} state wait_changes
+	}
 	
 	state wait_changes {
 		when(delay(1000)){
