@@ -128,6 +128,7 @@ acq400ioc_SRCS += hudpResetOnStop.st
 acq400ioc_SRCS += continuous_wdg.st
 acq400ioc_SRCS += sfp_txen.st
 acq400ioc_SRCS += ppw_tick_scaler.st
+acq400ioc_SRCS += bolo_button.st
 
 # Build the main IOC entry point on workstation OSs.
 acq400ioc_SRCS_DEFAULT += acq400iocMain.cpp \
