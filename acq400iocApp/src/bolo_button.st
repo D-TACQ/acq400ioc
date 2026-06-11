@@ -40,7 +40,7 @@ monitor run_button;
  * set_arm is the garden variety way of arming an ACQ400
  * it will then capture on trigger
  */
-string calib_script - "/usr/local/bin/run_calibfit";
+string calib_script = "/usr/local/bin/run_calibfit";
 string run_script = "/usr/local/bin/set_arm";
 
 int verbose;
@@ -89,7 +89,7 @@ ss bolo_button_states {
 				printf("in idle state on site %d \n", site);
 			}
 		}
-		when(mode != MODE_BP_ON) {
+		when(mode != MODE_IDLE) {
 			
 		} state idle0
 	}
@@ -102,7 +102,7 @@ ss bolo_button_states {
 				printf("in calib state on site %d \n", site);
 			}
 		}
-		when(mode != MODE_BP_ON) {
+		when(mode != MODE_CALIB) {
 			
 		} state idle0
 	}
@@ -115,7 +115,7 @@ ss bolo_button_states {
 				printf("in run state on site %d \n", site);
 			}
 		}
-		when(mode != MODE_BP_ON) {
+		when(mode != MODE_RUN) {
 			
 		} state idle0
 	}
