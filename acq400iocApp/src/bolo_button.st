@@ -13,7 +13,7 @@ option +r;
 /*
  * +m to include the main procedure (seqMain.c) for a standalone program.
  */
-option +m;
+/* option +m; */
 
 %%#include <stdio.h>
 %%#include <stdlib.h>
@@ -51,6 +51,7 @@ int run_button0 = 99;
 
 int site;
 char* message;
+int rc;
 
 ss bolo_button_states {
 	state init {
@@ -97,7 +98,7 @@ ss bolo_button_states {
 		entry {
 			// bypass_debounce = 1;
 			// pvPut(bypass_debounce);
-                        system(calib_script);
+                        rc = system(calib_script);
 			if (verbose){
 				printf("in calib state on site %d \n", site);
 			}
@@ -110,7 +111,7 @@ ss bolo_button_states {
 		entry {
 			//bypass_debounce = 1;
 			//pvPut(bypass_debounce);
-                        system(run_script);
+                        rc = system(run_script);
 			if (verbose){
 				printf("in run state on site %d \n", site);
 			}

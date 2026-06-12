@@ -68,6 +68,7 @@ acq400ioc_DBD += ppw_tick_scaler.dbd
 acq400ioc_DBD += softIocPVX.dbd
 acq400ioc_DBD += pvxsIoc.dbd
 acq400ioc_DBD += reccaster.dbd
+acq400ioc_DBD += bolo_button.dbd
 
 # Add all the support libraries needed by this IOC
 acq400ioc_LIBS += acq2ioc
