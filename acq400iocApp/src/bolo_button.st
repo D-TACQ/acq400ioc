@@ -39,6 +39,9 @@ monitor run_button;
  * run_calibfit is part of the BOLODSP package
  * set_arm is the garden variety way of arming an ACQ400
  * it will then capture on trigger
+ *
+ * TODO: Put in some logic in case these files do not exist
+ * if (file_not_exist) { tell user bolo package not enabled }
  */
 string calib_script = "/usr/local/bin/run_calibfit";
 string run_script = "/usr/local/bin/set_arm";
@@ -46,8 +49,8 @@ string run_script = "/usr/local/bin/set_arm";
 int verbose;
 
 /* monitor previous state */
-int calib_button0 = 99;
-int run_button0 = 99;
+int calib_button0 = 1;
+int run_button0 = 1;
 
 int site;
 char* message;
@@ -60,26 +63,7 @@ ss bolo_button_states {
 				verbose = macValueGet("verbose")[0] - '0';
 			}
 			site = macValueGet("site")[0] - '0';
-		} state idle0
-	}
-	
-	state idle0 {
-		entry {
-			if (verbose){
-				printf("in idle0 state %d idle0\n", site);
-			}
-		}
-		when(mode == MODE_IDLE){
-			
 		} state idle
-		
-		when(mode == MODE_CALIB){
-			
-		} state calib
-		
-		when(mode == MODE_RUN ){
-			
-		} state run
 	}
 	
 	state idle {
@@ -90,10 +74,20 @@ ss bolo_button_states {
 				printf("in idle state on site %d \n", site);
 			}
 		}
-		when(mode != MODE_IDLE) {
+
+                when(calib_button > calib_button0) {
+                    calib_button0 = calib_button;
+                } state calib
+
+                when(run_button > run_button0) {
+                    run_button0 = run_button;
+                } state run
+
+		when {
 			
-		} state idle0
+		} state idle
 	}
+
 	state calib {
 		entry {
 			// bypass_debounce = 1;
@@ -103,9 +97,8 @@ ss bolo_button_states {
 				printf("in calib state on site %d \n", site);
 			}
 		}
-		when(mode != MODE_CALIB) {
-			
-		} state idle0
+		when() {
+		} state idle
 	}
 	state run {
 		entry {
@@ -116,8 +109,8 @@ ss bolo_button_states {
 				printf("in run state on site %d \n", site);
 			}
 		}
-		when(mode != MODE_RUN) {
+		when {
 			
-		} state idle0
+		} state idle
 	}
 }
