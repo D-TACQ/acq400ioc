@@ -79,6 +79,21 @@ ss bolo_button_states {
                     run_button0 = run_button;
                 } state run
 
+		/* Reset detection if count decreased */
+		when(run_button < run_button0) {
+		    if (verbose) {
+			printf("run_button reset detected on site %d\n", site);
+		    }
+		    run_button0 = run_button; 
+		} state idle
+
+		when(calib_button < calib_button0) {
+		    if (verbose) {
+			printf("calib_button reset detected on site %d\n", site);
+		    }
+		    calib_button0 = calib_button;
+		} state idle
+
 		when() {
 			
 		} state idle
@@ -93,6 +108,9 @@ ss bolo_button_states {
 				printf("in calib state on site %d \n", site);
 			}
 		}
+
+
+
 		when() {
 		} state idle
 	}
@@ -105,6 +123,9 @@ ss bolo_button_states {
 				printf("in run state on site %d \n", site);
 			}
 		}
+
+
+
 		when() {
 			
 		} state idle
