@@ -83,7 +83,7 @@ ss bolo_button_states {
                     run_button0 = run_button;
                 } state run
 
-		when {
+		when() {
 			
 		} state idle
 	}
@@ -109,7 +109,7 @@ ss bolo_button_states {
 				printf("in run state on site %d \n", site);
 			}
 		}
-		when {
+		when() {
 			
 		} state idle
 	}
