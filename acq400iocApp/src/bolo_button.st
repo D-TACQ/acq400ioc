@@ -18,20 +18,16 @@ option +r;
 %%#include <stdio.h>
 %%#include <stdlib.h>
 
-/*
- * The mode is determined by the counts of the trigger and sync counters
- * */
-int mode; assign mode to "{uut}:{site}:SIG:EVT_EXT:COUNT";
-monitor mode;
-
 #define MODE_IDLE  0
 #define MODE_CALIB 1
 #define MODE_RUN   2
 
-int calib_button; assign calib_button to "{uut}:{site}:SIG:TRG_EXT:COUNT";
+/* monitor the event bus alias for HDMI GPIO */
+int calib_button; assign calib_button to "{uut}:{site}:SIG:EVT_MB:COUNT";
 monitor calib_button;
 
-int run_button; assign run_button to "{uut}:{site}:SIG:SYN_EXT:COUNT";
+/* monitor the event bus alias for HDMI SYNC */
+int run_button; assign run_button to "{uut}:{site}:SIG:EVT_S2:COUNT";
 monitor run_button;
 
 
