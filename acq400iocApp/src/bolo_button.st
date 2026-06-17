@@ -64,8 +64,6 @@ ss bolo_button_states {
 	
 	state idle {
 		entry {
-			//bypass_debounce = 1;
-			//pvPut(bypass_debounce);
 			if (verbose){
 				printf("in idle state on site %d \n", site);
 			}
@@ -101,33 +99,29 @@ ss bolo_button_states {
 
 	state calib {
 		entry {
-			// bypass_debounce = 1;
-			// pvPut(bypass_debounce);
-                        rc = system(calib_script);
 			if (verbose){
 				printf("in calib state on site %d \n", site);
 			}
+                        rc = system(calib_script);
 		}
 
-
-
 		when() {
+                    calib_button0 = calib_button;
+                    run_button0 = run_button;
 		} state idle
 	}
+
 	state run {
 		entry {
-			//bypass_debounce = 1;
-			//pvPut(bypass_debounce);
-                        rc = system(run_script);
 			if (verbose){
 				printf("in run state on site %d \n", site);
 			}
+                        rc = system(run_script);
 		}
 
-
-
 		when() {
-			
+		    calib_button0 = calib_button;
+                    run_button0 = run_button;
 		} state idle
 	}
 }
