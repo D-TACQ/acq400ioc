@@ -22,7 +22,7 @@ record (mbbo, "${UUT}:${SITE}:GAIN:${CH}") {
 	field(VAL,  "0")
         field(DISV, "1")
         field(SDIS, "${UUT}:${SITE}:ACTIVE")	
-        field(FLNK, "${UUT}:${SITE}:GAIN:s")
+        field(FLNK, "${UUT}:${SITE}:GAIN:${CH}:s")
 }
 
 record(waveform, "${UUT}:${SITE}:GAIN:${CH}:X") {
