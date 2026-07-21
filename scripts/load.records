@@ -489,7 +489,7 @@ load_400() {
             LO=66000000;;
         $MT_ACQ426)
             calmon=calmon426
-            ["x$SUBCALMON42x_FOR_CALMON426" = "xy" ] calmon=calmon42x
+            [" x$SUBCALMON42x_FOR_CALMON426" = "xy" ] calmon=calmon42x
             dblr '"db/acq426.db","'${cprams}'"'
             gains="GX=fixed"
             source /dev/sites/${site}/details
