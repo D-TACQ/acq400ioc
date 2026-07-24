@@ -25,6 +25,7 @@ option +r;
 /* monitor the event bus alias for HDMI GPIO */
 int calib_button; assign calib_button to "{uut}:{site}:SIG:EVT_MB:COUNT";
 monitor calib_button;
+int calibmode; assign calibmode to "{uut}:B8:CALIBMODE";
 
 /* monitor the event bus alias for HDMI SYNC */
 int run_button; assign run_button to "{uut}:{site}:SIG:EVT_S2:COUNT";
@@ -39,7 +40,6 @@ monitor run_button;
  * TODO: Put in some logic in case these files do not exist
  * if (file_not_exist) { tell user bolo package not enabled }
  */
-string calib_script = "/usr/local/bin/run_calibfit";
 string run_script = "/usr/local/bin/set_arm";
 
 int verbose;
@@ -102,10 +102,17 @@ ss bolo_button_states {
 			if (verbose){
 				printf("in calib state on site %d \n", site);
 			}
-                        rc = system(calib_script);
+			pvGet(calibmode);
+			if (calibmode){
+			        rc = system("/usr/local/bin/run_calibfit 1");
+			}
+			else {
+			        rc = system("usr/local/bin/run_calibfit");
+		        }
 		}
 
 		when() {
+		    pvGet(calibmode);
                     calib_button0 = calib_button;
                     run_button0 = run_button;
 		} state idle

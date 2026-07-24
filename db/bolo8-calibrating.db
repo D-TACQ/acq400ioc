@@ -7,6 +7,14 @@ record(bo, "${UUT}:B8:CALIBRATING") {
 	field(FLNK, "${UUT}:B8:CALIBRATING:N")
 }
 
+record(bi, "${UUT}:B8:CALIBMODE") {
+	field(DTYP, "Soft Channel")
+	field(ZNAM, "0")
+	field(ONAM, "1")
+	field(PINI, "YES")
+	field(VAL,  "0")
+}
+
 record(calc, "${UUT}:B8:CALIBRATING:N") {
 	field(INPA, "${UUT}:B8:CALIBRATING")
 	field(CALC, "!A")
