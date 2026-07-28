@@ -107,7 +107,7 @@ ss bolo_button_states {
 			        rc = system("/usr/local/bin/run_calibfit 1");
 			}
 			else {
-			        rc = system("usr/local/bin/run_calibfit");
+			        rc = system("/usr/local/bin/run_calibfit");
 		        }
 		}
 
