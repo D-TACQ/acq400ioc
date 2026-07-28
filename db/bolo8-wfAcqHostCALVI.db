@@ -7,7 +7,7 @@ record(aSub, "${UUT}:${SITE}:AI:TW:${cid}:V") {
 	field(NOVJ, "${SPL_TW_LEN}")	
 	
 	field(FTP, "FLOAT")
-	field(INPP,  "3.051758e-5")      # SWG (14) raw->Volts
+	field(INPP,  "3.81469725e-5")      # SWG (14) raw->Volts
 	field(FTQ, "FLOAT")
 	field(INPQ,  "2.6042e-6")        # SWG (15) raw->Iamps
 	field(FTR,  "SHORT")
