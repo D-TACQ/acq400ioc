@@ -108,7 +108,8 @@ make_epics_knobs() {
 	done
 	
 	for PV in $(grep -v :TRG: $RLP | egrep -e FIR:01$ -e HPF:0[1-8] -e T50R -e ACQ480 \
-			-e LFNS -e INVERT -e ACQ4.X_SAMPLE_RATE -e GAIN -e RANGE -e ACQ465 -e QEN -e PPW)
+			-e LFNS -e INVERT -e ACQ4.X_SAMPLE_RATE -e GAIN -e RANGE -e ACQ465 \
+			-e QEN -e PPW -e ES_ENABLE )
 	do
 		NU=${PV#*:}
 		SITE=${NU%%:*}
