@@ -7,11 +7,11 @@ record(aSub, "${UUT}:1:AI:TW:TB") {
 	
 	field(FTA,  "LONG")
 	field(NOA,  "1")
-	field(INPA, "${UUT}:MODE:TRANSIENT:PRE")
+	field(INPA, "${UUT}:MODE:TRANSIENT:PRE:r")
 	
 	field(FTB,  "LONG")
 	field(NOB,  "1")
-	field(INPB, "${UUT}:MODE:TRANSIENT:POST")
+	field(INPB, "${UUT}:MODE:TRANSIENT:POST:r")
 	
 	field(FTC,  "FLOAT")
 	field(NOC,  "1")
