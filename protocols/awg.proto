@@ -54,6 +54,17 @@ setOneShot {
 	out "playloop_oneshot %d";
 	in;
 }
+
+setAwgSoftTrigger {
+	out "awg SOFT_TRIGGER=%d";
+	in;
+}
+
+getAwgSoftTrigger {
+	out "awg";
+	in "SOFT_TRIGGER=%d";
+}
+
 setAbort {
     	out "playloop_oneshot %d";
     	in;
