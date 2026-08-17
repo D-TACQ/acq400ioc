@@ -195,26 +195,46 @@ record(bo, "${UUT}:MODE:TRANSIENT:DEMUX:s") {
 	field(OUT,  "${UUT}:MODE:TRANSIENT:DEMUX PP")
 }
 
-record(bi, "${UUT}:MODE:TRANSIENT:AUTO_SOFT_TRG:r") {
+record(bo, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "auto soft trigger after ARM")
+	field(ZNAM, "NO")
+	field(ONAM, "YES")
+	field(FLNK, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER:w PP")
+}
+
+record(bo, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER:w") {
+	field(DTYP, "stream")
+	field(ZNAM, "0")
+	field(ONAM, "1")
+	field(OUT,  "@transient.proto setTransientSoftTrigger ${SPORT}")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER")
+	field(DISV, "1")
+
+	field(SDIS, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER:r.PACT")
+}
+
+record(bi, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER:r") {
 	field(DTYP, "stream")
 	field(INP,  "@transient.proto getTransientSoftTrigger ${SPORT}")
 	field(SCAN, "I/O Intr")
 	field(DESC, "transient set to self trigger")
 	field(ZNAM, "0")
 	field(ONAM, "1")
+	field(FLNK, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER:s")
 }
 
-
-record(longout, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER") {
+record(bo, "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER:s") {
 	field(DTYP, "Soft Channel")
-	field(DESC, "auto soft trigger after ARM")
-	field(EGU,  "Samples")
-	field(VAL,  "1")
-	field(PINI, "YES")	
-	field(LOPR, "0")
-	field(HOPR, "1")
-	field(FLNK, "${UUT}:MODE:TRANSIENT:set1 PP")
+	field(ZNAM, "0")
+	field(ONAM, "1")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER:r NPP")
+	field(OUT,  "${UUT}:MODE:TRANSIENT:SOFT_TRIGGER PP")
 }
+
+alias("${UUT}:MODE:TRANSIENT:SOFT_TRIGGER", "${UUT}:MODE:TRANSIENT:AUTO_SOFT_TRG")
 
 record(bo, "${UUT}:MODE:TRANSIENT:SET_ARM") {
 	field(ONAM, "ON")
