@@ -43,6 +43,11 @@ setTransientDemux {
 	in;
 }
 
+setTransientSoftTrigger {
+	out "transient SOFT_TRIGGER=%d";
+	in;
+}
+
 # PRE=0 POST=100000 OSAM=1 DEMUX=1 SOFT_TRIGGER=0
 getTransientPre {
 	out "transient";

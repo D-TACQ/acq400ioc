@@ -232,3 +232,44 @@ record (stringin, "${UUT}:${SITE}:AWG:SEG") {
 }
 
 
+
+
+record(bo, "${UUT}:AWG:SOFT_TRIGGER") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "auto soft trigger for AWG")
+	field(ZNAM, "NO")
+	field(ONAM, "YES")
+	field(FLNK, "${UUT}:AWG:SOFT_TRIGGER:w PP")
+}
+
+record(bo, "${UUT}:AWG:SOFT_TRIGGER:w") {
+	field(DTYP, "stream")
+	field(ZNAM, "0")
+	field(ONAM, "1")
+	field(OUT,  "@awg.proto setAwgSoftTrigger SS")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:AWG:SOFT_TRIGGER")
+	field(DISV, "1")
+
+	field(SDIS, "${UUT}:AWG:SOFT_TRIGGER:r.PACT")
+}
+
+record(bi, "${UUT}:AWG:SOFT_TRIGGER:r") {
+	field(DTYP, "stream")
+	field(INP,  "@awg.proto getAwgSoftTrigger SS")
+	field(SCAN, "1 second")
+	field(DESC, "awg auto soft trigger")
+	field(ZNAM, "0")
+	field(ONAM, "1")
+	field(FLNK, "${UUT}:AWG:SOFT_TRIGGER:s")
+}
+
+record(bo, "${UUT}:AWG:SOFT_TRIGGER:s") {
+	field(DTYP, "Soft Channel")
+	field(ZNAM, "0")
+	field(ONAM, "1")
+	field(OMSL, "closed_loop")
+	field(DOL,  "${UUT}:AWG:SOFT_TRIGGER:r NPP")
+	field(OUT,  "${UUT}:AWG:SOFT_TRIGGER PP")
+}
+
