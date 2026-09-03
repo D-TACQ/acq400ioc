@@ -140,8 +140,6 @@ record(longout, "${UUT}:MODE:TRANSIENT:OSAM") {
 	field(DESC, "subrate oversample ratio")
 	field(EGU,  "Samples")
 	field(LOPR, "0")
-	field(VAL,  "1")
-	field(PINI, "YES")
 	field(HOPR, "256")
 	field(FLNK, "${UUT}:MODE:TRANSIENT:set1 PP")
 }
