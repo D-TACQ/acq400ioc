@@ -34,7 +34,7 @@ mdsPutCh	{ in "mdsPutCh %d"; }
 # transient PRE=1000 POST=1000 OSAM=1 SOFT_TRIGGER=1
 
 setTransient {
-	out "transient PRE=%(\$1:PRE)d POST=%(\$1:POST)d OSAM=%(\$1:OSAM)d SOFT_TRIGGER=%(\$1:SOFT_TRIGGER)d";
+	out "transient PRE=%(\$1:PRE)d POST=%(\$1:POST)d OSAM=%(\$1:OSAM)d";
 	in;
 }
 
