@@ -72,6 +72,12 @@ record(longin, "${UUT}:0:AGGREGATOR:S1") {
 	field(SCAN,  "5 second")
 }
 
+record(bi, "${UUT}:0:AGGREGATOR:BACKPRESSURE") {
+	field(DTYP,  "stream")
+	field(INP,   "@acq400mb.proto getAggregatorBackpressure ${SPORT2}")
+	field(SCAN,  "1 second")
+}
+
 record(bi, "${UUT}:0:AGGREGATOR:ON") {
 	field(DESC, "$placeholder")
 	field(DTYP,  "stream")
