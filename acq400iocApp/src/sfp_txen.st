@@ -29,7 +29,10 @@ ss sfp_txen {
 				remove_threshold = macValueGet("remove_threshold")[0] - '0';
 			}
 			port = macValueGet("port");
-			tx_disable = 1; pvPut(tx_disable);
+			pvGet(present);
+			if (!present) {
+			    tx_disable = 1; pvPut(tx_disable);
+			}
 		} state wait_present
 	}
 	state wait_present {
