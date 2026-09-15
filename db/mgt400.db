@@ -40,9 +40,9 @@ record(longin, "${UUT}:${chan}:AGGREGATOR") {
 	field(PINI,  "YES")
 }
 
-record(longin, "${UUT}:${chan}:PCIECTRL") {
+record(ai, "${UUT}:${chan}:PCIECTRL") {
 	field(DTYP,  "dsSysfsAi")
-	field(INP,   "@/etc/acq400/${chan}/PCIE_CTRL"))
+	field(INP,   "@/etc/acq400/${chan}/PCIE_CTRL")
 	field(SCAN,  "1 second")
 	field(DESC,  "PCIe Control Register")
 	field(PINI,  "YES")

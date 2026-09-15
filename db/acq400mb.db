@@ -72,7 +72,7 @@ record(longin, "${UUT}:0:AGGREGATOR:S1") {
 	field(SCAN,  "5 second")
 }
 
-record(bi, "${UUT}:0:AGGREGATOR:BACKPRESSURE") {
+record(ai, "${UUT}:0:AGGREGATOR:BACKPRESSURE") {
 	field(DTYP,  "dsSysfsAi")
 	field(INP,   "@/etc/acq400/${chan}/aggsta_backpressure")
 	field(SCAN,  "1 second")
