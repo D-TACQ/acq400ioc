@@ -42,7 +42,7 @@ record(longin, "${UUT}:${chan}:AGGREGATOR") {
 
 record(longin, "${UUT}:${chan}:PCIECTRL") {
 	field(DTYP,  "dsSysfsAi")
-	field(INP,   "@/sys/kernel/debug/mgt400/mgt400.${chan}/PCIE_CTRL.0x1004"))
+	field(INP,   "@/etc/acq400/${chan}/PCIE_CTRL"))
 	field(SCAN,  "1 second")
 	field(DESC,  "PCIe Control Register")
 	field(PINI,  "YES")

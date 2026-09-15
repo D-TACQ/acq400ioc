@@ -32,11 +32,6 @@ getAggregatorS1 {
 	in "%*s %d";
 }
 
-getAggregatorBackpressure {
-        out "aggsta_backpressure";
-	in "%d";
-}
-
 getAggregatorEn {	
 	in "reg=0x%*x sites=%*s threshold=%*d DATA_MOVER_EN=%{off|on}";
 }
