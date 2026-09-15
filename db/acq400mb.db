@@ -72,6 +72,14 @@ record(longin, "${UUT}:0:AGGREGATOR:S1") {
 	field(SCAN,  "5 second")
 }
 
+record(ai, "${UUT}:0:AGGREGATOR:BACKPRESSURE") {
+	field(DTYP,  "dsSysfsAi")
+	field(INP,   "@/etc/acq400/${chan}/aggsta_backpressure")
+	field(SCAN,  "1 second")
+	field(DESC, "Aggregator backpressure indictator")
+	field(PINI, "YES")
+}
+
 record(bi, "${UUT}:0:AGGREGATOR:ON") {
 	field(DESC, "$placeholder")
 	field(DTYP,  "stream")
