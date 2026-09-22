@@ -43,3 +43,13 @@ record (calc, "${UUT}:${SITE}:GAIN_CHANGES") {
 	field(INPA, "${UUT}:${SITE}:GAIN_CHANGES")
 	field(CALC, "A+1")
 }
+
+# dummy record for RDIS - not used in acq423
+record(bo, "${UUT}:${SITE}:GAIN:RDIS") {
+        field(DTYP, "Soft Channel")
+        field(ZNAM, "ENABLE")
+        field(ONAM, "DISABLE")
+        field(DESC, "Global gain readback disable")
+        field(PINI, "YES")
+        field(VAL,  "0")
+}
