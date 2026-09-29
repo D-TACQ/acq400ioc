@@ -224,9 +224,16 @@ static void fixup(int site, char* cmd, int maxcmd, const char* gainstr, const ch
 
 	for (int ic = 0; gainstr[ic]; ++ic, ++ch){
 		if (gainstr[ic] != actstr[ic]){
-			snprintf(cmd, maxcmd, "set.site %d gain%d=%c", site, ch, gainstr[ic]);
-			fp = popen(cmd, "r");
-			pclose(fp);
+			snprintf(cmd, maxcmd, "/dev/acq400.%d.knobs/gain%d", site, ch);
+			fp = fopen(cmd, "w");
+			if (fp != NULL){
+			    fputc(gainstr[ic], fp);
+			    fclose(fp);
+			}else {
+			    char emsg[256];
+			    snprintf(emsg, sizeof(emsg), "ERROR: %s %s fopen write fail", __FUNCTION__, cmd);
+			    perror(emsg);
+			}
 		}
 	}
 }
@@ -238,6 +245,7 @@ static void fixup(int site, char* cmd, int maxcmd, const char* gainstr, const ch
  */
 int acq400_cal_ll_check_success(int site, int gains[], int nchan)
 {
+	char filename[80];
 	char cmd[80];
 	char* actstr = cmd;
 	char gainstr[33];
@@ -250,19 +258,20 @@ int acq400_cal_ll_check_success(int site, int gains[], int nchan)
 	}
 	gainstr[ch-1] = '\0';
 
-	snprintf(cmd, 80, "get.site %d gains", site);
+	snprintf(filename, sizeof(filename), "/dev/acq400.%d.knobs/gains", site);
 
-	fp = popen(cmd, "r");
-	if (fp == 0){
+	fp = fopen(filename, "r");
+
+	if (fp == NULL){
 		char emsg[256];
-		snprintf(emsg, 255, "ERROR: %s %s popen fail", __FUNCTION__, cmd);
+		snprintf(emsg, 255, "ERROR: %s %s fopen fail", __FUNCTION__, filename);
 		perror(emsg);
 		rc = -1;
-	}else if (fgets(actstr, 80, fp) == 0){
+	}else if (fgets(actstr, 80, fp) == NULL){
 		rc = -1;
-		pclose(fp);
+		fclose(fp);
 	}else{
-		pclose(fp);
+		fclose(fp);
 
 		actstr[strlen(actstr)-1] = '\0';  /* rtrim */
 		rc = strcmp(gainstr, actstr);
