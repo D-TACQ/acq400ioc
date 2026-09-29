@@ -68,14 +68,14 @@ record(mbbo, "${UUT}:${SITE}:DIO:MODE:s") {
 
 # force DO's to process as they may be disabled.. from change of OUTPUT
 record(fanout, "${UUT}:${SITE}:DIO:fan") {
-	field(LNKA, "${UUT}:${SITE}:IMM:DO:BANK1 PP")
-	field(LNKB, "${UUT}:${SITE}:IMM:DO:BANK2 PP")
-	field(LNKC, "${UUT}:${SITE}:IMM:DO:BANK3 PP")
-	field(LNKD, "${UUT}:${SITE}:IMM:DO:BANK4 PP")
-	field(LNKD, "${UUT}:${SITE}:IMM:DO:BANK5 PP")
-	field(LNKD, "${UUT}:${SITE}:IMM:DO:BANK6 PP")
-	field(LNKD, "${UUT}:${SITE}:IMM:DO:BANK7 PP")
-	field(LNKD, "${UUT}:${SITE}:IMM:DO:BANK8 PP")
+	field(LNK0, "${UUT}:${SITE}:IMM:DO:BANK1 PP")
+	field(LNK1, "${UUT}:${SITE}:IMM:DO:BANK2 PP")
+	field(LNK2, "${UUT}:${SITE}:IMM:DO:BANK3 PP")
+	field(LNK3, "${UUT}:${SITE}:IMM:DO:BANK4 PP")
+	field(LNK4, "${UUT}:${SITE}:IMM:DO:BANK5 PP")
+	field(LNK5, "${UUT}:${SITE}:IMM:DO:BANK6 PP")
+	field(LNK6, "${UUT}:${SITE}:IMM:DO:BANK7 PP")
+	field(LNK7, "${UUT}:${SITE}:IMM:DO:BANK8 PP")
 }
 
 record(longin, "${UUT}:${SITE}:IMM:DI32") {
@@ -142,7 +142,7 @@ record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK1") {
 record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK8") {
 	field(DTYP, "Raw Soft Channel")
 	field(DESC, "Instantaneous DI, Bank8")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK8")
 	field(DISV, "1")
 }
@@ -150,7 +150,7 @@ record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK8") {
 record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK7") {
 	field(DTYP, "Raw Soft Channel")
 	field(DESC, "Instantaneous DI, Bank7")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK7")
 	field(DISV, "1")
 }
@@ -158,7 +158,7 @@ record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK7") {
 record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK6") {
 	field(DTYP, "Raw Soft Channel")
 	field(DESC, "Instantaneous DI, Bank6")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK6")
 	field(DISV, "1")
 }
@@ -166,7 +166,7 @@ record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK6") {
 record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK5") {
 	field(DTYP, "Raw Soft Channel")
 	field(DESC, "Instantaneous DI, Bank5")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK5")
 	field(DISV, "1")
 }
@@ -174,7 +174,7 @@ record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK5") {
 record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK4") {
 	field(DTYP, "Raw Soft Channel")
 	field(DESC, "Instantaneous DI, Bank4")
-	field(NOBT, "8")
+	field(NOBT, "4")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK4")
 	field(DISV, "1")
 }
@@ -226,7 +226,7 @@ record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK8") {
 	field(OUT,  "@dio482_xrm.proto set_DO32(${UUT}:${SITE}:IMM:DO) ${SPORT}")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK8")
 	field(DISV, "0")
 }
@@ -237,7 +237,7 @@ record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK7") {
 	field(OUT,  "@dio482_xrm.proto set_DO32(${UUT}:${SITE}:IMM:DO) ${SPORT}")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK7")
 	field(DISV, "0")
 }
@@ -248,7 +248,7 @@ record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK6") {
 	field(OUT,  "@dio482_xrm.proto set_DO32(${UUT}:${SITE}:IMM:DO) ${SPORT}")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK6")
 	field(DISV, "0")
 }
@@ -259,7 +259,7 @@ record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK5") {
 	field(OUT,  "@dio482_xrm.proto set_DO32(${UUT}:${SITE}:IMM:DO) ${SPORT}")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
+	field(NOBT, "1")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK5")
 	field(DISV, "0")
 }
@@ -270,7 +270,7 @@ record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK4") {
 	field(OUT,  "@dio482_xrm.proto set_DO32(${UUT}:${SITE}:IMM:DO) ${SPORT}")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
+	field(NOBT, "4")
 	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK4")
 	field(DISV, "0")
 }

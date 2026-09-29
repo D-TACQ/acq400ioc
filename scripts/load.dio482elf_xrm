@@ -11,5 +11,5 @@ HSS="UUT=${HOST},SITE=${site},SPORT=S${site}C"
 
 create_asyn_channel S${site}C 127.0.0.1:$((4220+${site}))
 dblr '"db/cos.db","'${HSS}'"'
-dblr '"db/dio432.db","'${HSS}'"'
+dblr '"db/dio482elf_xrm.db","'${HSS}'"'
 
