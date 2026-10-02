@@ -62,7 +62,6 @@ record(mbbo, "${UUT}:${SITE}:DIO:MODE:s") {
         field(DOL,  "${UUT}:${SITE}:DIO:MODE:r NPP")
         field(OMSL, "closed_loop")
         field(OUT,  "${UUT}:${SITE}:DIO:MODE PP")
-        field(FLNK, "${UUT}:${SITE}:DIO:fan")
 }
 
 
