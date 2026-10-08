@@ -62,16 +62,34 @@ record(mbbo, "${UUT}:${SITE}:DIO:MODE:s") {
         field(DOL,  "${UUT}:${SITE}:DIO:MODE:r NPP")
         field(OMSL, "closed_loop")
         field(OUT,  "${UUT}:${SITE}:DIO:MODE PP")
-        field(FLNK, "${UUT}:${SITE}:DIO:fan")
 }
 
 
 # force DO's to process as they may be disabled.. from change of OUTPUT
 record(fanout, "${UUT}:${SITE}:DIO:fan") {
-	field(LNKA, "${UUT}:${SITE}:IMM:DO:BYTE1 PP")
-	field(LNKB, "${UUT}:${SITE}:IMM:DO:BYTE2 PP")
-	field(LNKC, "${UUT}:${SITE}:IMM:DO:BYTE3 PP")
-	field(LNKD, "${UUT}:${SITE}:IMM:DO:BYTE4 PP")
+	field(LNK0, "${UUT}:${SITE}:IMM:DO:BANK1 PP")
+	field(LNK1, "${UUT}:${SITE}:IMM:DO:BANK2 PP")
+	field(LNK2, "${UUT}:${SITE}:IMM:DO:BANK3 PP")
+	field(LNK3, "${UUT}:${SITE}:IMM:DO:BANK4 PP")
+	field(LNK4, "${UUT}:${SITE}:IMM:DO:BANK5 PP")
+	field(LNK5, "${UUT}:${SITE}:IMM:DO:BANK6 PP")
+	field(LNK6, "${UUT}:${SITE}:IMM:DO:BANK7 PP")
+	field(LNK7, "${UUT}:${SITE}:IMM:DO:BANK8 PP")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DO:CALC") {
+	field(DTYP, "stream")
+	field(OUT,  "@dio482_xrm.proto set_DO32 ${SPORT}")
+	field(INPA, "${UUT}:${SITE}:IMM:DO:BANK1 NPP NMS")
+	field(INPB, "${UUT}:${SITE}:IMM:DO:BANK2 NPP NMS")
+	field(INPC, "${UUT}:${SITE}:IMM:DO:BANK3 NPP NMS")
+	field(INPD, "${UUT}:${SITE}:IMM:DO:BANK4 NPP NMS")
+	field(INPE, "${UUT}:${SITE}:IMM:DO:BANK5 NPP NMS")
+	field(INPF, "${UUT}:${SITE}:IMM:DO:BANK6 NPP NMS")
+	field(INPG, "${UUT}:${SITE}:IMM:DO:BANK7 NPP NMS")
+	field(INPH, "${UUT}:${SITE}:IMM:DO:BANK8 NPP NMS")
+	# Shift everything into a 32-bit word
+	field(CALC, "(A|(B<<8)|(C<<16)|(D<<24)|(E<<28)|(F<<29)|(G<<30)) + (H*2147483648)")
 }
 
 record(longin, "${UUT}:${SITE}:IMM:DI32") {
@@ -90,22 +108,43 @@ record(longout, "${UUT}:${SITE}:IMM:DO32") {
 	field(PRIO, "LOW")
 }
 
-record(bi, "${UUT}:${SITE}:ISOUTPUT:BYTE4") {
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK8") {
 	field(DTYP, "Raw Soft Channel")
 	field(ZNAM, "FALSE")
 	field(ONAM, "TRUE")
 }
-record(bi, "${UUT}:${SITE}:ISOUTPUT:BYTE3") {
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK7") {
 	field(DTYP, "Raw Soft Channel")
 	field(ZNAM, "FALSE")
 	field(ONAM, "TRUE")
 }
-record(bi, "${UUT}:${SITE}:ISOUTPUT:BYTE2") {
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK6") {
 	field(DTYP, "Raw Soft Channel")
 	field(ZNAM, "FALSE")
 	field(ONAM, "TRUE")
 }
-record(bi, "${UUT}:${SITE}:ISOUTPUT:BYTE1") {
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK5") {
+	field(DTYP, "Raw Soft Channel")
+	field(ZNAM, "FALSE")
+	field(ONAM, "TRUE")
+}
+
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK4") {
+	field(DTYP, "Raw Soft Channel")
+	field(ZNAM, "FALSE")
+	field(ONAM, "TRUE")
+}
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK3") {
+	field(DTYP, "Raw Soft Channel")
+	field(ZNAM, "FALSE")
+	field(ONAM, "TRUE")
+}
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK2") {
+	field(DTYP, "Raw Soft Channel")
+	field(ZNAM, "FALSE")
+	field(ONAM, "TRUE")
+}
+record(bi, "${UUT}:${SITE}:ISOUTPUT:BANK1") {
 	field(DTYP, "stream")
 	field(INP,  "@dio482_xrm.proto get_dir(${UUT}:${SITE}:ISOUTPUT) ${SPORT}")
 	field(PINI, "YES")
@@ -114,36 +153,117 @@ record(bi, "${UUT}:${SITE}:ISOUTPUT:BYTE1") {
 	field(ONAM, "TRUE")
 }
 
-record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BYTE4") {
-	field(DTYP, "Raw Soft Channel")
-	field(DESC, "Instantaneous DI, Byte4")
-	field(NOBT, "8")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE4")
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK8") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank8")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK8 CP NMS")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK8")
 	field(DISV, "1")
 }
 
-record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BYTE3") {
-	field(DTYP, "Raw Soft Channel")
-	field(DESC, "Instantaneous DI, Byte3")
-	field(NOBT, "8")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE3")
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK7") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank7")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK7 CP NMS")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK7")
 	field(DISV, "1")
 }
 
-record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BYTE2") {
-	field(DTYP, "Raw Soft Channel")
-	field(DESC, "Instantaneous DI, Byte2")
-	field(NOBT, "8")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE2")
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK6") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank6")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK6 CP NMS")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK6")
 	field(DISV, "1")
 }
 
-record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BYTE1") {
-	field(DTYP, "Raw Soft Channel")
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK5") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank5")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK5 CP NMS")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK5")
+	field(DISV, "1")
+}
+
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK4") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank4")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK4 CP NMS")
+	field(NOBT, "4")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK4")
+	field(DISV, "1")
+}
+
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK3") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank3")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK3 CP NMS")
+	field(NOBT, "8")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK3")
+	field(DISV, "1")
+}
+
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK2") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank2")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK2 CP NMS")
+	field(NOBT, "8")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK2")
+	field(DISV, "1")
+}
+
+record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:BANK1") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DI, Bank1")
+	field(INP,  "${UUT}:${SITE}:IMM:DI:UNPACK1 CP NMS")
 	field(NOBT, "8")
 	field(MASK, "0xff")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK1")
 	field(DISV, "1")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK1") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "A&255")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK2") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "(A>>8)&255")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK3") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "(A>>16)&255")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK4") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "(A>>24)&15")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK5") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "(A>>28)&1")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK6") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "(A>>29)&1")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK7") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "(A>>30)&1")
+}
+
+record(calcout, "${UUT}:${SITE}:IMM:DI:UNPACK8") {
+    field(INPA, "${UUT}:${SITE}:IMM:DI32 CP NMS")
+    field(CALC, "(A>>31)&1")
 }
 
 record(bo, "${UUT}:${SITE}:NOPOLL") {
@@ -151,10 +271,11 @@ record(bo, "${UUT}:${SITE}:NOPOLL") {
 	field(ZNAM, "0")
 	field(ONAM, "1")
 }
+
 record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:bx") {
 	field(DTYP, "stream")
 	field(DESC, "Instantaneous DI, monitor")
-	field(INP,  "@dio482_xrm.proto get_DI32_4x8(${UUT}:${SITE}:IMM:DI) ${SPORT}")
+	field(INP,  "@dio482_xrm.proto get_DI32(${UUT}:${SITE}:IMM:DI) ${SPORT}")
 	field(SCAN, ".1 second")
 	field(NOBT, "8")
 	field(MASK, "0xff")
@@ -162,47 +283,91 @@ record(mbbiDirect, "${UUT}:${SITE}:IMM:DI:bx") {
 	field(DISV, "1")
 }
 
-record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BYTE4") {
-	field(DTYP, "stream")
-	field(DESC, "Instantaneous DO, Byte4")
-	field(OUT,  "@dio482_xrm.proto set_DO32_4x8(${UUT}:${SITE}:IMM:DO) ${SPORT}")
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK8") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank8")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE4")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK8")
 	field(DISV, "0")
 }
 
-record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BYTE3") {
-	field(DTYP, "stream")
-	field(DESC, "Instantaneous DO, Byte3")
-	field(OUT,  "@dio482_xrm.proto set_DO32_4x8(${UUT}:${SITE}:IMM:DO) ${SPORT}")
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK7") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank7")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE3")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK7")
 	field(DISV, "0")
 }
 
-record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BYTE2") {
-	field(DTYP, "stream")
-	field(DESC, "Instantaneous DO, Byte2")
-	field(OUT,  "@dio482_xrm.proto set_DO32_4x8(${UUT}:${SITE}:IMM:DO) ${SPORT}")
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK6") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank6")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
 	field(PINI, "YES")
 	field(VAL,  "0")
-	field(NOBT, "8")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE2")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK6")
 	field(DISV, "0")
 }
 
-record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BYTE1") {
-	field(DTYP, "stream")
-	field(DESC, "Instantaneous DO, Byte1")
-	field(OUT,  "@dio482_xrm.proto set_DO32_4x8(${UUT}:${SITE}:IMM:DO) ${SPORT}")
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK5") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank5")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	field(NOBT, "1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK5")
+	field(DISV, "0")
+}
+
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK4") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank4")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	field(NOBT, "4")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK4")
+	field(DISV, "0")
+}
+
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK3") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank3")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
 	field(PINI, "YES")
 	field(VAL,  "0")
 	field(NOBT, "8")
-	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BYTE1")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK3")
+	field(DISV, "0")
+}
+
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK2") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank2")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	field(NOBT, "8")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK2")
+	field(DISV, "0")
+}
+
+record(mbboDirect, "${UUT}:${SITE}:IMM:DO:BANK1") {
+	field(DTYP, "Soft Channel")
+	field(DESC, "Instantaneous DO, Bank1")
+	field(FLNK,  "${UUT}:${SITE}:IMM:DO:CALC")
+	field(PINI, "YES")
+	field(VAL,  "0")
+	field(NOBT, "8")
+	field(SDIS, "${UUT}:${SITE}:ISOUTPUT:BANK1")
 	field(DISV, "0")
 }
 

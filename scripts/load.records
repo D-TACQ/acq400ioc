@@ -615,7 +615,7 @@ load_400() {
 	    $MT_DIO422|$MT_DI460|$MT_DIO_5CH|$MT_ACQ1102DIO4|$MT_DIO482ELF_XRM)
         mv=$(cat /dev/acq400.$site.knobs/module_variant)
         case $model in
-        $MT_DIO482|$MT_DI460|$MT_DIO_5CH)
+            $MT_DIO482|$MT_DI460|$MT_DIO_5CH)
                 if [ "$mv" = "20" -o "$mv" = "21" ]; then
                         if [ $site -eq 1 ]; then
                                 dblr '"db/dio482-scaler.db","'${cprams}'"'
@@ -623,6 +623,9 @@ load_400() {
                         ./scripts/load.scaler ${HOST} ${site}
                         is_adc="scaler"
                 fi;;
+	    $MT_DIO482ELF_XRM)
+		dblr '"db/dio482_xrm.db","'${cprams}'"'
+		;;
         *)      ;;
         esac
 

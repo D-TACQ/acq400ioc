@@ -36,20 +36,8 @@ get_DI32 {
 	in "%x"
 }
 
-get_DI32_4x8 {
-	out "DI32";
-	in "0x%(\$1:BYTE4.RVAL)!2x%(\$1:BYTE3.RVAL)!2x%(\$1:BYTE2.RVAL)!2x%(\$1:BYTE1.RVAL)!2x";
-}
-
-
-
 set_DO32 {
 	out "DO32 0x%08x";
-	in;
-}
-
-set_DO32_4x8 {
-	out "DO32 0x%(\$1:BYTE4.RVAL)02x%(\$1:BYTE3.RVAL)02x%(\$1:BYTE2.RVAL)02x%(\$1:BYTE1.RVAL)02x";
 	in;
 }
 
@@ -75,5 +63,5 @@ get_di_snoop {
 
 get_dir {
 	out "byte_is_output";
-	in "%(\$1:BYTE1.RVAL)d,%(\$1:BYTE2.RVAL)d,%(\$1:BYTE3.RVAL)d,%(\$1:BYTE4.RVAL)d,%(\$1:BYTE5.RVAL)d,%(\$1:BYTE6.RVAL)d,%(\$1:BYTE7.RVAL)d,%(\$1:BYTE8.RVAL)d";
+	in "%(\$1:BANK1.RVAL)d,%(\$1:BANK2.RVAL)d,%(\$1:BANK3.RVAL)d,%(\$1:BANK4.RVAL)d,%(\$1:BANK5.RVAL)d,%(\$1:BANK6.RVAL)d,%(\$1:BANK7.RVAL)d,%(\$1:BANK8.RVAL)d";
 }
