@@ -89,7 +89,7 @@ record(calcout, "${UUT}:${SITE}:IMM:DO:CALC") {
 	field(INPG, "${UUT}:${SITE}:IMM:DO:BANK7 NPP NMS")
 	field(INPH, "${UUT}:${SITE}:IMM:DO:BANK8 NPP NMS")
 	# Shift everything into a 32-bit word
-	field(CALC, "A|(B<<8)|(C<<16)|(D<<24)|(E<<28)|(F<<29)|(G<<30)|(H<<31)")
+	field(CALC, "(A|(B<<8)|(C<<16)|(D<<24)|(E<<28)|(F<<29)|(G<<30)) + (H*2147483648)")
 }
 
 record(longin, "${UUT}:${SITE}:IMM:DI32") {
