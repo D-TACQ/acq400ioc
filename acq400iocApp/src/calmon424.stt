@@ -69,7 +69,7 @@ ss calmon {
 			adc_cal_mode = adc_cal_mode0 = acq400_isCalibrated(doc);
 			pvPut(adc_cal_mode);
 
-			if (macValueGet("rdis)") != 0 ) rdis_permanent = atoi(macValueGet("rdis"));
+			if (macValueGet("rdis") != 0 ) rdis_permanent = atoi(macValueGet("rdis"));
 		} state init2
 	}
 	state init2 {
