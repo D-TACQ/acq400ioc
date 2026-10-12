@@ -29,6 +29,10 @@
 #include <assert.h>
 #include "acq-util.h"
 #include "tinyxml2.h"
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <string.h>
 
 extern "C" {
 	void* acq400_openDoc(const char* docfile, int* nchan);
@@ -217,18 +221,76 @@ int acq400_getChannelByNearestGain(void *prv, int ch, const char* sw, int gain, 
 	return 1;
 }
 
+static int acq400_tcp_cmd(int site, const char* cmd, char* reply, int reply_max)
+{
+    int sock;
+    struct sockaddr_in serv_addr;
+    char buffer[256];
+    int port = 4220 + site;
 
-static void fixup(int site, char* cmd, int maxcmd, const char* gainstr, const char* actstr){
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("Socket creation error");
+        return -1;
+    }
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
+    inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
+
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        perror("Connection to acq400_knobs failed");
+        close(sock);
+        return -1;
+    }
+
+    // Wrap socket descriptor in FILE stream for easy I/O
+    FILE* fp = fdopen(sock, "r+");
+    if (!fp) {
+        close(sock);
+        return -1;
+    }
+
+    // Send command
+    fprintf(fp, "%s\n", cmd);
+    fflush(fp);
+
+    if (reply != NULL && reply_max > 0) {
+        reply[0] = '\0';
+        while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+            if (buffer[0] == '\r' || buffer[0] == '\n') continue;
+
+            // Capture the actual data returned
+            strncpy(reply, buffer, reply_max - 1);
+            reply[reply_max - 1] = '\0';
+            // Trim the trailing newline
+            size_t len = strlen(reply);
+            while (len > 0 && (reply[len-1] == '\n' || reply[len-1] == '\r')) {
+		reply[len-1] = '\0';
+		len--;
+	    }
+            break;
+        }
+    }
+
+    fclose(fp); // fclose also closes socket descriptor
+    return 0;
+}
+
+static void fixup(int site, const char* gainstr, const char* actstr){
 	int ch = 1;
-	FILE* fp;
 
 	for (int ic = 0; gainstr[ic]; ++ic, ++ch){
-		if (gainstr[ic] != actstr[ic]){
-			snprintf(cmd, maxcmd, "set.site %d gain%d=%c", site, ch, gainstr[ic]);
-			fp = popen(cmd, "r");
-			pclose(fp);
-		}
-	}
+                if (gainstr[ic] != actstr[ic]){
+                        char tcp_cmd[32];
+                        snprintf(tcp_cmd, sizeof(tcp_cmd), "gain%d %c", ch, gainstr[ic]);
+                        // Pass NULL because we don't need a response when setting
+                        if (acq400_tcp_cmd(site, tcp_cmd, NULL, 0) < 0) {
+                                char emsg[256];
+                                snprintf(emsg, sizeof(emsg), "ERROR: %s socket write fail for %s", __FUNCTION__, tcp_cmd);
+                                perror(emsg);
+                        }
+                }
+        }
 }
 
 /** @@todo: popen() causes memory stress. It's a heavy solution.
@@ -238,10 +300,8 @@ static void fixup(int site, char* cmd, int maxcmd, const char* gainstr, const ch
  */
 int acq400_cal_ll_check_success(int site, int gains[], int nchan)
 {
-	char cmd[80];
-	char* actstr = cmd;
+	char actstr[80];
 	char gainstr[33];
-	FILE* fp;
 	int ch;
 	int rc = 0;
 
@@ -250,25 +310,17 @@ int acq400_cal_ll_check_success(int site, int gains[], int nchan)
 	}
 	gainstr[ch-1] = '\0';
 
-	snprintf(cmd, 80, "get.site %d gains", site);
-
-	fp = popen(cmd, "r");
-	if (fp == 0){
-		char emsg[256];
-		snprintf(emsg, 255, "ERROR: %s %s popen fail", __FUNCTION__, cmd);
-		perror(emsg);
-		rc = -1;
-	}else if (fgets(actstr, 80, fp) == 0){
-		rc = -1;
-		pclose(fp);
-	}else{
-		pclose(fp);
-
-		actstr[strlen(actstr)-1] = '\0';  /* rtrim */
-		rc = strcmp(gainstr, actstr);
+        // Send "gains" and capture up to 80 characters directly into actstr
+        if (acq400_tcp_cmd(site, "gains", actstr, 80) < 0 || strlen(actstr) == 0) {
+                char emsg[256];
+                snprintf(emsg, 255, "ERROR: %s TCP socket read fail", __FUNCTION__);
+                perror(emsg);
+                rc = -1;
+        } else {
+                rc = strcmp(gainstr, actstr);
 		printf("site:%d Compare: set:\"%s\" act:\"%s\" %s\n", site, gainstr, actstr, rc? "Needs Fixing": "OK");
 		if (rc){
-			fixup(site, cmd, 80, gainstr, actstr);
+			fixup(site, gainstr, actstr);
 		}
 	}
 
