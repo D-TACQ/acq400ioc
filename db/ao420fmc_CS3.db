@@ -22,7 +22,7 @@ record(ao, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}") {
         field(DISV, "1")
 }
 
-record(ai, "${UUT}:${SITE}:AI:SLOW_SET:CH:${cid}:r") {
+record(ai, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r") {
         field(DTYP, "dsSysfsAi")
         field(INP, "@/dev/acq400.${SITE}.knobs/AO_0${cid}")
         field(SCAN, "1 second")
