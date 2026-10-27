@@ -15,7 +15,7 @@ record(ao, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}") {
         field(DISV, "1")
 }
 
-record(ai, "${UUT}:${SITE}:AI:SLOW_SET:CH:${cid}") {
+record(ai, "${UUT}:${SITE}:AI:SLOW_SET:CH:${cid}:r") {
         field(DTYP, "dsSysfsAi")
         field(INP, "@/dev/acq400.${SITE}.knobs/AO_${cid}")
         field(SCAN, "1 second")
@@ -27,6 +27,22 @@ record(ai, "${UUT}:${SITE}:AI:SLOW_SET:CH:${cid}") {
         field(HOPR, "2.4999")
         field(LOPR, "-2.5")
         field(EGU,  "V")
+}
+
+record(calcout, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:s") {
+        field(DESC, "Sync hardware to EPICS AO")
+        # Monitor the raw integer from the read
+        field(INPA, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.RVAL CP")
+        # Check the raw integer of the write
+        field(INPB, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.RVAL NPP")
+        # Exact integer comparison
+        field(CALC, "A!=B")
+        field(OOPT, "When Non-zero")
+        # If different, grab the read's converted voltage and push to AO
+        field(INPC, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.VAL NPP")
+        field(DOPT, "Use OCALC")
+        field(OCALC, "C")
+        field(OUT,  "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.VAL PP")
 }
 
 record(dfanout, "${UUT}:${SITE}:AO:SLOW_SET:CH:ALL:f${fn}") {
