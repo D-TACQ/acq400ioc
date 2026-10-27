@@ -22,6 +22,24 @@ record(ao, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}") {
         field(DISV, "1")
 }
 
+record(ai, "${UUT}:${SITE}:AI:SLOW_SET:CH:${cid}") {
+        field(DTYP, "dsSysfsAi")
+        field(INP, "@/dev/acq400.${SITE}.knobs/AO_0${cid}")
+        field(SCAN, "1 second")
+        field(DESC, "Readback slow set AO${cid}")
+        field(DRVL, "0")
+        field(DRVH, "+3.3")
+        field(EGUL, "0")
+        field(EGUF, "+3.3")
+        field(HOPR, "3.3")
+        field(LOPR, "0")
+        field(EGU,  "V")
+        field(LINR, "LINEAR")
+        field(ESLO, "5.03547e-5")
+        field(EOFF, "0")
+        field(AOFF, "0")
+        field(ASLO, "1")
+}
 
 
 record(bo, "${UUT}:${SITE}:AO:GAIN:CH:${cid}") {
