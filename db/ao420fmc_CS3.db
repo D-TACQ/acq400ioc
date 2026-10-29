@@ -39,21 +39,49 @@ record(ai, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r") {
         field(EOFF, "0")
         field(AOFF, "0")
         field(ASLO, "1")
+
+	field(FLNK, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:deb")
 }
+
+record(calc, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:deb") {
+        field(DESC, "Debounce AWG ARM")
+	# all links NPP because driven by FLNK from SLOW_SET:CH:r above
+	field(INPA, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.RVAL NPP")
+	field(INPB, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.RVAL NPP")
+	field(INPC, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:deb.VAL NPP")
+
+	# if hardware != setpoint, increment timer (C+1), else reset to 0
+	field(CALC, "A!=B ? C+1 : 0")
+	# Move on to the sync calcout
+	field(FLNK, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:s")
+}
+
+# a copy of the AWG ARM record
+# note that it scans every .5 seconds...
+#record (bi, "${UUT}:${SITE}:AWG:ARM") {
+#	field(DTYP, "stream")
+#	field(INP, "@awg.proto getArm ${SPORT}")
+#	field(SCAN, ".5 second")
+#	field(DESC, "AWG is ARMED")
+#	field(ZNAM, "0")
+#	field(ONAM, "1")	
+#	field(PINI, "YES")
 
 record(calcout, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:s") {
         field(DESC, "Sync hardware to EPICS AO")
+        # disable when armed and waiting for trigger
+	field(SDIS, "${UUT}:${SITE}:AWG:ARM")
+	field(DISV, "1")
         # Monitor the raw integer from the read
-        field(INPA, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.RVAL CP")
-        # Check the raw integer of the write
-        field(INPB, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.RVAL NPP")
+        field(INPA, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:deb.VAL NPP")
+	# only sync if the mismatch has persisted for MORE than 1 second
         # Exact integer comparison
-        field(CALC, "A!=B")
+        field(CALC, "A>1")
         field(OOPT, "When Non-zero")
         # If different, grab the read's converted voltage and push to AO
         field(INPC, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.VAL NPP")
-        field(DOPT, "Use OCALC")
-        field(OCALC, "C")
+        field(DOPT, "Use OCAL")
+        field(OCAL, "C")
         field(OUT,  "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.VAL PP")
 }
 
