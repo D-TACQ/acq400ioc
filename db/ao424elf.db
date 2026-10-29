@@ -40,8 +40,8 @@ record(calcout, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:s") {
         field(OOPT, "When Non-zero")
         # If different, grab the read's converted voltage and push to AO
         field(INPC, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.VAL NPP")
-        field(DOPT, "Use OCALC")
-        field(OCALC, "C")
+        field(DOPT, "Use OCAL")
+        field(OCAL, "C")
         field(OUT,  "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.VAL PP")
 }
 

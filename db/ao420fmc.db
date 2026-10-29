@@ -28,12 +28,16 @@ record(ai, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r") {
         field(HOPR, "2.4999")
         field(LOPR, "-2.5")
         field(EGU,  "V")
+	field(FLNK, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:s")
 }
 
 record(calcout, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:s") {
         field(DESC, "Sync hardware to EPICS AO")
+        # disable when armed and waiting for trigger
+        field(SDIS, "${UUT}:${SITE}:AWG:ARM")
+        field(DISV, "1")
         # Monitor the raw integer from the read
-        field(INPA, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.RVAL CP")
+        field(INPA, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.RVAL NNP")
         # Check the raw integer of the write
         field(INPB, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.RVAL NPP")
         # Exact integer comparison
@@ -41,8 +45,8 @@ record(calcout, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:s") {
         field(OOPT, "When Non-zero")
         # If different, grab the read's converted voltage and push to AO
         field(INPC, "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}:r.VAL NPP")
-        field(DOPT, "Use OCALC")
-        field(OCALC, "C")
+        field(DOPT, "Use OCAL")
+        field(OCAL, "C")
         field(OUT,  "${UUT}:${SITE}:AO:SLOW_SET:CH:${cid}.VAL PP")
 }
 
