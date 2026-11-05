@@ -29,7 +29,7 @@ done
 for pvprams in \
             FUN=INDEX_HOME,fun=index,${SMAX} \
             FUN=ABS_TRG,fun=abs_trg,${SMAX} \
-            FUN=PRD_TRG,fun=prd_trg,${SMAX} \
+            FUN=PRD_TRG,fun=prd_trg,${SMAX} \;
 do
         dblr '"db/qen_tr3.db","'${trprams},${pvprams}'"'
 done
