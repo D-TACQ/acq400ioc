@@ -212,7 +212,6 @@ def wr_initialise_values(S1):
 
 def parse_args(args):
     config = {"positionals": []}
-    px = 1
     for token in args[1:]:
         if "=" in token:
             key, val = token.split("=", 1)

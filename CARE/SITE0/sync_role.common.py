@@ -116,7 +116,7 @@ def slavemb(S1):
     set_site(0, "SYS:CLK:FPMUX", "ZCLK")
     set_site(0, "SIG:CLK_MB:FIN", f"{freq.fin}")
     set_mb(S1)
-    set_site(0, "SIG:SRC:CLK:1MCLK")
+    set_site(0, "SIG:SRC:CLK:1", "MCLK")
     return 0
 
 
@@ -175,7 +175,7 @@ def acq1014_rpmaster(S1):
         return 0
 
 
-def acq1014_slave(S1, fs: int):
+def acq1014_slave(S1):
     set_common()
     # Be careful with FIN. For slaves this is 20MHz for
     # rear panel masters this will be 1MHz.
@@ -183,7 +183,8 @@ def acq1014_slave(S1, fs: int):
     if not inputs.P3:
         freq.fin = fin
     subprocess.run(
-        ["/usr/local/bin/acq1014_select_clk_src", "ext", f"{fs}", f"{fin}"], check=False
+        ["/usr/local/bin/acq1014_select_clk_src", "ext", f"{freq.fs}", f"{fin}"],
+        check=False,
     )
     return 0
 
@@ -241,14 +242,16 @@ def set_slave(S1):
         set_site(0, "SYS:CLK:OE_CLK1_ZYNQ", 0)
     set_site(0, "SYS:CLK:FPMUX", "OFF")
     sync_trg_to_clk(S1, 0)
-    set_site(0, "SIG:SRC:CLK:${1:-1}", "HDMI")
+    set_site(0, "SIG:SRC:CLK:{S1}", "HDMI")
     set_site(0, "SIG:SRC:TRG:0", "HDMI")
     set_site(0, "SIG:SRC:SYNC:0", "HDMI")
     set_site(S1, f"clk=1,d1,{clk.clk_sense}")
     set_site(S1, f"trg=1,d0,{trg.trg_sense}")
     if "master" not in ROLE and SYNC.exists():
         set_site(S1, "sync=1,d0,rising")
-    set_site(S1, "clk.clkdiv", f"{clk.clkdiv:-1}")
+    if not clk.clkdiv:
+        clk.clkdiv = 1
+    set_site(S1, "clk.clkdiv", f"{clk.clkdiv}")
 
 
 def set_common_master(S1):
@@ -321,6 +324,7 @@ def set_out_slave():
 
 def set_48x_override(S1, master_or_slave: str):
     # Configure clock
+    zclk_src = None
     if not clk.clkdiv:
         clk.clkdiv = 1
     if f"{master_or_slave}" == "master":
@@ -345,7 +349,7 @@ def set_48x_override(S1, master_or_slave: str):
     set_site(0, "SIG:SRC:CLK:1", "MCLK")
     if is_acq2106():
         set_site(0, "SYS:CLK:OE_CLK1_ZYNQ", "1")
-    set_site(S1, f"clk.clkdiv{clk.clkdiv}")
+    set_site(S1, f"CLKDIV={clk.clkdiv}")
     # Configure HDMI Clock out
     set_site(0, "SIG:SYNC_OUT:CLK:DX", "d0")
     return 0
@@ -363,7 +367,7 @@ def set_43x_override(fs, master_or_slave, S1):
     hi_res_mode = 1
     if fs >= 52000:
         hi_res_mode = 0
-    set_site(S1, f"hi_res_mode{hi_res_mode}")
+    set_site(S1, f"hi_res_mode={hi_res_mode}")
 
 
 def config_distributor_sites(distributor_trg):
@@ -382,9 +386,9 @@ def config_distributor_sites(distributor_trg):
     if not trg.trg_sense:
         trg.trg_sense = "rising"
     for site in distributor_sites:
-        if get_site("site", "module_role") == "MASTER":
+        if get_site(site, "module_role") == "MASTER":
             set_site(site, "clk", "1,1,1")
-            set_site(site, "trg=1,{trg.trg_dx},{trg.trg_sense}")
+            set_site(site, f"trg=1,{trg.trg_dx},{trg.trg_sense}")
             set_site(site, "clkdiv", f"{clk.clkdiv}")
             set_site(site, "CLKDIV", f"{clk.clkdiv}")
 
@@ -426,7 +430,7 @@ def set_master(S1):
     pv_read_lock("CLK", 1)
     if not clk.clk_dx:
         clk.clk_dx = "d1"
-    set_site(S1, f"clk=1,{'clk.clk_dx'}", f"{clk.clk_sense}")
+    set_site(S1, f"clk=1,{clk.clk_dx},{clk.clk_sense}")
     pv_read_lock("CLK", 0)
     pv_read_lock("TRG", 1)
     if not trg.trg_dx:
@@ -438,8 +442,7 @@ def set_master(S1):
 
 
 def parse_args(args):
-    config = {}
-    px = 1
+    config = {"positionals": []}
     for token in args:
         if "=" in token:
             key, val = token.split("=", 1)
@@ -463,13 +466,10 @@ def parse_args(args):
             else:
                 print(f"error {key} not defined", file=sys.stderr)
         else:
-            config["positionals"] = sys.argv[1:]
-            # positional argument (no "=" present)
-            px = len(config["positionals"]) + 1
-            if px <= 3:
+            if len(config["positionals"]) < 3:
                 config["positionals"].append(token)
             else:
-                print(f"error discard parameter {px} {token}", file=sys.stderr)
+                print(f"error discard parameter {token}", file=sys.stderr)
     return config
 
 
@@ -524,6 +524,26 @@ def update_globals(args):
     if "clk.clk_dx" in args:
         clk.clk_dx = args["clk.clk_dx"]
     return 0
+
+
+def egu2int(x) -> int:
+    log.info(f"egu2int called with input {x}")
+
+    output = subprocess.run(
+        ["/usr/local/bin/egu2int", f"{x}"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    log.info(f"output of egu2int is {output}")
+    try:
+        log.info("trying to cast output to integer")
+        int_output = int(output)
+        log.info("great success")
+        return int_output
+    except Exception:
+        log.info("failed casting output to integer")
+        raise ValueError(f"egu2int cannot convert {x}")
 
 
 DEV_SHM_ROLE = Path("/dev/shm/role")
@@ -684,13 +704,14 @@ def main():
         inputs.P3 = f"{freq.fin_def}"
     freq.fin = inputs.P3
 
-    subprocess.run(["egu2int", f"FS={inputs.P2}", f"FIN={inputs.P3}"], check=False)
+    freq.fs = egu2int(f"{inputs.P2}")
+    freq.fin = egu2int(f"{inputs.P3}")
 
     try:
         if MOD[0:7] == "acq1014":
             if not trg.trg:
                 trg.trg = "ext"
-            rc = acq1014_roles[ROLE](S1, freq.fs, freq.fin)
+            rc = acq1014_roles[ROLE](S1)
             if rc > 0:
                 print(f"ERROR: acq1014 role {dollar1} not valid")
                 return 1
