@@ -58,17 +58,17 @@ def source_shell_script(script_path, update_os_environ=True):
     return env_vars
 
 
-def fpmaster(S1):
+def fpmaster():
     set_common()
     set_out()
-    set_common_master(S1)
+    set_common_master()
     set_site(0, "SYS:CLK:FPMUX", "FPCLK")
     set_site(0, "SIG:SRC:TRG:0", "EXT")
-    set_master(S1)
+    set_master()
     return 0
 
 
-def rpmaster(S1):
+def rpmaster():
     set_common()
     set_out()
     set_slave(0)
@@ -80,24 +80,24 @@ def rpmaster(S1):
     return 0
 
 
-def master(S1):
+def master():
     set_common()
     set_out()
     trg.d_trg = "d1"
-    set_common_master(S1)
-    set_local_clock(S1)
+    set_common_master()
+    set_local_clock()
     if is_48x(S1):
         set_48x_override(S1, "master")
     return 0
 
 
-def solo(S1):
+def solo():
     set_common()
-    set_local_clock(S1)
+    set_local_clock()
     return 0
 
 
-def slave(S1):
+def slave():
     set_common()
     set_out_slave()
     set_slave(0)
@@ -108,7 +108,7 @@ def slave(S1):
     return 0
 
 
-def slavemb(S1):
+def slavemb():
     set_common()
     set_out_slave()
     set_slave(0)
@@ -120,7 +120,7 @@ def slavemb(S1):
     return 0
 
 
-def acq1014_master_solo(S1):
+def acq1014_master_solo():
     if not trg.trg:
         trg.trg = "int"
     trg.d_trg = "d1"
@@ -137,7 +137,7 @@ def acq1014_master_solo(S1):
     return 0
 
 
-def acq1014_fpmaster(S1):
+def acq1014_fpmaster():
     set_common()
     acq1014_clk_src = get_site("2", "acq1014_clk")
     if acq1014_clk_src != 2:
@@ -156,7 +156,7 @@ def acq1014_fpmaster(S1):
         return 0
 
 
-def acq1014_rpmaster(S1):
+def acq1014_rpmaster():
     set_common()
     acq1014_clk_src = get_site("2", "acq1014_clk")
     if acq1014_clk_src != 2:
@@ -175,7 +175,7 @@ def acq1014_rpmaster(S1):
         return 0
 
 
-def acq1014_slave(S1):
+def acq1014_slave():
     set_common()
     # Be careful with FIN. For slaves this is 20MHz for
     # rear panel masters this will be 1MHz.
@@ -189,11 +189,11 @@ def acq1014_slave(S1):
     return 0
 
 
-def set_acq43x_sample_rate(sample_rate, S1):
+def set_acq43x_sample_rate(sample_rate):
     set_site(S1, "ACQ43X_SAMPLE_RATE", f"{sample_rate}")
 
 
-def set_mbclk(S1):
+def set_mbclk():
     log.info(f"FS: {freq.fs} FIN: {freq.fin} {type(freq.fs)} {type(freq.fin)}")
     fs = int(freq.fs)
     fmin = freq.fmin
@@ -222,7 +222,7 @@ def select_lo_xclk():
     set_site(0, "SIG:CLK_MB:FIN", "32768000")
 
 
-def sync_trg_to_clk(S1, n_clk):
+def sync_trg_to_clk(n_clk):
     SYNC_TRG_TO_CLK = Path(f"/etc/acq400/{S1}/sync_trg_to_clk")
     if SYNC_TRG_TO_CLK.exists():
         set_site(S1, "sync_trg_to_clk", str(n_clk))
@@ -241,7 +241,7 @@ def set_slave(S1):
     if is_acq2106():
         set_site(0, "SYS:CLK:OE_CLK1_ZYNQ", 0)
     set_site(0, "SYS:CLK:FPMUX", "OFF")
-    sync_trg_to_clk(S1, 0)
+    sync_trg_to_clk(0)
     set_site(0, "SIG:SRC:CLK:{S1}", "HDMI")
     set_site(0, "SIG:SRC:TRG:0", "HDMI")
     set_site(0, "SIG:SRC:SYNC:0", "HDMI")
@@ -254,7 +254,7 @@ def set_slave(S1):
     set_site(S1, "clk.clkdiv", f"{clk.clkdiv}")
 
 
-def set_common_master(S1):
+def set_common_master():
     """Sets common master for ACQ1001
 
     Subsumed below function into this one:
@@ -273,7 +273,7 @@ def set_common_master(S1):
         set_site(0, "SYS:CLK:OE_CLK1_ZYNQ", "1")
         set_site(0, "SYS:CLK:BYPASS", "0")
     set_site(0, "SIG:SRC:CLK:1", "MCLK")
-    sync_trg_to_clk(S1, 1)
+    sync_trg_to_clk(1)
     if not clk.clkdiv:
         clk.clkdiv = 1
     if ACQ43X_SAMPLE_RATE.exists():
@@ -284,18 +284,18 @@ def set_common_master(S1):
         set_site(S1, "sync=0,0,0")
 
 
-def is_48x(S1):
-    mez = get_site(S1, "MODEL")
+def is_48x(site):
+    mez = get_site(site, "MODEL")
     return "ACQ48" in mez
 
 
-def is_42x(S1):
-    mez = get_site(S1, "MODEL")
+def is_42x(site):
+    mez = get_site(site, "MODEL")
     return bool("ACQ42" in mez or "AO42" in mez)
 
 
-def is_43x(S1):
-    mez = get_site(S1, "MODEL")
+def is_43x(site):
+    mez = get_site(site, "MODEL")
     return "ACQ43" in mez
 
 
@@ -411,9 +411,9 @@ def pv_read_lock(pv: str, value):
     caput(f"{PV_BASE}:1:{pv}:r.DISA", f"{value}")
 
 
-def set_local_clock(S1):
+def set_local_clock():
     select_lo()
-    set_mb(S1)
+    set_mb()
     pv_read_lock("CLK", 1)
     if not clk.clk_dx:
         clk.clk_dx = "d1"
@@ -443,7 +443,7 @@ def set_master(S1):
 
 def parse_args(args):
     config = {"positionals": []}
-    for token in args:
+    for token in args[1:]:
         if "=" in token:
             key, val = token.split("=", 1)
             if key == "TRG:SENSE":
@@ -599,6 +599,7 @@ clk = Clk()
 freq = Freq()
 trg = Trg()
 inputs = Inputs()
+S1 = 1
 
 
 def main():
@@ -606,6 +607,7 @@ def main():
     global select_lo
     global ROLE
     global CMDLINE
+    global S1
     log.info("starting sync_role.common.py")
     log.warning("starting sync_role.common.py")
     log.error("starting sync_role.common.py")
@@ -639,11 +641,10 @@ def main():
         print("modifiers [clk.clkdiv=div]")
         sys.exit(0)
     args = parse_args(sys.argv)
-    print(args.keys())
-    print(args["positionals"])
-    inputs.P1 = args["positionals"][0]
-    inputs.P2 = args["positionals"][1]
-    inputs.P3 = args["positionals"][2]
+    pos = args.get("positionals", [])
+    inputs.P1 = pos[0] if len(pos) > 0 else ""
+    inputs.P2 = pos[1] if len(pos) > 1 else ""
+    inputs.P3 = pos[2] if len(pos) > 2 else ""
     dollar1 = sys.argv[1]
     # echo busy > /dev/shm/role
     DEV_SHM_ROLE.write_text("busy")
@@ -668,6 +669,7 @@ def main():
     if s1:
         S1 = s1
     else:
+        # S1 stays the default value
         S1 = 1
 
     set_site(S1, "CLK", "1")  # 2>&1 > /dev/null
@@ -704,6 +706,7 @@ def main():
         inputs.P3 = f"{freq.fin_def}"
     freq.fin = inputs.P3
 
+    log.info(f"{inputs}")
     freq.fs = egu2int(f"{inputs.P2}")
     freq.fin = egu2int(f"{inputs.P3}")
 
@@ -711,7 +714,7 @@ def main():
         if MOD[0:7] == "acq1014":
             if not trg.trg:
                 trg.trg = "ext"
-            rc = acq1014_roles[ROLE](S1)
+            rc = acq1014_roles[ROLE]()
             if rc > 0:
                 print(f"ERROR: acq1014 role {dollar1} not valid")
                 return 1
@@ -729,9 +732,9 @@ def main():
         else:
             print(f"Not acq1014 and ROLE: {ROLE}")
             print(f"calling {roles[ROLE].__name__}()")
-            rc = roles[ROLE](S1)
+            rc = roles[ROLE]()
     except Exception as e:
-        log.exception(f"Error: role {dollar1} not valid")
+        log.exception(f"Error: {MOD} role {dollar1} not valid")
         print(f"ERROR: role {dollar1} not valid: {e}")
         return 1
 
