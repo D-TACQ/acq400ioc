@@ -70,6 +70,8 @@ def set_site(site_number: int, *site_params_vals):
         site_number_str = str(site_number)
     elif isinstance(site_number, str):
         site_number_str = site_number
+    if not isinstance(site_parameter, str) or not isinstance(site_parameter_value, str):
+        raise TypeError("set_site set.site requires strings")
     return subprocess.run(
         ["set.site", site_number_str, site_parameter, site_parameter_value],
         check=True,
@@ -110,6 +112,32 @@ def is_ds(site):
         return False
 
 
+def _set_fmbdef_hrmode(fs: int, S1) -> bool:
+    if freq.fs == 10000:
+        freq.fmb_def = 5120000
+        hrmode = 1
+    elif freq.fs == 20000:
+        freq.fmb_def = 10240000
+        hrmode = 1
+    elif freq.fs == 40000:
+        freq.fmb_def = 20480000
+        hrmode = 1
+    elif freq.fs == 80000:
+        freq.fmb_def = 20480000
+        hrmode = 0
+    elif freq.fs == 125000:
+        freq.fmb_def = 32000000
+        hrmode = 0
+    elif freq.fs == 128000:
+        freq.fmb_def = 32768000
+        hrmode = 0
+    else:
+        print("ERROR: SR options 10k 20k 40k 80k 125k 128k")
+        sys.exit(1)
+    set_site(S1, "hi_res_mode", f"{hrmode}")
+    return True
+
+
 def wr_initialise_values(S1):
     if is_ds(S1):
         log.info("is ds")
@@ -119,28 +147,7 @@ def wr_initialise_values(S1):
         else:
             freq.fs = egu2int(freq.fs_def)
         set_site(S1, "ACQ43X_SAMPLE_RATE", "0")
-        if freq.fs == 10000:
-            freq.fmb_def = 5120000
-            hrmode = 1
-        elif freq.fs == 20000:
-            freq.fmb_def = 10240000
-            hrmode = 1
-        elif freq.fs == 40000:
-            freq.fmb_def = 20480000
-            hrmode = 1
-        elif freq.fs == 80000:
-            freq.fmb_def = 20480000
-            hrmode = 0
-        elif freq.fs == 125000:
-            freq.fmb_def = 32000000
-            hrmode = 0
-        elif freq.fs == 128000:
-            freq.fmb_def = 32768000
-            hrmode = 0
-        else:
-            print("ERROR: SR options 10k 20k 40k 80k 125k 128k")
-            sys.exit(1)
-        set_site(S1, "hi_res_mode", f"{hrmode}")
+        _set_fmbdef_hrmode(freq.fs, S1)
     else:
         log.info("not is_ds()")
         clk.clkdiv = "unknown"
@@ -165,26 +172,36 @@ def wr_initialise_values(S1):
                 log.info("not 48x")
         if inputs.P2:
             log.info("freq.fs set to input P2")
-            freq.fs = inputs.P2
+            freq.fs = egu2int(inputs.P2)
         else:
             freq.fs = freq.fs_def
-        log.info(f"what is freq.fs?  :{freq.fs}")
-        if freq.fs > 100:
+        log.info(f"what is freq.fs? : {freq.fs} type({type(freq.fs)})")
+        if int(freq.fs) > 100:
+            log.info(f"{freq.fs} > 100")
             # freq.fs = str(freq.fs / 10000000) + "0M" # TODO: what are the consequences of commenting out this line?
             if freq.fs == freq.fmb_def:
                 clk.clkdiv = 1
             else:
                 plan = in_the_plan(freq.fs, freq.fmb_def)
-                if plan != freq.fmb_def:
-                    freq.fmb_def = plan
-                    clk.clkdiv = 1
+                log.info(f"in_the_plan returned {plan}")
+                if plan == "40M":
+                    clk.clkdiv = 40_000_000 // freq.fs
+                    log.info(
+                        f"since in_the_plan returned {plan} clkdiv calculated {clk.clkdiv}"
+                    )
+                # if plan != freq.fmb_def:
+                #    freq.fmb_def = plan
+                #    clk.clkdiv = 1
         else:
+            log.info("clkdiv set to unknown")
             clk.clkdiv = "unknown"
 
         if clk.clkdiv == "unknown":
             if inputs.P2:
+                log.info("freq.fs set to input")
                 freq.fs = egu2int(inputs.P2)
             else:
+                log.info(f"freq.fs set to freq.fs_def {freq.fs_def}")
                 freq.fs = egu2int(freq.fs_def)
             freq.fmb = egu2int(freq.fmb_def)
             clk.clkdiv = freq.fmb / freq.fs
@@ -194,9 +211,9 @@ def wr_initialise_values(S1):
 
 
 def parse_args(args):
-    config = {}
+    config = {"positionals": []}
     px = 1
-    for token in args:
+    for token in args[1:]:
         if "=" in token:
             key, val = token.split("=", 1)
             if key == "TRG:SENSE":
@@ -218,17 +235,15 @@ def parse_args(args):
             else:
                 print(f"error {key} not defined", file=sys.stderr)
         else:
-            config["positionals"] = sys.argv[1:]
-            px = len(config["positionals"]) + 1
-            if px <= 3:
+            if len(config["positionals"]) < 3:
                 config["positionals"].append(token)
             else:
-                print(f"error discard parameter {px} {token}")
+                print(f"error discard parameter {token}", file=sys.stderr)
     return config
 
 
 def sync_trg_to_clk(S1, val):
-    ETC_ACQ400_S1_SYNC_TRG_TO_CLK = Path("/etc/acq400/S1/sync_trg_to_clk")
+    ETC_ACQ400_S1_SYNC_TRG_TO_CLK = Path(f"/etc/acq400/{S1}/sync_trg_to_clk")
     if ETC_ACQ400_S1_SYNC_TRG_TO_CLK.exists():
         set_site(S1, "sync_trg_to_clk", val)
 
@@ -238,14 +253,14 @@ def is_48x(S1):
 
 
 def is_42x(S1):
-    return "ACQ42\\" in get_site(S1, "MODEL") or "AO42" in get_site(S1, "MODEL")
+    return "ACQ42" in get_site(S1, "MODEL") or "AO42" in get_site(S1, "MODEL")
 
 
 def set_slave(S1, slave_site):
     if is_acq2106():
         set_site(0, "SYS:CLK:OE_CLK1_ZYNQ", "0")
     set_site(0, "SYS:CLK:FPMUX", "OFF")
-    sync_trg_to_clk(S1, 0)
+    sync_trg_to_clk(S1, "0")
     set_site(0, f"SIG:SRC:CLK:{slave_site}", "HDMI")
     set_site(0, "SIG:SRC:TRG:0", "HDMI")
     set_site(0, "SIG:SRC:SYNC:0", "HDMI")
@@ -264,7 +279,7 @@ def set_common_master(S1):
         set_site(0, "SYS:CLK:BYPASS", "0")
     ETC_ACQ400_S1_ACQ43X_SAMPLE_RATE = Path(f"/etc/acq400/{S1}/ACQ43X_SAMPLE_RATE")
     set_site(0, "SIG:SRC:CLK:1", "MCLK")
-    sync_trg_to_clk(S1, 1)
+    sync_trg_to_clk(S1, "1")
     if not ETC_ACQ400_S1_ACQ43X_SAMPLE_RATE.exists():
         if not clk.clkdiv:
             clk.clkdiv = 1
@@ -275,7 +290,7 @@ def set_common_master(S1):
 # common to all
 # report init status - this will be overwritten on successful completion
 def set_common():
-    DEV_SHM_ROLE.write_text("WARNING:{CMDLINE} incomplete")
+    DEV_SHM_ROLE.write_text(f"WARNING:{CMDLINE} incomplete")
     # set_site(0 SIG:*:RESET=1  &
 
 
@@ -363,14 +378,27 @@ def in_the_plan(fs_target, default_fmb):
     directory = Path("/etc/si5326.d")
     prefix = "si5326_31M25-"
     # divide default_fmb and fs_target by 1 million and replace the decimal point with an M and stringify
-    fs_target = str(float(fs_target) / 1e6).replace(".", "M")
-    default_fmb = str(float(default_fmb) / 1e6).replace(".", "M")
+    if fs_target >= 1000000:
+        log.info("fs_target ~1M")
+        fs_target = str(float(fs_target) / 1e6).replace(".", "M").rstrip("0")
+    elif fs_target >= 100000:
+        log.info("fs_target ~100k")
+        fs_target = str(float(fs_target) / 1e3).replace(".", "k").rstrip("0")
+    elif fs_target >= 10000:
+        log.info("fs_target ~10k")
+        fs_target = str(float(fs_target) / 1e3).replace(".", "k").rstrip("0")
+    elif fs_target >= 1000:
+        log.info("fs_target ~1k")
+        fs_target = str(float(fs_target) / 1e3).replace(".", "k").rstrip("0")
+    default_fmb = str(float(default_fmb) / 1e6).replace(".", "M").rstrip("0")
     plan_list = [
         path.stem.removeprefix(prefix.rstrip("-") + "-")
         for path in sorted(directory.glob("si5326_31M25*.txt"))
     ]
     PLANS = "\n".join(plan_list)
-    for pl in PLANS:
+    for pl in plan_list:
+        log.info(f"pl in plan_list: {pl}")
+        log.info(f"does fs_target={fs_target} == pl={pl}")
         if fs_target == pl:
             return pl
     log.info(f"in_the_plan is returning {default_fmb}")
@@ -381,10 +409,13 @@ def int_to_egu(x: int) -> str:
 
     log.info(f"int_to_egu({x})")
     try:
-        x = int(x) / 1000000
-        return str(x).replace(".", "M").rstrip("0")
-    except ValueError:
-        return x.rstrip("0")
+        x_in_mega = int(x) / 1000000
+        return str(x_in_mega).replace(".", "M").rstrip("0")
+    except ValueError as e:
+        if isinstance(x, str):
+            return x.rstrip("0")
+        else:
+            raise ValueError(e)
 
 
 def wr(S1):
@@ -456,12 +487,12 @@ def egu2int(x) -> int:
     log.info(f"output of egu2int is {output}")
     try:
         log.info("trying to cast output to integer")
-        output = int(output)
+        int_output = int(output)
         log.info("great success")
+        return int_output
     except Exception:
         log.info("failed casting output to integer")
-        output = output
-    return output
+        raise ValueError(f"egu2int cannot convert {x}")
 
 
 # Globals
@@ -551,8 +582,7 @@ def main():
 
     set_site(S1, "CLK=1")  # 2>&1 > /dev/null
     arg1 = sys.argv[1]
-
-    if arg1 == "":
+    if len(sys.argv) < 2 or sys.argv[1] == "":
         if DEV_SHM_ROLE.exists():
             with DEV_SHM_ROLE.open() as f:
                 f.readline()
@@ -568,9 +598,10 @@ def main():
         print("modifiers [CLKDIV=div]")
         sys.exit(0)
     args = parse_args(sys.argv)
-    inputs.P1 = args["positionals"][0]
-    inputs.P2 = int(args["positionals"][1])
-    inputs.P3 = args["positionals"][2]
+    pos = args.get("positionals", [])
+    inputs.P1 = pos[0] if len(pos) > 0 else ""
+    inputs.P2 = pos[1] if len(pos) > 1 else None
+    inputs.P3 = pos[2] if len(pos) > 2 else ""
     wr_initialise_values(S1)
 
     ROLE = f"{inputs.P1}"
@@ -579,7 +610,7 @@ def main():
     try:
         roles[ROLE](S1)
     except Exception:
-        print("ERROR: role $1 not valid")
+        print(f"ERROR: role {ROLE} not valid")
         log.exception("Gone wrong")
         sys.exit(1)
     sys.exit(0)
