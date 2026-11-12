@@ -3,14 +3,14 @@
 record (mbbo, "${UUT}:${SITE}:GAIN:${CH}")	{
 	field(DTYP, "Soft Channel")
 	field(NOBT, "3")
-	field(ZRST, "${G0}")
-	field(ONST, "${G1}")
-	field(TWST, "${G2}")
-	field(THST, "${G3}")
-	field(FRST, "${G4}")
-	field(FVST, "${G5}")
-	field(SXST, "${G6}")
-	field(SVST, "${G7}")
+	field(ZRST, "${G0}V")
+	field(ONST, "${G1}V")
+	field(TWST, "${G2}V")
+	field(THST, "${G3}V")
+	field(FRST, "${G4}V")
+	field(FVST, "${G5}V")
+	field(SXST, "${G6}V")
+	field(SVST, "${G7}V")
 	field(ZRVL, "0")
 	field(ONVL, "1")
 	field(TWVL, "2")
@@ -66,7 +66,9 @@ record (mbbo, "${UUT}:${SITE}:GAIN:${CH}:s") {
 # force waveform record to rescale
 record(calc, "${UUT}:${SITE}:GAIN:${CH}_f") {
 	field(INPA, "${UUT}:${SITE}:GAIN:${CH}")
-	field(CALC, "A==0? ${G0}: A==1? ${G1}: A==2? ${G2}: A==3? ${G3}:  A==4? ${G4}:  A==5? ${G5}:  A==6? ${G6}: ${G7}")
+	# field(CALC, "A==0?${G0}:A==1?${G1}:A==2?${G2}:A==3?${G3}:A==4?${G4}:A==5?${G5}:A==6?${G6}:${G7}")
+	# replacing the above CALC field because it is too long and gains are always power of 2 starting at 25.6
+	field(CALC, "25.6 / (2^A)")
 }
 
 # and set the volts range in all associated WF records..
